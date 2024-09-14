@@ -14,7 +14,7 @@ class TodoView extends StatefulWidget {
 
 class _TodoViewState extends State<TodoView> {
   TextEditingController titleController = TextEditingController();
-  Box<Tasks> todoBox = Hive.box('todo');
+  Box<Tasks> todoBox = Hive.box<Tasks>('todo');
   int itemcount=0;
   @override
   void initState() {

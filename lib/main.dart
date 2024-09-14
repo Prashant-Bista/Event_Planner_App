@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:event_planner_app/pages/Guests/guests.dart';
 import 'package:event_planner_app/pages/Todo/tasks.dart';
 import 'package:flutter/material.dart';
 import 'package:event_planner_app/routes.dart';
@@ -13,7 +14,14 @@ void main() async{
   Directory directory = await getApplicationCacheDirectory();
   Hive.init(directory.path);
   Hive.registerAdapter(TasksAdapter());
-  await Hive.openBox<Tasks>('todo');
+  Hive.registerAdapter(GuestsAdapter());
+  if (!Hive.isBoxOpen('todo')) {
+    await Hive.openBox<Tasks>('todo');
+  }
+
+  if (!Hive.isBoxOpen('guests')) {
+    await Hive.openBox<Guests>('guests');
+  }
   runApp(const MyApp());
 }
 

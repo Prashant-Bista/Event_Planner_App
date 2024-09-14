@@ -1,3 +1,4 @@
+import 'package:event_planner_app/pages/Guests/add_guests.dart';
 import 'package:event_planner_app/pages/Todo/todo_view.dart';
 import 'package:event_planner_app/pages/Login/login.dart';
 import 'package:event_planner_app/pages/splash.dart';
@@ -14,6 +15,9 @@ class Routes{
 
     if (settings.name=='/todo'){
       return MaterialPageRoute(builder: (_)=>TodoView());
+    }
+    if (settings.name=='/guests'){
+      return MaterialPageRoute(builder: (_)=>AddGuests());
     }
   }
 }

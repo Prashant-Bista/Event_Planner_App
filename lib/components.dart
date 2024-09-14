@@ -1,5 +1,7 @@
+import 'package:event_planner_app/pages/Guests/guests.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hive/hive.dart';
 
 
 class Manrope extends StatelessWidget {
@@ -91,3 +93,139 @@ class _InputFieldState extends State<InputField> {
 
   }
 }
+
+class GuestList extends StatelessWidget {
+  final String contact;
+  final String memberNo;
+  final String name;
+  final bool isInvited;
+
+  const GuestList({super.key, required this.contact, required this.memberNo, required this.name, required this.isInvited});
+
+  @override
+  Widget build(BuildContext context) {
+
+
+    return GestureDetector(
+          onTap: (){
+            GuestAlert(context);
+          },
+          child:    Container(
+            padding: EdgeInsets.symmetric(vertical: 10.0),
+            height: 110,
+            decoration: BoxDecoration(
+              color: Colors.grey,
+              borderRadius: BorderRadius.circular(5),
+              border: Border.all(color: Color.fromRGBO(11, 13, 23, 1,),width: 1.5),
+            ),
+            child:      Row(
+              children: [
+                SizedBox(width: 20,),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Manrope(text: 'Name:'),
+                    Manrope(text: 'Contact:'),
+                    Manrope(text: 'No of Members:'),
+                    Manrope(text: 'Invitation:'),
+                  ],
+                ),
+                SizedBox(width: 20,),
+
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Manrope(text: '${name}'),
+                    Manrope(text: '${contact}'),
+                    Manrope(text: '${memberNo}'),
+                    Manrope(text: isInvited?'Invited':"Not Invited"),
+
+                  ],
+                ),
+              ],
+            )  ,
+          )
+      );
+
+
+
+
+  }
+}
+
+void GuestAlert(BuildContext context){
+  Box<Guests> guest= Hive.box<Guests>('guests');
+  TextEditingController nameController = TextEditingController();
+  TextEditingController contactController = TextEditingController();
+  TextEditingController membersController = TextEditingController();
+  TextEditingController inviteController = TextEditingController();
+    showDialog(context: context, builder: (BuildContext context){
+      return AlertDialog(
+        title: SizedBox(
+          width: 250,
+          child: Column(
+            children: [
+              TextField(
+                controller: nameController,
+                focusNode: FocusNode(),
+                decoration: InputDecoration(
+                    hintText:  "Name",
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(3),
+                        borderSide: BorderSide(style: BorderStyle.solid,width: 1)
+                    )
+                ),
+              ),
+              SizedBox(height: 20,),
+              TextField(
+                controller: contactController,
+                focusNode: FocusNode(),
+                decoration: InputDecoration(
+                    hintText:  "Contact No",
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(3),
+                        borderSide: BorderSide(style: BorderStyle.solid,width: 1)
+                    )
+                ),
+              ),
+              SizedBox(height: 20,),
+
+              TextField(
+                controller: membersController,
+                focusNode: FocusNode(),
+                decoration: InputDecoration(
+                    hintText:  "No of Members",
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(3),
+                        borderSide: BorderSide(style: BorderStyle.solid,width: 1)
+                    )
+                ),
+              ),
+              SizedBox(height: 20,),
+
+              TextField(
+                controller: inviteController,
+                focusNode: FocusNode(),
+                decoration: InputDecoration(
+                    hintText:  "Invitation",
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(3),
+                        borderSide: BorderSide(style: BorderStyle.solid,width: 1)
+                    )
+                ),
+              ),
+              SizedBox(height: 20,),
+
+            ],
+          ),
+        ),
+
+        content: ElevatedButton(onPressed: (){
+          if (nameController.text in guest)
+        }, child: Manrope(text: "Add")),
+      );
+    });
+  }
+
