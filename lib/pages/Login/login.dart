@@ -1,4 +1,5 @@
-import 'package:event_planner_app/pages/components.dart';
+import 'package:event_planner_app/components.dart';
+import 'package:event_planner_app/pages/Todo/todo_view.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sign_button/constants.dart';
@@ -25,9 +26,9 @@ class Login extends StatelessWidget {
               child: Image.asset('assets/images/EventAppCircle.png',filterQuality: FilterQuality.high,),
 
             ),
-            SizedBox(height: 20,),
+            SizedBox(height: 20.0,),
             Manrope(text: "Welcome!",size: 32.0,weight: FontWeight.bold,),
-            SizedBox(height: 20,),
+            SizedBox(height: 20.0,),
             Form(child: Container(
 
               child: Column(
@@ -60,27 +61,29 @@ class Login extends StatelessWidget {
                   }
                   return null;
                 },),
-               SizedBox(height: 20,),
+               SizedBox(height: 20.0,),
                Row(
                  mainAxisAlignment: MainAxisAlignment.end,
                  crossAxisAlignment: CrossAxisAlignment.center,
                  children: [
                    TextButton(onPressed: (){}, child:Manrope(text: "Forgot Password",color: Colors.blue,),
                    ),
-                   SizedBox(width: widthDevice/6,)
+                   SizedBox(width: widthDevice/6.0,)
                  ],
                ),
                MaterialButton(
                  minWidth: widthDevice/1.5,
-                 height: 50,
-                 padding: EdgeInsets.all(20),
+                 height: 50.0,
+                 padding: EdgeInsets.all(20.0),
                    shape: RoundedRectangleBorder(
-                     borderRadius: BorderRadius.circular(10),
+                     borderRadius: BorderRadius.circular(10.0),
                    ),
                    color: Colors.black,
-                   child:Manrope(text: "Sign In", size: 32,color: Colors.white,)
+                   child:Manrope(text: "Sign In", size: 32.0,color: Colors.white,)
                    ,
-                   onPressed: (){}),
+                   onPressed: (){
+                   Navigator.of(context).pushNamed('/todo');
+                   }),
                   Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,

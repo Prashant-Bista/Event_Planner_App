@@ -1,4 +1,5 @@
-import 'package:event_planner_app/pages/login.dart';
+import 'package:event_planner_app/pages/Todo/todo_view.dart';
+import 'package:event_planner_app/pages/Login/login.dart';
 import 'package:event_planner_app/pages/splash.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +10,10 @@ class Routes{
     }
     if (settings.name=='/login'){
       return MaterialPageRoute(builder: (_)=>Login());
+    }
+
+    if (settings.name=='/todo'){
+      return MaterialPageRoute(builder: (_)=>TodoView());
     }
   }
 }
