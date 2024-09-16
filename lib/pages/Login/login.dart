@@ -82,7 +82,7 @@ class Login extends StatelessWidget {
                    child:Manrope(text: "Sign In", size: 32.0,color: Colors.white,)
                    ,
                    onPressed: (){
-                   Navigator.of(context).pushNamed('/guests');
+                   Navigator.of(context).pushNamed('/event');
 
                    }),
                   Row(

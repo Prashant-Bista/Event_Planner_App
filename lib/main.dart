@@ -1,7 +1,10 @@
 import 'dart:io';
 
+import 'package:event_planner_app/pages/Budget/budget.dart';
+import 'package:event_planner_app/pages/Events/event.dart';
 import 'package:event_planner_app/pages/Guests/guests.dart';
 import 'package:event_planner_app/pages/Todo/tasks.dart';
+import 'package:event_planner_app/pages/Budget/budget.dart';
 import 'package:flutter/material.dart';
 import 'package:event_planner_app/routes.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,6 +18,10 @@ void main() async{
   Hive.init(directory.path);
   Hive.registerAdapter(TasksAdapter());
   Hive.registerAdapter(GuestsAdapter());
+  Hive.registerAdapter(BudgetAdapter());
+  Hive.registerAdapter(EventAdapter());
+
+
   if (!Hive.isBoxOpen('todo')) {
     await Hive.openBox<Tasks>('todo');
   }
@@ -22,6 +29,13 @@ void main() async{
   if (!Hive.isBoxOpen('guests')) {
     await Hive.openBox<Guests>('guests');
   }
+  if (!Hive.isBoxOpen('budget')) {
+    await Hive.openBox<Budget>('budget');
+  }
+  if (!Hive.isBoxOpen('event')) {
+    await Hive.openBox<Event>('event');
+  }
+
   runApp(const MyApp());
 }
 
