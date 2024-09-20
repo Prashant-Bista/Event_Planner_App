@@ -16,7 +16,8 @@ class Routes{
     }
 
     if (settings.name=='/todo'){
-      return MaterialPageRoute(builder: (_)=>TodoView());
+      final int args = int.parse(settings.arguments.toString());
+      return MaterialPageRoute(builder: (_)=>TodoView(eventIndex: args,));
     }
     if (settings.name=='/guests'){
       final int args = int.parse(settings.arguments.toString());

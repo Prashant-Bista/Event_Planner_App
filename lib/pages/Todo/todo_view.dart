@@ -5,8 +5,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import '../Events/event.dart';
+
 class TodoView extends StatefulWidget {
-  const TodoView({super.key});
+  final int eventIndex;
+  const TodoView({super.key, required this.eventIndex});
 
   @override
   State<TodoView> createState() => _TodoViewState();
@@ -15,12 +18,18 @@ class TodoView extends StatefulWidget {
 class _TodoViewState extends State<TodoView> {
   TextEditingController titleController = TextEditingController();
   Box<Tasks> todoBox = Hive.box<Tasks>('todo');
+  Box<Event> eventBox = Hive.box<Event>('event');
+  late Event? thisEvent;
+
+
   int itemcount=0;
   @override
   void initState() {
     // TODO: implement initState
-     itemcount= todoBox.length;
-    super.initState();
+     thisEvent = eventBox.getAt(widget.eventIndex);
+     itemcount= eventBox.getAt(widget.eventIndex)!.eventTasks.length;
+
+     super.initState();
   }
   @override
   Widget build(BuildContext context) {
@@ -33,27 +42,42 @@ class _TodoViewState extends State<TodoView> {
         elevation: 20.0,
         shadowColor: Colors.grey,
       ),
-      body: ValueListenableBuilder(valueListenable: todoBox.listenable(), builder: (context,Box box, widget){
-        if (box.isEmpty) {
-          return Center(child: Manrope(text: "No tasks to do",size: 35.0,color: Color.fromRGBO(11, 13, 23, 1),));
-        }
-          else{
-            return ListView.builder(itemCount:box.length,itemBuilder: (context,index){
-              Tasks task = box.getAt(index);
-              return ListTile(
-                title:Text("${task.title}",style: GoogleFonts.manrope(fontSize: 30,decoration: task.isDone?TextDecoration.lineThrough:TextDecoration.none),),
-                leading: Checkbox(value: task.isDone, onChanged: (bool? value){
-                  box.putAt(index,Tasks(title: task.title,isDone: value!) ) ;
-                },
-                ),
-                trailing: IconButton(icon: Icon(Icons.dangerous_outlined,color: Colors.red,size: 20,),onPressed: (){
-                  box.deleteAt(index);
-                },),
-              );
-            });
+      body: ValueListenableBuilder(
+        valueListenable:eventBox.listenable(), // Listen to the eventBox
+        builder: (context, Box<Event> box, _) {
+          thisEvent = box.getAt(widget.eventIndex); // Update thisEvent on change
 
-        }
-      },
+          if (thisEvent!.eventTasks.isEmpty) {
+            return Center(
+              child: Manrope(
+                text: "No Tasks added yet",
+                size: 35.0,
+                color: Color.fromRGBO(11, 13, 23, 1),
+              ),
+            );
+          } else {
+            return ListView.builder(
+              itemCount: thisEvent!.eventTasks.length,
+              itemBuilder: (context, index) {
+                Tasks task = thisEvent!.eventTasks[index];
+                return ListTile(
+                  title:Text(task.title,style: GoogleFonts.manrope(fontSize: 30,decoration: task.isDone?TextDecoration.lineThrough:TextDecoration.none),),
+                  leading: Checkbox(value: task.isDone, onChanged: (bool? value){
+                    List<Tasks>? updated= thisEvent!.eventTasks;
+                    updated[index]= Tasks(title: thisEvent!.eventTasks[index].title, isDone: value!);
+                    eventBox.putAt(index, Event(eventBudget: thisEvent!.eventBudget,eventDate: thisEvent!.eventDate,eventExpenses: thisEvent!.eventExpenses,eventGuests: thisEvent!.eventGuests,eventName: thisEvent!.eventName,eventTasks: updated));
+                    },
+
+                  ),
+                  trailing: IconButton(icon: Icon(Icons.dangerous_outlined,color: Colors.red,size: 20,),onPressed: (){
+                    thisEvent!.eventTasks.removeAt(index);
+                    eventBox.putAt(widget.eventIndex, thisEvent!);
+                  },),
+                );
+              },
+            );
+          }
+        },
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Color.fromRGBO(11, 13, 23, 1),
@@ -77,7 +101,8 @@ setState(() {
         ),
       ),
       content: ElevatedButton(onPressed: (){
-        todoBox.add(Tasks(title: titleController.text, isDone: false));
+        thisEvent!.eventTasks.add(Tasks(title: titleController.text, isDone: false));
+        eventBox.putAt(widget.eventIndex, thisEvent!);
         Navigator.pop(context);
         titleController.text='';
       }, child: Manrope(text: "Add")),

@@ -50,7 +50,9 @@ class _HomePageState extends State<HomePage> {
               HomeTile(height: tileHeight,width: tileWidth, tileIcon: Icons.people,tileName: "Guests",perform: (){
                 Navigator.of(context).pushNamed('/guests',arguments: widget.eventIndex );
               },),
-              HomeTile(height: tileHeight,width: tileWidth, tileIcon: Icons.task_outlined,tileName: "Tasks",perform: (){},),
+              HomeTile(height: tileHeight,width: tileWidth, tileIcon: Icons.task_outlined,tileName: "Tasks",perform: (){
+                Navigator.of(context).pushNamed("/todo",arguments: widget.eventIndex);
+              },),
               HomeTile(height: tileHeight,width: tileWidth, tileIcon: Icons.schedule_outlined,tileName: "Schedule",perform: (){},),
               HomeTile(height: tileHeight,width: tileWidth, tileIcon: CupertinoIcons.house_fill,tileName: "Venue",perform: (){},),
 

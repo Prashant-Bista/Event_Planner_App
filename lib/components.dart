@@ -1,6 +1,7 @@
 
 import 'package:event_planner_app/pages/Events/event.dart';
 import 'package:event_planner_app/pages/Guests/guests.dart';
+import 'package:event_planner_app/pages/Todo/tasks.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
@@ -104,11 +105,12 @@ class GuestList extends StatelessWidget {
   final String name;
   final bool isInvited;
   final int index;
-  const GuestList({super.key, required this.contact, required this.memberNo, required this.name, required this.isInvited, required this.index});
+  final int eventIndex;
+  const GuestList({super.key, required this.contact, required this.memberNo, required this.name, required this.isInvited, required this.index, required this.eventIndex});
 
   @override
   Widget build(BuildContext context) {
-    Box<Guests> guest = Hive.box<Guests>('guests');
+    Box<Event> eventBox = Hive.box<Event>('event');
     return GestureDetector(
           onTap: (){
             // GuestAlert(context,eventIndex);
@@ -123,7 +125,9 @@ class GuestList extends StatelessWidget {
             ),
             child:      ListTile(
               trailing: IconButton(onPressed: (){
-                guest.deleteAt(index);
+                Event? thisEvent = eventBox.getAt(eventIndex);
+                thisEvent!.eventGuests.removeAt(index);
+                eventBox.putAt(eventIndex, thisEvent);
               }, icon: Icon(Icons.dangerous,color: Colors.red,)),
               title: Row(
                 children: [
@@ -163,15 +167,18 @@ class GuestList extends StatelessWidget {
   }
 }
 
-void GuestAlert(BuildContext context,int eventIndex) {
-  Box<Event> eventBox= Hive.box<Event>("event");
+void GuestAlert(BuildContext context, int eventIndex) {
+  Box<Event> eventBox = Hive.box<Event>("event");
   TextEditingController nameController = TextEditingController();
   TextEditingController contactController = TextEditingController();
   TextEditingController membersController = TextEditingController();
   Event? thisEvent = eventBox.getAt(eventIndex);
   bool isInvited = false;
-  showDialog(context: context, builder: (BuildContext context) {
-    return StatefulBuilder(
+
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
         builder: (context, setState) {
           return AlertDialog(
             title: SizedBox(
@@ -180,73 +187,74 @@ void GuestAlert(BuildContext context,int eventIndex) {
                 children: [
                   TextField(
                     controller: nameController,
-                    focusNode: FocusNode(),
                     decoration: InputDecoration(
-                        hintText: "Name",
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(3),
-                            borderSide: BorderSide(style: BorderStyle.solid,
-                                width: 1)
-                        )
+                      hintText: "Name",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(3),
+                        borderSide: BorderSide(style: BorderStyle.solid, width: 1),
+                      ),
                     ),
                   ),
-                  SizedBox(height: 20,),
+                  SizedBox(height: 20),
                   TextField(
                     controller: contactController,
-                    focusNode: FocusNode(),
                     decoration: InputDecoration(
-                        hintText: "Contact No",
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(3),
-                            borderSide: BorderSide(style: BorderStyle.solid,
-                                width: 1)
-                        )
+                      hintText: "Contact No",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(3),
+                        borderSide: BorderSide(style: BorderStyle.solid, width: 1),
+                      ),
                     ),
                   ),
-                  SizedBox(height: 20,),
-
+                  SizedBox(height: 20),
                   TextField(
                     controller: membersController,
-                    focusNode: FocusNode(),
                     decoration: InputDecoration(
-                        hintText: "No of Members",
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(3),
-                            borderSide: BorderSide(style: BorderStyle.solid,
-                                width: 1)
-                        )
+                      hintText: "No of Members",
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(3),
+                        borderSide: BorderSide(style: BorderStyle.solid, width: 1),
+                      ),
                     ),
                   ),
-                  SizedBox(height: 20,),
+                  SizedBox(height: 20),
                   ListTile(
                     tileColor: Colors.purple,
                     trailing: Checkbox(
-                      value: isInvited, onChanged: (bool? value) {
-                      setState((){
-                        isInvited = value!;
-                      });
-                    },
-
+                      value: isInvited,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          isInvited = value!;
+                        });
+                      },
                     ),
-                    title: Manrope(text: "Invited",),
+                    title: Text("Invited"),
                   ),
-                  SizedBox(height: 20,),
-
                 ],
               ),
             ),
+            content: ElevatedButton(
+              onPressed: () {
+                thisEvent!.eventGuests.add(
+                  Guests(
+                    guestName: nameController.text,
+                    membersNo: int.parse(membersController.text),
+                    invited: isInvited,
+                    contact: contactController.text,
+                  ),
+                );
 
-            content: ElevatedButton(onPressed: ()  {
-               thisEvent!.eventGuests.add(Guests(guestName: nameController.text,
-                  membersNo: int.parse(membersController.text),
-                  invited: isInvited,
-                  contact: contactController.text));
-              Navigator.pop(context);
-            }, child: Manrope(text: "Add"),
+                eventBox.putAt(eventIndex, thisEvent!);
+
+                Navigator.pop(context);
+              },
+              child: Text("Add"),
             ),
           );
-        });
-  });
+        },
+      );
+    },
+  );
 }
 
 class HomeTile extends StatefulWidget {
@@ -281,5 +289,42 @@ class _HomeTileState extends State<HomeTile> {
   }
 }
 
+class TaskList extends StatefulWidget {
+  final String title;
+  final int taskIndex;
+  final int eventIndex;
+  final bool isDone;
+
+  const TaskList({super.key, required this.title, required this.taskIndex, required this.isDone, required this.eventIndex});
+
+  @override
+  State<TaskList> createState() => _TaskListState();
+}
+
+class _TaskListState extends State<TaskList> {
+  Box<Event> eventBox= Hive.box<Event>('event');
+  Box<Event> guestBox= Hive.box<Event>('guests');
+  Event? thisEvent;
+  @override
+  void initState() {
+    thisEvent = eventBox.getAt(widget.eventIndex);
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title:Text(widget.title,style: GoogleFonts.manrope(fontSize: 30,decoration: widget.isDone?TextDecoration.lineThrough:TextDecoration.none),),
+      leading: Checkbox(value: widget.isDone, onChanged: (bool? value){
+        // Tasks thistask =thisEvent!.eventTasks.elementAt(widget.taskIndex);
+        // thistask
+      },
+      ),
+      trailing: IconButton(icon: Icon(Icons.dangerous_outlined,color: Colors.red,size: 20,),onPressed: (){
+      },),
+    );;
+  }
+}
 
 

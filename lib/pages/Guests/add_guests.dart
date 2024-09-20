@@ -59,6 +59,7 @@ class _AddGuestsState extends State<AddGuests> {
               itemBuilder: (context, index) {
                 Guests guest = thisEvent!.eventGuests[index];
                 return GuestList(
+                  eventIndex: widget.eventIndex,
                   contact: guest.contact,
                   memberNo: '${guest.membersNo}',
                   name: guest.guestName,
