@@ -45,7 +45,10 @@ class _HomePageState extends State<HomePage> {
             spacing: widthDevice/10,
             children: [
               Image.asset("assets/images/Eventium_nobg.png",width: widthDevice,height: 200,),
-              HomeTile(height: tileHeight,width: tileWidth, tileIcon: CupertinoIcons.money_dollar_circle_fill,tileName: "Budget",perform: (){},),
+              HomeTile(height: tileHeight,width: tileWidth, tileIcon: CupertinoIcons.money_dollar_circle_fill,tileName: "Budget",perform: (){
+                Navigator.of(context).pushNamed("/budget",arguments: widget.eventIndex);
+
+              },),
               HomeTile(height: tileHeight,width: tileWidth, tileIcon: Icons.store_sharp,tileName: "Vendors",perform: (){},),
               HomeTile(height: tileHeight,width: tileWidth, tileIcon: Icons.people,tileName: "Guests",perform: (){
                 Navigator.of(context).pushNamed('/guests',arguments: widget.eventIndex );

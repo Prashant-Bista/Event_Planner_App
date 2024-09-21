@@ -1,4 +1,5 @@
 
+import 'package:event_planner_app/pages/Budget/budget.dart';
 import 'package:event_planner_app/pages/Events/event.dart';
 import 'package:event_planner_app/pages/Guests/guests.dart';
 import 'package:event_planner_app/pages/Todo/tasks.dart';
@@ -328,3 +329,44 @@ class _TaskListState extends State<TaskList> {
 }
 
 
+void AddAlert(BuildContext context,String hintText,int eventIndex ){
+  Box<Event> eventBox = Hive.box<Event>('/event');
+  Event? thisEvent =eventBox.getAt(eventIndex);
+  TextEditingController valueController =TextEditingController();
+ showDialog(context: context, builder: (BuildContext context){
+      return AlertDialog(
+        title: SizedBox(
+          width: 250,
+          child: TextField(
+            focusNode: FocusNode(),
+            controller: valueController,
+            decoration: InputDecoration(
+                hintText: hintText ,
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(3),
+                    borderSide: BorderSide(style: BorderStyle.solid,width: 1)
+                )
+            ),
+          ),
+        ),
+        content: ElevatedButton(onPressed: (){
+          thisEvent!.eventTasks.add(Tasks(title: valueController.text, isDone: false));
+          AddBudget(eventIndex);
+        }, child: Manrope(text: "Add")),
+      );
+    }
+  );
+}
+void AddBudget(int eventIndex){
+  Box<Event> eventBox = Hive.box<Event>('/event');
+  Event? thisEvent =eventBox.getAt(eventIndex);
+  Event? updatedEvent;
+
+  TextEditingController valueController =TextEditingController();
+  Budget thisBudget =thisEvent!.eventBudget;
+  thisBudget= Budget(budget: double.parse(valueController.text));
+  updatedEvent= Event(eventTasks: thisEvent.eventTasks,eventExpenses: thisEvent.eventExpenses,eventGuests: thisEvent.eventGuests,eventName: thisEvent.eventName,eventDate: thisEvent.eventDate,eventBudget: thisBudget);
+  eventBox.putAt(eventIndex, updatedEvent!);
+  valueController.text='';
+
+}

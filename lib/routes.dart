@@ -1,3 +1,4 @@
+import 'package:event_planner_app/pages/Budget/budget_track.dart';
 import 'package:event_planner_app/pages/Events/event_page.dart';
 import 'package:event_planner_app/pages/Guests/add_guests.dart';
 import 'package:event_planner_app/pages/Todo/todo_view.dart';
@@ -29,6 +30,10 @@ class Routes{
     if (settings.name=='/home'){
       final int args = int.parse(settings.arguments.toString());
       return MaterialPageRoute(builder: (_)=>HomePage(eventIndex:args ));
+    }
+    if (settings.name=='/budget'){
+      final int args = int.parse(settings.arguments.toString());
+      return MaterialPageRoute(builder: (_)=>BudgetTrack(eventIndex:args ));
     }
   }
 }
