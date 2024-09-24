@@ -8,7 +8,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 
 Color lightPurple= Color(0xFF45267FF);
-
+TextEditingController valueController =TextEditingController();
 Color mainColor = Color.fromRGBO(11, 14, 28, 1);
 class Manrope extends StatelessWidget {
   final text;
@@ -329,10 +329,8 @@ class _TaskListState extends State<TaskList> {
 }
 
 
-void AddAlert(BuildContext context,String hintText,int eventIndex ){
-  Box<Event> eventBox = Hive.box<Event>('/event');
-  Event? thisEvent =eventBox.getAt(eventIndex);
-  TextEditingController valueController =TextEditingController();
+void AddAlert(BuildContext context,String hintText,int eventIndex,VoidCallback? onPressed ){
+
  showDialog(context: context, builder: (BuildContext context){
       return AlertDialog(
         title: SizedBox(
@@ -349,24 +347,18 @@ void AddAlert(BuildContext context,String hintText,int eventIndex ){
             ),
           ),
         ),
-        content: ElevatedButton(onPressed: (){
-          thisEvent!.eventTasks.add(Tasks(title: valueController.text, isDone: false));
-          AddBudget(eventIndex);
-        }, child: Manrope(text: "Add")),
+        content: ElevatedButton(onPressed: onPressed, child: Manrope(text: "Add")),
       );
     }
   );
 }
-void AddBudget(int eventIndex){
+VoidCallback? AddBudget(int eventIndex){
   Box<Event> eventBox = Hive.box<Event>('/event');
   Event? thisEvent =eventBox.getAt(eventIndex);
   Event? updatedEvent;
-
-  TextEditingController valueController =TextEditingController();
   Budget thisBudget =thisEvent!.eventBudget;
-  thisBudget= Budget(budget: double.parse(valueController.text));
+  thisBudget= Budget(budget: double.parse(valueController.text),isSet: true);
   updatedEvent= Event(eventTasks: thisEvent.eventTasks,eventExpenses: thisEvent.eventExpenses,eventGuests: thisEvent.eventGuests,eventName: thisEvent.eventName,eventDate: thisEvent.eventDate,eventBudget: thisBudget);
   eventBox.putAt(eventIndex, updatedEvent!);
   valueController.text='';
-
 }

@@ -128,7 +128,7 @@ class _EventPageState extends State<EventPage> {
                   ),
                 ),
                 content: ElevatedButton(onPressed: (){
-                  event.add(Event(eventBudget: Budget(budget: 0), eventExpenses: [], eventGuests: [], eventTasks: [], eventName: nameController.text, eventDate: picked));
+                  event.add(Event(eventBudget: Budget(budget: 0,isSet: false), eventExpenses: [], eventGuests: [], eventTasks: [], eventName: nameController.text, eventDate: picked));
                   Navigator.pop(context);
                 }, child: Manrope(text: "Add")),
               );},

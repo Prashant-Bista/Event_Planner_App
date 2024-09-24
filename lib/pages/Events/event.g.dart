@@ -22,7 +22,7 @@ class EventAdapter extends TypeAdapter<Event> {
       eventGuests: (fields[3] as List).cast<Guests>(),
       eventTasks: (fields[2] as List).cast<Tasks>(),
       eventName: fields[5] as String,
-      eventDate: fields[6] as DateTime,
+      eventDate: fields[6] as DateTime?,
     );
   }
 

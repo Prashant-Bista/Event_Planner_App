@@ -6,9 +6,14 @@ part 'budget.g.dart';
 class Budget {
   @HiveField(0)
   final double budget;
+
+  @HiveField(1)
+  final bool isSet;
   Budget({
-    required this.budget
-});
+    required this.budget,
+    required this.isSet
+
+  });
 }
 
 @HiveType(typeId: 3)

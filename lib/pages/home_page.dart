@@ -27,9 +27,6 @@ class _HomePageState extends State<HomePage> {
   double tileHeight= heightDevice/8;
   double tileWidth= widthDevice/3.5;
 
-
-
-
   return SafeArea(
     child: Scaffold(
       backgroundColor: mainColor,
@@ -39,12 +36,11 @@ class _HomePageState extends State<HomePage> {
           title: Manrope(text: "Home Page",size: 25.0,weight: FontWeight.bold,),
         ),
         body: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 60),
+          padding: const EdgeInsets.symmetric(horizontal: 60 ,vertical: 30),
           child: Wrap(
             runSpacing:widthDevice/10,
             spacing: widthDevice/10,
             children: [
-              Image.asset("assets/images/Eventium_nobg.png",width: widthDevice,height: 200,),
               HomeTile(height: tileHeight,width: tileWidth, tileIcon: CupertinoIcons.money_dollar_circle_fill,tileName: "Budget",perform: (){
                 Navigator.of(context).pushNamed("/budget",arguments: widget.eventIndex);
 

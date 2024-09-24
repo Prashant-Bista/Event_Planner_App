@@ -5,10 +5,12 @@ import 'package:event_planner_app/pages/Events/event.dart';
 import 'package:event_planner_app/pages/Guests/guests.dart';
 import 'package:event_planner_app/pages/Todo/tasks.dart';
 import 'package:event_planner_app/pages/Budget/budget.dart';
+import 'package:event_planner_app/pages/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:event_planner_app/routes.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 
 void main() async{
@@ -36,7 +38,7 @@ void main() async{
     await Hive.openBox<Event>('event');
   }
 
-  runApp(const MyApp());
+  runApp(ProviderScope(child: MyApp()) );
 }
 
 class MyApp extends StatelessWidget {
@@ -48,7 +50,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
       ),
-      home: Scaffold(),
+      home: Splash(),
       initialRoute: '/splash',
       onGenerateRoute: (settings)=>Routes.routeGenerator(settings),
     );
