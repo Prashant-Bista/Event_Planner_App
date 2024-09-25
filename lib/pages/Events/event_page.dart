@@ -1,9 +1,9 @@
 import 'package:event_planner_app/pages/Budget/budget.dart';
-import 'package:event_planner_app/pages/home_page.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:intl/intl.dart';
 
 import '../../components.dart';
 import 'event.dart';
@@ -24,7 +24,7 @@ class _EventPageState extends State<EventPage> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.purple,
+        backgroundColor: muave,
         title: Manrope(text:"Events", color: Colors.white,weight: FontWeight.bold,),
         elevation: 20.0,
         shadowColor: Colors.grey,
@@ -43,13 +43,13 @@ class _EventPageState extends State<EventPage> {
               },
               child: Container(
                 decoration: BoxDecoration(
-                  border: Border.all(width: 1,color: Color.fromRGBO(11, 13, 23,1))
+                  border: Border.all(width: 1,color: Colors.black)
                 ),
                 child: ListTile(
                   trailing: IconButton(onPressed: (){
                     box.deleteAt(index);
                   }, icon: Icon(Icons.dangerous,color: Colors.red,)),
-                  tileColor: Color(0xFF45267FF),
+                  tileColor: dusty_rose,
                   // trailing: ,
                   title: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -73,7 +73,7 @@ class _EventPageState extends State<EventPage> {
               return AlertDialog(
 
                 title: SizedBox(
-                  width: 350,
+                  width: 500,
                   child: Column(
                     children: [
                       TextField(
@@ -81,46 +81,50 @@ class _EventPageState extends State<EventPage> {
                         focusNode: FocusNode(),
                         controller: nameController,
                         decoration: InputDecoration(
-                          hintStyle: TextStyle(),
+                          hintStyle: TextStyle(fontSize: 13),
                             hintText:  "Name of Event",
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(3),
-                                borderSide: BorderSide(style: BorderStyle.solid,width: 1,color: Color(0xFF45267FF))
+                                borderSide: BorderSide(style: BorderStyle.solid,width: 1,color: lightPurple)
                             ),
                             enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(3),
-                                borderSide: BorderSide(style: BorderStyle.solid,width: 1,color: Color(0xFF45267FF))
+                                borderSide: BorderSide(style: BorderStyle.solid,width: 1,color: lightPurple)
                             )
                         ),
                       ),
                       SizedBox(height: 10,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Manrope(text: "Date Time :",size: 15.0,),
-                          SizedBox(width: 10,),
-                          Container(
-                            width: 210,
-                              decoration:BoxDecoration(
-                            border: Border.all(width: 1,color: Color(0xFF45267FF))
-                          ),child: Center(child: Manrope(text: picked==null?"Not selected":picked.toString(),size: 15.0,))),
-                          IconButton(
-                            icon: Icon(Icons.date_range,color:Color(0xFF45267FF),),
-                              onPressed: () async{
-                            final DateTime? selectedDate =  await showDatePicker(context: context, firstDate: DateTime(2000,1,1), lastDate: DateTime(2100,1,1),initialDate: DateTime.now(),);
-                            if (selectedDate==null){
-                              return;
+                      SizedBox(
+                        height: 30,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Manrope(text: "Date Time: ",size: 15.0,),
+                            Container(
+                              width: 155,
+                                decoration:BoxDecoration(
+                              border: Border.all(width: 1,color: Colors.black)
+                            ),child: Center(child: Manrope(text: picked==null?"Not selected": DateFormat('yyyy/MM/dd/hh:mm a').format(picked!),size: 15.0,))),
+                            IconButton(
+                              padding: EdgeInsets.zero,
+                              icon: Icon(Icons.date_range,color:Color(0xFF45267FF),size: 25,),
+                                onPressed: () async{
+                              final DateTime? selectedDate =  await showDatePicker(context: context, firstDate: DateTime(2000,1,1), lastDate: DateTime(2100,1,1),initialDate: DateTime.now(),);
+                              if (selectedDate==null){
+                                return;
+                              }
+                              final TimeOfDay? selectedTime =  await showTimePicker(context: context, initialTime: TimeOfDay.now() );
+                              if (selectedTime==null){
+                                return;
+                              }
+                              setState(() {
+                                picked =DateTime(selectedDate.year,selectedDate.month,selectedDate.day,selectedTime.hour,selectedTime.minute);
+                              });
                             }
-                            final TimeOfDay? selectedTime =  await showTimePicker(context: context, initialTime: TimeOfDay.now() );
-                            if (selectedTime==null){
-                              return;
-                            }
-                            setState(() {
-                              picked =DateTime(selectedDate.year,selectedDate.month,selectedDate.day,selectedTime.hour,selectedTime.minute);
-                            });
-                          }
-                                      ),
-                        ],
+                                        ),
+                          ],
+                        ),
                       )
 
 

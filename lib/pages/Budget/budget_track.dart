@@ -22,8 +22,8 @@ class BudgetTrack extends ConsumerWidget {
       backgroundColor:Colors.white ,
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.purple,
-        title: Manrope(text:"Budget Manaement", color: Colors.white,),
+        backgroundColor: muave,
+        title: Manrope(text:"Budget Management", color: Colors.white,weight: FontWeight.bold,),
         elevation: 20.0,
         shadowColor: Colors.grey,
       ),
@@ -33,16 +33,15 @@ class BudgetTrack extends ConsumerWidget {
             valueListenable:eventBox.listenable(), // Listen to the eventBox
             builder: (context, Box<Event> box, _) {
               if (thisEvent!.eventBudget.budget==0) {
-                return Center(
-                  child: Manrope(
+                return Manrope(
                     text: "No Budget added yet",
                     size: 35.0,
                     color: Color.fromRGBO(11, 13, 23, 1),
-                  ),
-                );
+                  );
               } else {
-                return Container(
-                  child: Manrope(text: "Budget:${thisEvent!.eventBudget.budget} "),
+                return ListTile(
+                  tileColor: Colors.greenAccent,
+                  leading: Manrope(text: "Budget:${thisEvent!.eventBudget.budget} ",size: 20.0,color: Colors.black,weight: FontWeight.bold,),
                 );
               }
             },

@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:event_planner_app/pages/Budget/budget.dart';
 import 'package:event_planner_app/pages/Events/event.dart';
+import 'package:event_planner_app/pages/Guests/guests.dart';
 import 'package:event_planner_app/pages/Todo/tasks.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -57,6 +58,20 @@ class BusinessLogic extends ChangeNotifier {
     thisEvent!.eventTasks.removeAt(index);
     eventBox.putAt(eventIndex, thisEvent!);
     notifyListeners();
+  }
+  VoidCallback? addGuest(int eventIndex,String name, int members, bool isInvited, String contact){
+    Box<Event> eventBox = Hive.box<Event>('event');
+    Event? thisEvent = eventBox.getAt(eventIndex);
+    thisEvent!.eventGuests.add(
+      Guests(
+        guestName: name,
+        membersNo: members,
+        invited: isInvited,
+        contact: contact,
+      ),
+    );
+
+    eventBox.putAt(eventIndex, thisEvent!);
   }
 }
 

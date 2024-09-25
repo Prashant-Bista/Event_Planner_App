@@ -29,11 +29,13 @@ class _HomePageState extends State<HomePage> {
 
   return SafeArea(
     child: Scaffold(
-      backgroundColor: mainColor,
+      backgroundColor: dusty_rose,
         appBar: AppBar(
-          backgroundColor:Colors.purple ,
           centerTitle: true,
-          title: Manrope(text: "Home Page",size: 25.0,weight: FontWeight.bold,),
+          backgroundColor: muave,
+          title: Manrope(text:"Home Page", color: Colors.white,weight: FontWeight.bold,),
+          elevation: 20.0,
+          shadowColor: Colors.grey,
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 60 ,vertical: 30),
