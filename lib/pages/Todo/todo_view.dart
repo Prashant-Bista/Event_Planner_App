@@ -83,31 +83,7 @@ class TodoView extends ConsumerWidget {
           color: Colors.white,
         ),
         onPressed: () {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: SizedBox(
-                    width: 250,
-                    child: TextField(
-                      focusNode: FocusNode(),
-                      controller: titleController,
-                      decoration: InputDecoration(
-                          hintText: "Title",
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(3),
-                              borderSide: BorderSide(
-                                  style: BorderStyle.solid, width: 1))),
-                    ),
-                  ),
-                  content: ElevatedButton(
-                      onPressed: (){
-                        provider.addTask(eventIndex,titleController.text);
-                        Navigator.pop(context);
-                      },
-                      child: Manrope(text: "Add")),
-                );
-              });
+CommonAlert(context, eventIndex, "Task", provider);
         },
       ),
     );

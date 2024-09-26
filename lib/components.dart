@@ -204,4 +204,56 @@ class _HomeTileState extends State<HomeTile> {
 }
 
 
+void CommonAlert(BuildContext context,int eventIndex,String title,final provider){
+  TextEditingController titleController =TextEditingController();
+  showDialog(context: context, builder: (BuildContext context){
+    return AlertDialog(
+      title: SizedBox(
+        width: 250,
+        child: TextField(
+          controller: titleController,
+          focusNode: FocusNode(),
+          decoration: InputDecoration(
+              hintText:  title,
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(3),
+                  borderSide: BorderSide(style: BorderStyle.solid,width: 1)
+              )
+          ),
+        ),
+      ),
+      content: ElevatedButton(onPressed: (){
+        if (title=="Budget"){
+          provider.AddBudget(eventIndex,double.parse(titleController.text));
+        }
+        else if (title == "Expense"){
+          provider.addExpense(double.parse(titleController.text), eventIndex);
 
+        }
+        else if (title=="Task"){
+          provider.addTask(eventIndex,titleController.text);
+        }
+        Navigator.pop(context);
+      }, child: Manrope(text:"Add")),
+    );
+  });
+}
+
+class BudgetTile extends StatelessWidget {
+  final double value;
+  const BudgetTile({super.key, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.green,
+      height: 75,
+      child:  Manrope(
+          text: "Budget: ${value}",
+          size: 20.0,
+          color: Colors.black,
+          weight: FontWeight.bold,
+        ),
+    );
+  }
+}

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:event_planner_app/pages/Budget/budget.dart';
 import 'package:event_planner_app/pages/Events/event.dart';
+import 'package:event_planner_app/pages/Events/event_page.dart';
 import 'package:event_planner_app/pages/Guests/guests.dart';
 import 'package:event_planner_app/pages/Todo/tasks.dart';
 import 'package:event_planner_app/pages/Budget/budget.dart';
@@ -22,6 +23,8 @@ void main() async{
   Hive.registerAdapter(GuestsAdapter());
   Hive.registerAdapter(BudgetAdapter());
   Hive.registerAdapter(EventAdapter());
+  Hive.registerAdapter(ExpensesAdapter());
+
 
 
   if (!Hive.isBoxOpen('todo')) {
@@ -37,6 +40,9 @@ void main() async{
   if (!Hive.isBoxOpen('event')) {
     await Hive.openBox<Event>('event');
   }
+  if (!Hive.isBoxOpen('expense')) {
+    await Hive.openBox<Expenses>('expense');
+  }
 
   runApp(ProviderScope(child: MyApp()) );
 }
@@ -50,8 +56,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
       ),
-      home: Splash(),
-      initialRoute: '/splash',
+      home: EventPage(),
+      initialRoute: '/event',
       onGenerateRoute: (settings)=>Routes.routeGenerator(settings),
     );
   }

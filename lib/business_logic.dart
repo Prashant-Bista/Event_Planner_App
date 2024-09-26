@@ -72,6 +72,32 @@ class BusinessLogic extends ChangeNotifier {
     );
 
     eventBox.putAt(eventIndex, thisEvent!);
+    notifyListeners();
+
   }
+  VoidCallback? addExpense(double value, int eventIndex,String purpose){
+    Box<Event> eventBox = Hive.box<Event>('event');
+    Event? thisEvent = eventBox.getAt(eventIndex);
+    thisEvent!.eventExpenses.add(Expenses(
+        expenses:value,
+      purpose: purpose
+    ));
+    eventBox.putAt(eventIndex, thisEvent!);
+    notifyListeners();
+
+  }
+  double calcBudgetLeft(int eventIndex,){
+    Box<Event> eventBox = Hive.box<Event>('event');
+    Event? thisEvent = eventBox.getAt(eventIndex);
+    List<Expenses> expenses=thisEvent!.eventExpenses;
+    double totalExpense=0;
+    double budgetRemaining;
+    for(Expenses expense in expenses){
+      totalExpense=totalExpense+expense.expenses;
+    }
+    budgetRemaining = thisEvent.eventBudget.budget-totalExpense;
+    return budgetRemaining;
+  }
+
 }
 

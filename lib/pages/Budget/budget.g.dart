@@ -18,7 +18,7 @@ class BudgetAdapter extends TypeAdapter<Budget> {
     };
     return Budget(
       budget: fields[0] as double,
-      isSet: fields[1] != null ? fields[1] as bool : false,
+      isSet: fields[1] as bool,
     );
   }
 
@@ -47,7 +47,7 @@ class ExpensesAdapter extends TypeAdapter<Expenses> {
   @override
   final int typeId = 3;
 
-  @override
+@override
   Expenses read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
@@ -55,15 +55,18 @@ class ExpensesAdapter extends TypeAdapter<Expenses> {
     };
     return Expenses(
       expenses: fields[0] as double,
+      purpose: fields[1] as String?, // Make this cast nullable
     );
   }
 
   @override
   void write(BinaryWriter writer, Expenses obj) {
     writer
-      ..writeByte(1)
+      ..writeByte(2)
       ..writeByte(0)
-      ..write(obj.expenses);
+      ..write(obj.expenses)
+      ..writeByte(1)
+      ..write(obj.purpose);
   }
 
   @override
