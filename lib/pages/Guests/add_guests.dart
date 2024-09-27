@@ -1,9 +1,6 @@
 
 import 'package:event_planner_app/business_logic.dart';
-import 'package:event_planner_app/pages/Todo/tasks.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -31,7 +28,7 @@ class AddGuests extends ConsumerWidget {
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Colors.purple,
-        title: Manrope(text: "Guest Management", color: Colors.white),
+        title: const Manrope(text: "Guest Management", color: Colors.white),
         elevation: 20.0,
         shadowColor: Colors.grey,
       ),
@@ -41,10 +38,10 @@ class AddGuests extends ConsumerWidget {
           thisEvent = box.getAt(eventIndex); // Update thisEvent on change
 
           if (thisEvent!.eventGuests.isEmpty) {
-            return Center(
+            return const Center(
               child: Manrope(
                 text: "No Guests added yet",
-                size: 35.0,
+                size: 32.0,
                 color: Color.fromRGBO(11, 13, 23, 1),
               ),
             );
@@ -57,23 +54,23 @@ class AddGuests extends ConsumerWidget {
                     onTap: (){
                     },
                     child:    Container(
-                      padding: EdgeInsets.symmetric(vertical: 10.0),
+                      padding: const EdgeInsets.symmetric(vertical: 10.0),
                       height: 120,
                       decoration: BoxDecoration(
                         color: Colors.grey,
                         borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: Color.fromRGBO(11, 13, 23, 1,),width: 1.5),
+                        border: Border.all(color: const Color.fromRGBO(11, 13, 23, 1,),width: 1.5),
                       ),
                       child:      ListTile(
                         trailing: IconButton(onPressed: (){
                           Event? thisEvent = eventBox.getAt(eventIndex);
                           thisEvent!.eventGuests.removeAt(index);
                           eventBox.putAt(eventIndex, thisEvent);
-                        }, icon: Icon(Icons.dangerous,color: Colors.red,)),
+                        }, icon: const Icon(Icons.dangerous,color: Colors.red,)),
                         title: Row(
                           children: [
-                            SizedBox(width: 20,),
-                            Column(
+                            const SizedBox(width: 20,),
+                            const Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -83,14 +80,14 @@ class AddGuests extends ConsumerWidget {
                                 Manrope(text: 'Invitation:'),
                               ],
                             ),
-                            SizedBox(width: 20,),
+                            const SizedBox(width: 20,),
 
                             Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Manrope(text: '${guest.guestName}'),
-                                Manrope(text: '${guest.contact}'),
+                                Manrope(text: guest.guestName),
+                                Manrope(text: guest.contact),
                                 Manrope(text: '${guest.membersNo}'),
                                 Manrope(text: guest.invited?'Invited':"Not Invited"),
 
@@ -107,8 +104,8 @@ class AddGuests extends ConsumerWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Color.fromRGBO(11, 13, 23, 1),
-        child: Icon(
+        backgroundColor: const Color.fromRGBO(11, 13, 23, 1),
+        child: const Icon(
           Icons.add,
           color: Colors.white,
         ),
@@ -129,35 +126,38 @@ class AddGuests extends ConsumerWidget {
                                 hintText: "Name",
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(3),
-                                  borderSide: BorderSide(style: BorderStyle.solid, width: 1),
+                                  borderSide: const BorderSide(style: BorderStyle.solid, width: 1),
                                 ),
                               ),
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             TextField(
                               controller: contactController,
                               decoration: InputDecoration(
                                 hintText: "Contact No",
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(3),
-                                  borderSide: BorderSide(style: BorderStyle.solid, width: 1),
+                                  borderSide: const BorderSide(style: BorderStyle.solid, width: 1),
                                 ),
                               ),
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             TextField(
                               controller: membersController,
                               decoration: InputDecoration(
                                 hintText: "No of Members",
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(3),
-                                  borderSide: BorderSide(style: BorderStyle.solid, width: 1),
+                                  borderSide: const BorderSide(style: BorderStyle.solid, width: 1),
                                 ),
                               ),
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             ListTile(
-                              tileColor: Colors.purple,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5)
+                              ),
+                              tileColor: dusty_rose,
                               trailing: Checkbox(
                                 value: isInvited,
                                 onChanged: (bool? value) {
@@ -166,7 +166,7 @@ class AddGuests extends ConsumerWidget {
                                   });
                                 },
                               ),
-                              title: Text("Invited"),
+                              title: const Text("Invited"),
                             ),
                           ],
                         ),
@@ -177,7 +177,7 @@ class AddGuests extends ConsumerWidget {
                           provider.addGuest(eventIndex, nameController.text,int.parse(membersController.text),isInvited,contactController.text);
                           Navigator.pop(context);
                         },
-                        child: Text("Add"),
+                        child: const Text("Add"),
                       ),
                     );
                   },

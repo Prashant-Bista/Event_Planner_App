@@ -21,17 +21,18 @@ class _EventPageState extends State<EventPage> {
   Box<Event> event = Hive.box<Event>('event');
   @override
   Widget build(BuildContext context) {
+    double deveiceWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: muave,
-        title: Manrope(text:"Events", color: Colors.white,weight: FontWeight.bold,),
+        title: const Manrope(text:"Events", color: Colors.white,weight: FontWeight.bold,),
         elevation: 20.0,
         shadowColor: Colors.grey,
       ),
       body: ValueListenableBuilder(valueListenable: event.listenable(), builder: (context,Box box,widget){
         if(box.isEmpty){
-          return Center(child: Manrope(text: "No Events yet",size: 30.0,));
+          return const Center(child: Manrope(text: "No Events yet",size: 30.0,));
         }
         else{
           return ListView.builder(itemCount:box.length,itemBuilder: (context,index){
@@ -48,14 +49,14 @@ class _EventPageState extends State<EventPage> {
                 child: ListTile(
                   trailing: IconButton(onPressed: (){
                     box.deleteAt(index);
-                  }, icon: Icon(Icons.dangerous,color: Colors.red,)),
+                  }, icon: const Icon(Icons.dangerous,color: Colors.red,)),
                   tileColor: dusty_rose,
                   // trailing: ,
                   title: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [Manrope(text: event.eventName,size: 35.0,weight: FontWeight.bold,),
-                    SizedBox(height: 10,),
-                    Manrope(text: "Scheduled on :   ${eventDate!.year}/ ${eventDate!.month}/ ${eventDate.day}        At ${eventDate!.hour}:${eventDate!.minute<10?"0${eventDate!.minute}":eventDate!.minute}")
+                    const SizedBox(height: 10,),
+                    Manrope(text: "Scheduled on :   ${eventDate!.year}/ ${eventDate.month}/ ${eventDate.day}        At ${eventDate.hour}:${eventDate.minute<10?"0${eventDate.minute}":eventDate.minute}")
                     ]
                   ),
                 ),
@@ -71,7 +72,6 @@ class _EventPageState extends State<EventPage> {
             return StatefulBuilder(
               builder: (BuildContext context,StateSetter setState){
               return AlertDialog(
-
                 title: SizedBox(
                   width: 500,
                   child: Column(
@@ -81,7 +81,7 @@ class _EventPageState extends State<EventPage> {
                         focusNode: FocusNode(),
                         controller: nameController,
                         decoration: InputDecoration(
-                          hintStyle: TextStyle(fontSize: 13),
+                          hintStyle: const TextStyle(fontSize: 13),
                             hintText:  "Name of Event",
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(3),
@@ -93,22 +93,23 @@ class _EventPageState extends State<EventPage> {
                             )
                         ),
                       ),
-                      SizedBox(height: 10,),
+                      const SizedBox(height: 10,),
+                      const Manrope(text: "Date Time: ",size: 15.0,weight: FontWeight.bold,),
                       SizedBox(
                         height: 30,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Manrope(text: "Date Time: ",size: 15.0,),
+
                             Container(
-                              width: 155,
+                              width: deveiceWidth/2.1,
                                 decoration:BoxDecoration(
-                              border: Border.all(width: 1,color: Colors.black)
-                            ),child: Center(child: Manrope(text: picked==null?"Not selected": DateFormat('yyyy/MM/dd/hh:mm a').format(picked!),size: 15.0,))),
+                              border: Border.all(width: 1,color: lightPurple)
+                            ),child: Center(child: Manrope(size:15.0,text: picked==null?"Not selected": DateFormat('yyyy/MM/dd/hh:mm a').format(picked!),))),
                             IconButton(
                               padding: EdgeInsets.zero,
-                              icon: Icon(Icons.date_range,color:Color(0xFF45267FF),size: 25,),
+                              icon: const Icon(Icons.date_range,color:Color(0xff45267ff),size: 25,),
                                 onPressed: () async{
                               final DateTime? selectedDate =  await showDatePicker(context: context, firstDate: DateTime(2000,1,1), lastDate: DateTime(2100,1,1),initialDate: DateTime.now(),);
                               if (selectedDate==null){
@@ -134,12 +135,12 @@ class _EventPageState extends State<EventPage> {
                 content: ElevatedButton(onPressed: (){
                   event.add(Event(eventBudget: Budget(budget: 0,isSet: false), eventExpenses: [], eventGuests: [], eventTasks: [], eventName: nameController.text, eventDate: picked));
                   Navigator.pop(context);
-                }, child: Manrope(text: "Add")),
+                }, child: const Manrope(text: "Add")),
               );},
             );
           });
 
-      }, child: Icon(Icons.add),),
+      }, child: const Icon(Icons.add),),
     );
   }
 }

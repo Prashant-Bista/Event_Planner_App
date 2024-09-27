@@ -3,7 +3,6 @@ import 'package:event_planner_app/components.dart';
 import 'package:event_planner_app/pages/Todo/tasks.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -24,7 +23,7 @@ class TodoView extends ConsumerWidget {
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Colors.purple,
-        title: Manrope(
+        title: const Manrope(
           text: "Todo",
           color: Colors.white,
         ),
@@ -37,7 +36,7 @@ class TodoView extends ConsumerWidget {
           thisEvent = box.getAt(eventIndex); // Update thisEvent on change
 
           if (thisEvent!.eventTasks.isEmpty) {
-            return Center(
+            return const Center(
               child: Manrope(
                 text: "No Tasks added yet",
                 size: 35.0,
@@ -64,7 +63,7 @@ class TodoView extends ConsumerWidget {
                             provider.taskCompletion(value!, eventIndex, index),
                       ),
                       trailing: IconButton(
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.dangerous_outlined,
                             color: Colors.red,
                             size: 20,
@@ -77,8 +76,8 @@ class TodoView extends ConsumerWidget {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Color.fromRGBO(11, 13, 23, 1),
-        child: Icon(
+        backgroundColor: const Color.fromRGBO(11, 13, 23, 1),
+        child: const Icon(
           Icons.add,
           color: Colors.white,
         ),

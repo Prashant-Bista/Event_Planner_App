@@ -3,17 +3,18 @@ import 'package:event_planner_app/pages/Budget/budget.dart';
 import 'package:event_planner_app/pages/Events/event.dart';
 import 'package:event_planner_app/pages/Guests/guests.dart';
 import 'package:event_planner_app/pages/Todo/tasks.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:event_planner_app/business_logic.dart';
 
-Color lightPurple= Color(0xFF45267FF);
+Color lightPurple= const Color(0xff45267ff);
 TextEditingController valueController =TextEditingController();
-Color mainColor = Color.fromRGBO(11, 14, 28, 1);
-Color muave = Color.fromRGBO(150, 46, 42, 1);
-Color dusty_rose = Color.fromRGBO(227, 134, 125, 1);
-Color soft_blue_grey = Color.fromRGBO(206, 230, 242, 1);
+Color mainColor = const Color.fromRGBO(11, 14, 28, 1);
+Color muave = const Color.fromRGBO(150, 46, 42, 1);
+Color dusty_rose = const Color.fromRGBO(227, 134, 125, 1);
+Color soft_blue_grey = const Color.fromRGBO(206, 230, 242, 1);
 class Manrope extends StatelessWidget {
   final text;
   final size;
@@ -52,8 +53,9 @@ class _InputFieldState extends State<InputField> {
     if (widget.isObscure==true){
       isInvisible=true;
     }
-    else
+    else {
       isInvisible = false;
+    }
     super.initState();
   }
   @override
@@ -71,27 +73,27 @@ class _InputFieldState extends State<InputField> {
               setState(() {
                 isInvisible=!isInvisible;
               });
-            }, icon: Icon(Icons.remove_red_eye,color: Colors.black,)):null,
+            }, icon: const Icon(Icons.remove_red_eye,color: Colors.black,)):null,
             enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   width: 1,color: Colors.black,
                 ),
                 borderRadius: BorderRadius.circular(10)
             ),
             focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   width: 1,color: Colors.grey,
                 ),
                 borderRadius: BorderRadius.circular(15)
             ),
             errorBorder: OutlineInputBorder(
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   width: 1,color: Colors.red,
                 ),
                 borderRadius: BorderRadius.circular(10)
             ),
             focusedErrorBorder: OutlineInputBorder(
-                borderSide: BorderSide(
+                borderSide: const BorderSide(
                   width: 1,color: Colors.red,
                 ),
                 borderRadius: BorderRadius.circular(15)
@@ -120,23 +122,23 @@ class GuestList extends StatelessWidget {
           onTap: (){
           },
           child:    Container(
-            padding: EdgeInsets.symmetric(vertical: 10.0),
+            padding: const EdgeInsets.symmetric(vertical: 10.0),
             height: 120,
             decoration: BoxDecoration(
               color: Colors.grey,
               borderRadius: BorderRadius.circular(5),
-              border: Border.all(color: Color.fromRGBO(11, 13, 23, 1,),width: 1.5),
+              border: Border.all(color: const Color.fromRGBO(11, 13, 23, 1,),width: 1.5),
             ),
             child:      ListTile(
               trailing: IconButton(onPressed: (){
                 Event? thisEvent = eventBox.getAt(eventIndex);
                 thisEvent!.eventGuests.removeAt(index);
                 eventBox.putAt(eventIndex, thisEvent);
-              }, icon: Icon(Icons.dangerous,color: Colors.red,)),
+              }, icon: const Icon(Icons.dangerous,color: Colors.red,)),
               title: Row(
                 children: [
-                  SizedBox(width: 20,),
-                  Column(
+                  const SizedBox(width: 20,),
+                  const Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -146,15 +148,15 @@ class GuestList extends StatelessWidget {
                       Manrope(text: 'Invitation:'),
                     ],
                   ),
-                  SizedBox(width: 20,),
+                  const SizedBox(width: 20,),
 
                   Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Manrope(text: '$name'),
-                      Manrope(text: '$contact'),
-                      Manrope(text: '$memberNo'),
+                      Manrope(text: name),
+                      Manrope(text: contact),
+                      Manrope(text: memberNo),
                       Manrope(text: isInvited?'Invited':"Not Invited"),
 
                     ],
@@ -189,17 +191,22 @@ class _HomeTileState extends State<HomeTile> {
     return MaterialButton(onPressed: widget.perform,
       minWidth: widget.width,
       height:widget.height ,
-      elevation: 20,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+      elevation: 5.0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       color: soft_blue_grey,
-      child: Container(child: Column(
+      splashColor: Colors.lightBlueAccent,
+      child: Container(
+        padding: EdgeInsets.zero,
+          height: 65,
+          width: 65,
+          child:
+      Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(widget.tileIcon ,color: mainColor,size: 40,),
-          Manrope(text: widget.tileName,color: mainColor,size: 20.0,)
+          Icon(widget.tileIcon ,color: mainColor,size: 25,),
+          Manrope(text: widget.tileName,color: mainColor,size: 15.0,)
         ],
-      )),
-      splashColor: Colors.lightBlueAccent);
+      )));
   }
 }
 
@@ -217,7 +224,7 @@ void CommonAlert(BuildContext context,int eventIndex,String title,final provider
               hintText:  title,
               border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(3),
-                  borderSide: BorderSide(style: BorderStyle.solid,width: 1)
+                  borderSide: const BorderSide(style: BorderStyle.solid,width: 1)
               )
           ),
         ),
@@ -234,7 +241,7 @@ void CommonAlert(BuildContext context,int eventIndex,String title,final provider
           provider.addTask(eventIndex,titleController.text);
         }
         Navigator.pop(context);
-      }, child: Manrope(text:"Add")),
+      }, child: const Manrope(text:"Add")),
     );
   });
 }
@@ -249,11 +256,59 @@ class BudgetTile extends StatelessWidget {
       color: Colors.green,
       height: 75,
       child:  Manrope(
-          text: "Budget: ${value}",
+          text: "Budget: $value",
           size: 20.0,
           color: Colors.black,
           weight: FontWeight.bold,
         ),
+    );
+  }
+}
+
+class BottomBar extends StatefulWidget {
+  const BottomBar({super.key});
+
+  @override
+  State<BottomBar> createState() => _BottomBarState();
+}
+
+class _BottomBarState extends State<BottomBar> {
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+      currentIndex: 0,
+      onTap: (index) {},
+      iconSize: 24.0,
+      elevation: 20,
+      backgroundColor: soft_blue_grey,
+      showSelectedLabels: true,
+      showUnselectedLabels: true,
+      type: BottomNavigationBarType.fixed,
+      selectedItemColor: Colors.black,
+      unselectedItemColor: Colors.black,
+      items: [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.celebration,color: mainColor,size: 24,),
+          label: "Events",
+          backgroundColor: mainColor,
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(CupertinoIcons.money_dollar,color: mainColor,size: 24,),
+          label: 'Budgets',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.task,color: mainColor,size: 24,),
+          label: "Tasks",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.people,color: mainColor,size: 24,),
+          label: 'Guests',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.settings,color: mainColor,size: 24,),
+          label: 'Settings',
+        ),
+      ],
     );
   }
 }

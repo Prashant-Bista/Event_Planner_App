@@ -5,8 +5,6 @@ import 'package:event_planner_app/pages/Events/event.dart';
 import 'package:event_planner_app/pages/Events/event_page.dart';
 import 'package:event_planner_app/pages/Guests/guests.dart';
 import 'package:event_planner_app/pages/Todo/tasks.dart';
-import 'package:event_planner_app/pages/Budget/budget.dart';
-import 'package:event_planner_app/pages/splash.dart';
 import 'package:flutter/material.dart';
 import 'package:event_planner_app/routes.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -44,7 +42,7 @@ void main() async{
     await Hive.openBox<Expenses>('expense');
   }
 
-  runApp(ProviderScope(child: MyApp()) );
+  runApp(const ProviderScope(child: MyApp()) );
 }
 
 class MyApp extends StatelessWidget {
@@ -56,7 +54,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
       ),
-      home: EventPage(),
+      home: const EventPage(),
       initialRoute: '/event',
       onGenerateRoute: (settings)=>Routes.routeGenerator(settings),
     );

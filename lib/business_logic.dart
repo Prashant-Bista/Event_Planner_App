@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:event_planner_app/pages/Budget/budget.dart';
 import 'package:event_planner_app/pages/Events/event.dart';
@@ -7,7 +6,6 @@ import 'package:event_planner_app/pages/Todo/tasks.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
-import 'components.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final stateProvider = ChangeNotifierProvider.autoDispose<BusinessLogic>((ref)=>BusinessLogic());
@@ -25,8 +23,9 @@ class BusinessLogic extends ChangeNotifier {
         eventName: thisEvent.eventName,
         eventDate: thisEvent.eventDate,
         eventBudget: thisBudget);
-    eventBox.putAt(eventIndex, updatedEvent!);
+    eventBox.putAt(eventIndex, updatedEvent);
     notifyListeners();
+    return null;
   }
   bool budgetSetCheck(int eventIndex){
     Box<Event> eventBox = Hive.box<Event>('event');
@@ -38,8 +37,9 @@ class BusinessLogic extends ChangeNotifier {
     Box<Event> eventBox = Hive.box<Event>('event');
   Event? thisEvent = eventBox.getAt(eventIndex);
     thisEvent!.eventTasks.add(Tasks(title: task, isDone: false));
-    eventBox.putAt(eventIndex, thisEvent!);
+    eventBox.putAt(eventIndex, thisEvent);
     notifyListeners();
+    return null;
 
   }
 
@@ -47,17 +47,19 @@ class BusinessLogic extends ChangeNotifier {
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     List<Tasks>? updated= thisEvent!.eventTasks;
-    updated[index]= Tasks(title: thisEvent!.eventTasks[index].title, isDone: value!);
-    eventBox.putAt(eventIndex, Event(eventBudget: thisEvent!.eventBudget,eventDate: thisEvent!.eventDate,eventExpenses: thisEvent!.eventExpenses,eventGuests: thisEvent!.eventGuests,eventName: thisEvent!.eventName,eventTasks: updated));
+    updated[index]= Tasks(title: thisEvent.eventTasks[index].title, isDone: value);
+    eventBox.putAt(eventIndex, Event(eventBudget: thisEvent.eventBudget,eventDate: thisEvent.eventDate,eventExpenses: thisEvent.eventExpenses,eventGuests: thisEvent.eventGuests,eventName: thisEvent.eventName,eventTasks: updated));
     notifyListeners();
+    return null;
 
   }
   VoidCallback? taskDelete(int eventIndex, int index){
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     thisEvent!.eventTasks.removeAt(index);
-    eventBox.putAt(eventIndex, thisEvent!);
+    eventBox.putAt(eventIndex, thisEvent);
     notifyListeners();
+    return null;
   }
   VoidCallback? addGuest(int eventIndex,String name, int members, bool isInvited, String contact){
     Box<Event> eventBox = Hive.box<Event>('event');
@@ -71,8 +73,9 @@ class BusinessLogic extends ChangeNotifier {
       ),
     );
 
-    eventBox.putAt(eventIndex, thisEvent!);
+    eventBox.putAt(eventIndex, thisEvent);
     notifyListeners();
+    return null;
 
   }
   VoidCallback? addExpense(double value, int eventIndex,String purpose){
@@ -82,8 +85,9 @@ class BusinessLogic extends ChangeNotifier {
         expenses:value,
       purpose: purpose
     ));
-    eventBox.putAt(eventIndex, thisEvent!);
+    eventBox.putAt(eventIndex, thisEvent);
     notifyListeners();
+    return null;
 
   }
   double calcBudgetLeft(int eventIndex,){
