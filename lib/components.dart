@@ -12,22 +12,83 @@ import 'package:event_planner_app/business_logic.dart';
 Color lightPurple= const Color(0xff45267ff);
 TextEditingController valueController =TextEditingController();
 Color mainColor = const Color.fromRGBO(11, 14, 28, 1);
-Color muave = const Color.fromRGBO(150, 46, 42, 1);
-Color dusty_rose = const Color.fromRGBO(227, 134, 125, 1);
+Color muave = const Color.fromRGBO(199, 124, 124, 1.0);
+Color dusty_rose = const Color.fromRGBO(242, 202, 198, 1.0);
+Color dark_dusty_rose = const Color.fromRGBO(244, 175, 168, 1.0);
+
+Color light_dusty_rose = const Color.fromRGBO(242, 223, 223, 1.0);
+
 Color soft_blue_grey = const Color.fromRGBO(206, 230, 242, 1);
-class Manrope extends StatelessWidget {
+// class FrenchCannon extends StatelessWidget {
+//   final text;
+//   final size;
+//   final weight;
+//   final color;
+//   const FrenchCannon({super.key, @required this.text,  this.size, this.weight,  this.color});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return   Text(text,style: GoogleFonts.FrenchCannon(fontSize: size,fontWeight: weight,color: color),)
+//     ;
+//   }
+// }
+class FrenchCannon extends StatelessWidget {
   final text;
   final size;
   final weight;
   final color;
-  const Manrope({super.key, @required this.text,  this.size, this.weight,  this.color});
+  const FrenchCannon({super.key, @required this.text,  this.size, this.weight,  this.color});
 
   @override
   Widget build(BuildContext context) {
-    return   Text(text,style: GoogleFonts.manrope(fontSize: size,fontWeight: weight,color: color),)
+    return   Text(text,style: TextStyle(fontFamily: "FrenchCannon",fontSize: size,color: color),)
     ;
   }
 }
+class ScheduleFont extends StatelessWidget {
+  final text;
+  const ScheduleFont({super.key, @required this.text,});
+
+  @override
+  Widget build(BuildContext context) {
+    return   Text(text,style: GoogleFonts.manrope(fontSize: 14),)
+    ;
+  }
+}
+class EventTile extends StatelessWidget {
+  final Event thisEvent;
+  const EventTile({super.key, required this.thisEvent});
+
+  @override
+  Widget build(BuildContext context) {
+    return           ListTile(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(25)
+      ),
+      tileColor: light_dusty_rose,
+      // trailing: ,
+      title: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [BulletoKilla(text: thisEvent!.eventName,),
+            ScheduleFont(text: "On :   ${thisEvent!.eventDate!.year}/${thisEvent!.eventDate!.month}/${thisEvent!.eventDate!.day}        At ${thisEvent!.eventDate!.hour}:${thisEvent!.eventDate!.minute<10?"0${thisEvent!.eventDate!.minute}":thisEvent!.eventDate!.minute}")
+          ]
+      ),
+    );
+  }
+}
+
+class BulletoKilla extends StatelessWidget {
+  final text;
+  final color;
+  const BulletoKilla({super.key, @required this.text,  this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return   Text(text,style: TextStyle(fontFamily: "Bulletto Killa",fontSize: 25))
+    ;
+  }
+}
+
 
 
 class InputField extends StatefulWidget {
@@ -142,10 +203,10 @@ class GuestList extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Manrope(text: 'Name:'),
-                      Manrope(text: 'Contact:'),
-                      Manrope(text: 'No of Members:'),
-                      Manrope(text: 'Invitation:'),
+                      FrenchCannon(text: 'Name:'),
+                      FrenchCannon(text: 'Contact:'),
+                      FrenchCannon(text: 'No of Members:'),
+                      FrenchCannon(text: 'Invitation:'),
                     ],
                   ),
                   const SizedBox(width: 20,),
@@ -154,10 +215,10 @@ class GuestList extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Manrope(text: name),
-                      Manrope(text: contact),
-                      Manrope(text: memberNo),
-                      Manrope(text: isInvited?'Invited':"Not Invited"),
+                      FrenchCannon(text: name),
+                      FrenchCannon(text: contact),
+                      FrenchCannon(text: memberNo),
+                      FrenchCannon(text: isInvited?'Invited':"Not Invited"),
 
                     ],
                   ),
@@ -193,7 +254,7 @@ class _HomeTileState extends State<HomeTile> {
       height:widget.height ,
       elevation: 5.0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      color: soft_blue_grey,
+      color: light_dusty_rose,
       splashColor: Colors.lightBlueAccent,
       child: Container(
         padding: EdgeInsets.zero,
@@ -204,7 +265,7 @@ class _HomeTileState extends State<HomeTile> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(widget.tileIcon ,color: mainColor,size: 25,),
-          Manrope(text: widget.tileName,color: mainColor,size: 15.0,)
+          FrenchCannon(text: widget.tileName,color: mainColor,size: 13.0,)
         ],
       )));
   }
@@ -241,7 +302,7 @@ void CommonAlert(BuildContext context,int eventIndex,String title,final provider
           provider.addTask(eventIndex,titleController.text);
         }
         Navigator.pop(context);
-      }, child: const Manrope(text:"Add")),
+      }, child: const FrenchCannon(text:"Add")),
     );
   });
 }
@@ -255,7 +316,7 @@ class BudgetTile extends StatelessWidget {
     return Container(
       color: Colors.green,
       height: 75,
-      child:  Manrope(
+      child:  FrenchCannon(
           text: "Budget: $value",
           size: 20.0,
           color: Colors.black,
@@ -312,3 +373,13 @@ class _BottomBarState extends State<BottomBar> {
     );
   }
 }
+class RemoveButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  const RemoveButton({super.key, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(icon: const Icon(Icons.dangerous,color: Colors.red,),onPressed: onPressed);
+    }
+  }
+

@@ -24,11 +24,11 @@ class AddGuests extends ConsumerWidget {
     TextEditingController membersController = TextEditingController();
     bool isInvited = false;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: dusty_rose,
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.purple,
-        title: const Manrope(text: "Guest Management", color: Colors.white),
+        backgroundColor: muave,
+        title: const FrenchCannon(text: "Guest Management", color: Colors.white),
         elevation: 20.0,
         shadowColor: Colors.grey,
       ),
@@ -39,7 +39,7 @@ class AddGuests extends ConsumerWidget {
 
           if (thisEvent!.eventGuests.isEmpty) {
             return const Center(
-              child: Manrope(
+              child: FrenchCannon(
                 text: "No Guests added yet",
                 size: 32.0,
                 color: Color.fromRGBO(11, 13, 23, 1),
@@ -50,53 +50,57 @@ class AddGuests extends ConsumerWidget {
               itemCount: thisEvent!.eventGuests.length,
               itemBuilder: (context, index) {
                 Guests guest = thisEvent!.eventGuests[index];
-                return GestureDetector(
-                    onTap: (){
-                    },
-                    child:    Container(
-                      padding: const EdgeInsets.symmetric(vertical: 10.0),
-                      height: 120,
-                      decoration: BoxDecoration(
-                        color: Colors.grey,
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: const Color.fromRGBO(11, 13, 23, 1,),width: 1.5),
-                      ),
-                      child:      ListTile(
-                        trailing: IconButton(onPressed: (){
-                          Event? thisEvent = eventBox.getAt(eventIndex);
-                          thisEvent!.eventGuests.removeAt(index);
-                          eventBox.putAt(eventIndex, thisEvent);
-                        }, icon: const Icon(Icons.dangerous,color: Colors.red,)),
-                        title: Row(
-                          children: [
-                            const SizedBox(width: 20,),
-                            const Column(
+                return Column(
+                  children: [
+                    SizedBox(height: 10,),
+                    GestureDetector(
+                        onTap: (){
+                        },
+                        child:    Container(
+                          height: 90,
+                          decoration: BoxDecoration(
+                            color: light_dusty_rose,
+                            borderRadius: BorderRadius.circular(35),
+                          ),
+                          child:      ListTile(
+                            trailing: RemoveButton(onPressed: (){
+                              Event? thisEvent = eventBox.getAt(eventIndex);
+                              thisEvent!.eventGuests.removeAt(index);
+                              eventBox.putAt(eventIndex, thisEvent);
+                            },),
+                            title: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Manrope(text: 'Name:'),
-                                Manrope(text: 'Contact:'),
-                                Manrope(text: 'No of Members:'),
-                                Manrope(text: 'Invitation:'),
+                                SizedBox(width: 20,),
+                                const Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    FrenchCannon(text: 'Name:',size: 13.0,),
+                                    FrenchCannon(text: 'Contact:',size: 13.0),
+                                    FrenchCannon(text: 'No of Members:',size: 13.0),
+                                    FrenchCannon(text: 'Invitation:',size: 13.0),
+                                  ],
+                                ),
+                                const SizedBox(width: 20,),
+
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    FrenchCannon(text: guest.guestName,size: 13.0),
+                                    FrenchCannon(text: guest.contact,size: 13.0),
+                                    FrenchCannon(text: '${guest.membersNo}',size: 13.0),
+                                    FrenchCannon(text: guest.invited?'Invited':"Not Invited",size: 13.0),
+
+                                  ],
+                                ),
                               ],
                             ),
-                            const SizedBox(width: 20,),
-
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Manrope(text: guest.guestName),
-                                Manrope(text: guest.contact),
-                                Manrope(text: '${guest.membersNo}'),
-                                Manrope(text: guest.invited?'Invited':"Not Invited"),
-
-                              ],
-                            ),
-                          ],
-                        ),
-                      )  ,
-                    )
+                          )  ,
+                        )
+                    ),
+                  ],
                 );
               },
             );

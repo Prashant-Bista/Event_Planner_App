@@ -55,7 +55,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
       ),
       home: const EventPage(),
-      initialRoute: '/event',
+      initialRoute: '/splash',
       onGenerateRoute: (settings)=>Routes.routeGenerator(settings),
     );
   }

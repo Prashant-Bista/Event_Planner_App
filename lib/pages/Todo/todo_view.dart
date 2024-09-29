@@ -19,11 +19,11 @@ class TodoView extends ConsumerWidget {
     Event? thisEvent = eventBox.getAt(eventIndex);
     TextEditingController titleController = TextEditingController();
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: dusty_rose,
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.purple,
-        title: const Manrope(
+        backgroundColor: muave,
+        title: const FrenchCannon(
           text: "Todo",
           color: Colors.white,
         ),
@@ -37,9 +37,9 @@ class TodoView extends ConsumerWidget {
 
           if (thisEvent!.eventTasks.isEmpty) {
             return const Center(
-              child: Manrope(
+              child: FrenchCannon(
                 text: "No Tasks added yet",
-                size: 35.0,
+                size: 30.0,
                 color: Color.fromRGBO(11, 13, 23, 1),
               ),
             );
@@ -51,8 +51,9 @@ class TodoView extends ConsumerWidget {
                   return ListTile(
                       title: Text(
                         task.title,
-                        style: GoogleFonts.manrope(
-                            fontSize: 30,
+                        style: TextStyle(
+                          fontFamily: "FrenchCannon",
+                            fontSize: 20,
                             decoration: task.isDone
                                 ? TextDecoration.lineThrough
                                 : TextDecoration.none),
@@ -62,12 +63,7 @@ class TodoView extends ConsumerWidget {
                         onChanged: (bool? value) =>
                             provider.taskCompletion(value!, eventIndex, index),
                       ),
-                      trailing: IconButton(
-                          icon: const Icon(
-                            Icons.dangerous_outlined,
-                            color: Colors.red,
-                            size: 20,
-                          ),
+                      trailing: RemoveButton(
                           onPressed:(){
                             provider.taskDelete(eventIndex, index);
                           } ));

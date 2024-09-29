@@ -79,7 +79,13 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
-
+  fonts:
+    - family: FrenchCannon
+      fonts:
+        - asset: assets/fonts/im-fell-french-canon/FeFCsc2.ttf
+    - family: Bulletto Killa
+      fonts:
+        - asset: assets/fonts/Bulletto Killa.ttf
   assets:
     - assets/images/
 

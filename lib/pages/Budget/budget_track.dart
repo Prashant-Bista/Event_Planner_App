@@ -1,23 +1,29 @@
-import 'package:event_planner_app/business_logic.dart';
 import 'package:flutter/material.dart';
-import 'package:hive_flutter/adapters.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../components.dart';
 import '../Events/event.dart';
-
+import 'package:event_planner_app/business_logic.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 class BudgetTrack extends ConsumerWidget {
   final int eventIndex;
+
   const BudgetTrack({super.key, required this.eventIndex});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    double deviceHeight = MediaQuery.of(context).size.height;
-    double deviceWidth = MediaQuery.of(context).size.width;
-    double budgetWidth = deviceWidth/2;
-
+    double deviceHeight = MediaQuery
+        .of(context)
+        .size
+        .height;
+    double deviceWidth = MediaQuery
+        .of(context)
+        .size
+        .width ;
     final provider = ref.watch(stateProvider);
     TextEditingController titleController = TextEditingController();
+    TextEditingController expensecontroller=TextEditingController();
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex); // Update thisEvent on change
     return Scaffold(
@@ -25,8 +31,8 @@ class BudgetTrack extends ConsumerWidget {
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: muave,
-        title: const Manrope(
-          text: "Budget Management",
+        title: FrenchCannon(
+          text: "Budgeting",
           color: Colors.white,
           weight: FontWeight.bold,
         ),
@@ -34,23 +40,28 @@ class BudgetTrack extends ConsumerWidget {
         shadowColor: Colors.grey,
       ),
       body: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           ValueListenableBuilder(
             valueListenable: eventBox.listenable(),
             builder: (context, Box<Event> box, _) {
               if (thisEvent!.eventBudget.budget == 0 &&
-                  thisEvent.eventExpenses.isEmpty) {
-                return const Manrope(
+                  thisEvent!.eventExpenses.isEmpty) {
+                return FrenchCannon(
                   text: "No Budget or Expense added yet",
                   size: 35.0,
                   color: Color.fromRGBO(11, 13, 23, 1),
                 );
-              } else if (thisEvent.eventBudget.budget != 0 &&
-                  thisEvent.eventExpenses.isEmpty) {
+              } else if (thisEvent!.eventBudget.budget != 0 &&
+                  thisEvent!.eventExpenses.isEmpty) {
                 return Column(
                   children: [
-                    BudgetTile(value: thisEvent.eventBudget.budget),
-                    const Manrope(
+                    ListTile(
+
+                      tileColor:Colors.green,
+                      title: FrenchCannon(text: "Budget: ${thisEvent!.eventBudget.budget}",color: Colors.green,),
+                ),
+                    FrenchCannon(
                       text: "No Expense added yet",
                       size: 20.0,
                       color: Colors.black,
@@ -58,25 +69,26 @@ class BudgetTrack extends ConsumerWidget {
                     )
                   ],
                 );
-              } else if (thisEvent.eventBudget.budget == 0 &&
-                  thisEvent.eventExpenses.isNotEmpty) {
+              } else if (thisEvent!.eventBudget.budget == 0 &&
+                  thisEvent!.eventExpenses.isNotEmpty) {
                 return Column(
                   children: [
-                    const Manrope(
+                    FrenchCannon(
                       text: "No Budget added yet",
                       size: 35.0,
                       color: Color.fromRGBO(11, 13, 23, 1),
                     ),
-                    SizedBox(
+                    Container(
                       height: deviceHeight / 2, // Specify a height
                       child: ListView.builder(
-                        itemCount: thisEvent.eventExpenses.length,
+                        itemCount: thisEvent!.eventExpenses.length,
                         itemBuilder: (context, index) {
                           return ListTile(
                             tileColor: Colors.redAccent,
-                            leading: Manrope(
+                            leading: FrenchCannon(
                               text:
-                                  "Expense: ${thisEvent.eventExpenses[index].expenses}",
+                              "Expense: ${thisEvent!.eventExpenses[index]
+                                  .expenses}",
                               size: 20.0,
                               color: Colors.black,
                               weight: FontWeight.bold,
@@ -88,88 +100,150 @@ class BudgetTrack extends ConsumerWidget {
                   ],
                 );
               } else {
-                return SizedBox(
-                  height: 600,
-                  child: Column(
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Container(
-                            height: 50,
-                            width: budgetWidth,
-                            color: Colors.greenAccent,
-                            child: Center(child: Manrope(text: "Budget:\n ${thisEvent.eventBudget.budget.toString()}",size:deviceWidth/20,weight: FontWeight.bold,)),
-                          ),
-                          Container(
-                            width: budgetWidth,
-                            height: 50,
-                              color: const Color.fromRGBO(128, 128,0, 1),
-                              child: Center(child: Manrope(text: "Budget Remaining:\n ${provider.calcBudgetLeft(eventIndex).toString()}",size: 12.0,weight: FontWeight.bold,))),
-                        ],
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.redAccent,
-                            border: Border.all(color: Colors.black, width: 2)),
-                        height: 475, // Specify a height
-                        child: ListView.builder(
-                          shrinkWrap: false,
-                          itemCount: thisEvent.eventExpenses.length,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                              leading: Manrope(
-                                text:
-                                    "Expense: ${thisEvent.eventExpenses[index].expenses}",
-                                size: 20.0,
-                                color: Colors.black,
-                                weight: FontWeight.bold,
+                return Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+
+                  children: [
+                    Container(
+                      height: 40,
+                      width: deviceWidth,
+                      color: dusty_rose,
+                      child: Center(child: FrenchCannon(
+                        text: "Budget: ${thisEvent.eventBudget.budget
+                            .toString()}",
+                        size: 20.0,
+                        weight: FontWeight.bold,color: Colors.green,)),
+                    ),
+                    Container(
+                        width: deviceWidth,
+                        height: 50,
+                        color: dusty_rose,
+                        child: Center(child: FrenchCannon(
+                          text: "Budget left: ${provider
+                              .calcBudgetLeft(eventIndex).toString()}",
+                          size: 20.0,
+                          weight: FontWeight.bold,color: Colors.orange,))),
+                    Container(
+                      decoration: BoxDecoration(
+                          color: light_dusty_rose,
+                          border: Border.all(color: Colors.black, width: 2)),
+                      height: 450, // Specify a height
+                      child: ListView.builder(
+                        shrinkWrap: false,
+                        itemCount: thisEvent!.eventExpenses.length,
+                        itemBuilder: (context, index) {
+                          return Column(
+                            children: [
+                              SizedBox(height: 15.0),
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: dusty_rose,
+                                    borderRadius: BorderRadius.circular(25)
+                                ),
+                                child: ListTile(
+                                  leading: Column(
+                                    children: [
+                                      FrenchCannon(
+                                        text:
+                                        "Expense: ${thisEvent!.eventExpenses[index]
+                                            .expenses}",
+                                        size: 15.0,
+                                        color: Colors.redAccent,
+                                        weight: FontWeight.bold,
+                                      ),
+                                      FrenchCannon(
+                                        text:
+                                        "For: ${thisEvent!.eventExpenses[index]
+                                            .purpose}",
+                                        size: 15.0,
+                                        color: Colors.redAccent,
+                                        weight: FontWeight.bold,
+                                      )
+                                    ],
+                                  ),
+                                  trailing: RemoveButton(onPressed: (){
+                                    provider.deleteExpense(eventIndex, index);
+                                  },),
+                                ),
                               ),
-                            );
-                          },
-                        ),
+                            ],
+                          );
+                        },
                       ),
-
-                    ],
-
-                  ),
+                    ),
+                  ],
                 );
               }
             },
           ),
-          SizedBox(
-            height:100,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
+          SizedBox(height: 10,),
+          Container(
+            height: 40,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 MaterialButton(
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
-                  color: lightPurple,
+                  color: dusty_rose,
                   onPressed: () {
-                    CommonAlert(context, eventIndex, "Expense", provider);
+                    showDialog(context: context, builder: (BuildContext context){
+                      return AlertDialog(
+                        title: SizedBox(
+                          width: 250,
+                          child: Column(
+                            children: [
+                              TextField(
+                                controller: expensecontroller,
+                                focusNode: FocusNode(),
+                                decoration: InputDecoration(
+                                    hintText:  "Expense",
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(3),
+                                        borderSide: const BorderSide(style: BorderStyle.solid,width: 1)
+                                    )
+                                ),
+                              ),
+                    SizedBox(height: 20,),
+                    TextField(
+                    controller: titleController,
+                    focusNode: FocusNode(),
+                    decoration: InputDecoration(
+                    hintText:  "Purpose",
+                    border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(3),
+                    borderSide: const BorderSide(style: BorderStyle.solid,width: 1)
+                    )
+                    ),
+                    ),
+                            ],
+                          ),
+                        ),
+                        content: ElevatedButton(child: const FrenchCannon(text:"Add"),onPressed: (){
+                            provider.addExpense(double.parse(expensecontroller.text), eventIndex,titleController.text);
+                        }
+                        ));
+                    });
                   },
-                  child: const Text("Add Expenses"),
+                  child: Text("Add Expenses"),
                 ),
-                 SizedBox(
-                  height: 60,
-                ),
+
                 MaterialButton(
-                  minWidth: 180,
-                  height: 200,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
-                  color: lightPurple,
+                  color: dusty_rose,
                   onPressed: () {
                     CommonAlert(context, eventIndex, "Budget", provider);
                   },
-                  child: const Text("Add/Update Budget"),
+                  child: Text("Add Budget"),
                 )
               ],
             ),
           )
         ],
       ),
+      bottomNavigationBar: BottomBar(),
     );
   }
 }

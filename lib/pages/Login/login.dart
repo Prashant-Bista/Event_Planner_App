@@ -25,7 +25,7 @@ class Login extends StatelessWidget {
 
             ),
             const SizedBox(height: 20.0,),
-            const Manrope(text: "Welcome!",size: 32.0,weight: FontWeight.bold,),
+            const FrenchCannon(text: "Welcome!",size: 32.0,weight: FontWeight.bold,),
             const SizedBox(height: 20.0,),
             Form(child: Container(
 
@@ -64,7 +64,7 @@ class Login extends StatelessWidget {
                  mainAxisAlignment: MainAxisAlignment.end,
                  crossAxisAlignment: CrossAxisAlignment.center,
                  children: [
-                   TextButton(onPressed: (){}, child:const Manrope(text: "Forgot Password",color: Colors.blue,),
+                   TextButton(onPressed: (){}, child:const FrenchCannon(text: "Forgot Password",color: Colors.blue,),
                    ),
                    SizedBox(width: widthDevice/6.0,)
                  ],
@@ -77,7 +77,7 @@ class Login extends StatelessWidget {
                      borderRadius: BorderRadius.circular(10.0),
                    ),
                    color: Colors.black,
-                   child:const Manrope(text: "Sign In", size: 32.0,color: Colors.white,)
+                   child:const FrenchCannon(text: "Sign In", size: 32.0,color: Colors.white,)
                    ,
                    onPressed: (){
                    Navigator.of(context).pushNamed('/event');
@@ -96,7 +96,7 @@ class Login extends StatelessWidget {
             remember = value!;
                 }}),
                     const SizedBox(width: 10.0),
-                    const Manrope(text: "Remember me on this device",)
+                    const FrenchCannon(text: "Remember me on this device",color:Colors.white,)
                   ],
                 ),
                   Row(
@@ -126,7 +126,7 @@ class Login extends StatelessWidget {
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Manrope(text: "Don't have an account",)
+                      FrenchCannon(text: "Don't have an account",)
 
                       
                     ],

@@ -102,6 +102,12 @@ class BusinessLogic extends ChangeNotifier {
     budgetRemaining = thisEvent.eventBudget.budget-totalExpense;
     return budgetRemaining;
   }
+  VoidCallback? deleteExpense(int eventIndex,index){
+    Box<Event> eventBox = Hive.box<Event>('event');
+    Event? thisEvent = eventBox.getAt(eventIndex);
+    thisEvent!.eventExpenses.removeAt(index);
+    notifyListeners();
+  }
 
 }
 
