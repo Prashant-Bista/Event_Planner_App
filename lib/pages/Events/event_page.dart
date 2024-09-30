@@ -1,6 +1,5 @@
 import 'package:event_planner_app/pages/Budget/budget.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:intl/intl.dart';
@@ -138,7 +137,7 @@ class _EventPageState extends State<EventPage> {
                   ),
                 ),
                 content: ElevatedButton(onPressed: (){
-                  event.add(Event(eventBudget: Budget(budget: 0,isSet: false), eventExpenses: [], eventGuests: [], eventTasks: [], eventName: nameController.text, eventDate: picked));
+                  event.add(Event(eventBudget: Budget(budget: 0,isSet: false), eventExpenses: [], eventGuests: [], eventTasks: [], eventName: nameController.text, eventDate: picked,eventVendors: []));
                   Navigator.pop(context);
                 }, child: const FrenchCannon(text: "Add")),
               );},

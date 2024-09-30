@@ -8,7 +8,7 @@ part of 'event.dart';
 
 class EventAdapter extends TypeAdapter<Event> {
   @override
-  final int typeId = 4;
+  final int typeId = 5;
 
   @override
   Event read(BinaryReader reader) {
@@ -23,13 +23,14 @@ class EventAdapter extends TypeAdapter<Event> {
       eventTasks: (fields[2] as List).cast<Tasks>(),
       eventName: fields[5] as String,
       eventDate: fields[6] as DateTime?,
+      eventVendors: (fields[4] as List).cast<Vendors>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Event obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.eventBudget)
       ..writeByte(1)
@@ -38,6 +39,8 @@ class EventAdapter extends TypeAdapter<Event> {
       ..write(obj.eventTasks)
       ..writeByte(3)
       ..write(obj.eventGuests)
+      ..writeByte(4)
+      ..write(obj.eventVendors)
       ..writeByte(5)
       ..write(obj.eventName)
       ..writeByte(6)

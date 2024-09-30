@@ -68,7 +68,9 @@ class _HomePageState extends State<HomePage> {
                   
                             },),
                             HomeTile(height: tileHeight,width: tileWidth, tileIcon: CupertinoIcons.house_fill,tileName: "Venue",perform: (){},),
-                            HomeTile(height: tileHeight,width: tileWidth, tileIcon: Icons.store_sharp,tileName: "Vendors",perform: (){},),
+                            HomeTile(height: tileHeight,width: tileWidth, tileIcon: Icons.store_sharp,tileName: "Vendors",perform: (){
+                              Navigator.of(context).pushNamed('/vendors',arguments: widget.eventIndex);
+                            },),
                   
                           ],
                     ),
@@ -80,7 +82,7 @@ class _HomePageState extends State<HomePage> {
         ),
           ],
           ),
-      bottomNavigationBar: const BottomBar(),
+      bottomNavigationBar: BottomBar(eventIndex:widget.eventIndex,)
 
     ),
       );

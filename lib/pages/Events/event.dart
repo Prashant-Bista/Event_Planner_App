@@ -1,12 +1,12 @@
 import 'package:hive/hive.dart';
-
 import '../Budget/budget.dart';
 import '../Guests/guests.dart';
 import '../Todo/tasks.dart';
+import '../Vendors/vendors.dart';
 
 part 'event.g.dart';
 
-@HiveType(typeId: 4)
+@HiveType(typeId: 5)
 class Event {
   @HiveField(0)
   final Budget eventBudget;
@@ -20,11 +20,15 @@ class Event {
   @HiveField(3)
   final List<Guests> eventGuests;
 
+  @HiveField(4)
+  final List<Vendors> eventVendors;
+
   @HiveField(5)
   final String eventName;
 
   @HiveField(6)
   final DateTime? eventDate;
+
 
   Event({
    required this.eventBudget,
@@ -32,7 +36,11 @@ class Event {
     required this.eventGuests,
     required this.eventTasks,
     required this.eventName,
-    required this.eventDate
+    required this.eventDate,
+    required this.eventVendors,
+
+
+
   });
 }
 

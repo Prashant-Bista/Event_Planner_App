@@ -64,9 +64,7 @@ class AddGuests extends ConsumerWidget {
                           ),
                           child:      ListTile(
                             trailing: RemoveButton(onPressed: (){
-                              Event? thisEvent = eventBox.getAt(eventIndex);
-                              thisEvent!.eventGuests.removeAt(index);
-                              eventBox.putAt(eventIndex, thisEvent);
+                              provider.removeGuest(eventIndex, index);
                             },),
                             title: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -190,6 +188,7 @@ class AddGuests extends ConsumerWidget {
           );
         },
       ),
+      bottomNavigationBar: BottomBar(eventIndex: eventIndex),
     );
   }
 }

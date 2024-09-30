@@ -3,6 +3,7 @@ import 'package:event_planner_app/pages/Events/event_page.dart';
 import 'package:event_planner_app/pages/Guests/add_guests.dart';
 import 'package:event_planner_app/pages/Todo/todo_view.dart';
 import 'package:event_planner_app/pages/Login/login.dart';
+import 'package:event_planner_app/pages/Vendors/vendors_view.dart';
 import 'package:event_planner_app/pages/contact.dart';
 import 'package:event_planner_app/pages/home_page.dart';
 import 'package:event_planner_app/pages/splash.dart';
@@ -36,8 +37,9 @@ class Routes{
       final int args = int.parse(settings.arguments.toString());
       return MaterialPageRoute(builder: (_)=>BudgetTrack(eventIndex:args ));
     }
-    if (settings.name=='/contact'){
-      return MaterialPageRoute(builder: (_)=>ContactPage());
+    if (settings.name=='/vendors'){
+      final int args = int.parse(settings.arguments.toString());
+      return MaterialPageRoute(builder: (_)=>VendorsView(eventIndex: args));
     }
     return null;
   }

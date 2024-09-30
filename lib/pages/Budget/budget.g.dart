@@ -47,7 +47,7 @@ class ExpensesAdapter extends TypeAdapter<Expenses> {
   @override
   final int typeId = 3;
 
-@override
+  @override
   Expenses read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
@@ -55,7 +55,7 @@ class ExpensesAdapter extends TypeAdapter<Expenses> {
     };
     return Expenses(
       expenses: fields[0] as double,
-      purpose: fields[1] as String?, // Make this cast nullable
+      purpose: fields[1] as String?,
     );
   }
 

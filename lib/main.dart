@@ -5,6 +5,7 @@ import 'package:event_planner_app/pages/Events/event.dart';
 import 'package:event_planner_app/pages/Events/event_page.dart';
 import 'package:event_planner_app/pages/Guests/guests.dart';
 import 'package:event_planner_app/pages/Todo/tasks.dart';
+import 'package:event_planner_app/pages/Vendors/vendors.dart';
 import 'package:flutter/material.dart';
 import 'package:event_planner_app/routes.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,14 +18,18 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   Directory directory = await getApplicationCacheDirectory();
   Hive.init(directory.path);
+  print(directory.path);
   Hive.registerAdapter(TasksAdapter());
   Hive.registerAdapter(GuestsAdapter());
   Hive.registerAdapter(BudgetAdapter());
   Hive.registerAdapter(EventAdapter());
   Hive.registerAdapter(ExpensesAdapter());
+  Hive.registerAdapter(VendorsAdapter());
 
 
 
+
+  Box<Event> box =await Hive.openBox<Event>('event');
   if (!Hive.isBoxOpen('todo')) {
     await Hive.openBox<Tasks>('todo');
   }
@@ -36,12 +41,15 @@ void main() async{
     await Hive.openBox<Budget>('budget');
   }
   if (!Hive.isBoxOpen('event')) {
-    await Hive.openBox<Event>('event');
+    Box<Event> box =await Hive.openBox<Event>('event');
   }
   if (!Hive.isBoxOpen('expense')) {
     await Hive.openBox<Expenses>('expense');
   }
-
+  if (!Hive.isBoxOpen('vendors')) {
+    await Hive.openBox<Vendors>('vendors');
+  }
+  await box.clear();
   runApp(const ProviderScope(child: MyApp()) );
 }
 

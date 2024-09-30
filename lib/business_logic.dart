@@ -22,7 +22,9 @@ class BusinessLogic extends ChangeNotifier {
         eventGuests: thisEvent.eventGuests,
         eventName: thisEvent.eventName,
         eventDate: thisEvent.eventDate,
-        eventBudget: thisBudget);
+        eventBudget: thisBudget,
+      eventVendors: thisEvent.eventVendors,
+    );
     eventBox.putAt(eventIndex, updatedEvent);
     notifyListeners();
     return null;
@@ -48,7 +50,7 @@ class BusinessLogic extends ChangeNotifier {
     Event? thisEvent = eventBox.getAt(eventIndex);
     List<Tasks>? updated= thisEvent!.eventTasks;
     updated[index]= Tasks(title: thisEvent.eventTasks[index].title, isDone: value);
-    eventBox.putAt(eventIndex, Event(eventBudget: thisEvent.eventBudget,eventDate: thisEvent.eventDate,eventExpenses: thisEvent.eventExpenses,eventGuests: thisEvent.eventGuests,eventName: thisEvent.eventName,eventTasks: updated));
+    eventBox.putAt(eventIndex, Event(eventBudget: thisEvent.eventBudget,eventDate: thisEvent.eventDate,eventExpenses: thisEvent.eventExpenses,eventGuests: thisEvent.eventGuests,eventName: thisEvent.eventName,eventTasks: updated,eventVendors: thisEvent.eventVendors));
     notifyListeners();
     return null;
 
@@ -106,6 +108,13 @@ class BusinessLogic extends ChangeNotifier {
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     thisEvent!.eventExpenses.removeAt(index);
+    notifyListeners();
+  }
+  VoidCallback? removeGuest (int eventIndex,int index){
+    Box<Event> eventBox = Hive.box<Event>('event');
+    Event? thisEvent = eventBox.getAt(eventIndex);
+    thisEvent!.eventGuests.removeAt(index);
+    eventBox.putAt(eventIndex, thisEvent);
     notifyListeners();
   }
 

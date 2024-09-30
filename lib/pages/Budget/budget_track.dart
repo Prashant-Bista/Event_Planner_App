@@ -243,7 +243,7 @@ class BudgetTrack extends ConsumerWidget {
           )
         ],
       ),
-      bottomNavigationBar: BottomBar(),
+      bottomNavigationBar: BottomBar(eventIndex: eventIndex,),
     );
   }
 }

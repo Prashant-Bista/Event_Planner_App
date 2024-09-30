@@ -326,19 +326,27 @@ class BudgetTile extends StatelessWidget {
   }
 }
 
-class BottomBar extends StatefulWidget {
-  const BottomBar({super.key});
+class BottomBar extends StatelessWidget {
+  final int eventIndex;
+  const BottomBar({super.key, required this.eventIndex});
 
-  @override
-  State<BottomBar> createState() => _BottomBarState();
-}
-
-class _BottomBarState extends State<BottomBar> {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       currentIndex: 0,
-      onTap: (index) {},
+      onTap: (index) {
+        if (index==0){
+          Navigator.of(context).pushNamed('/event',);
+        }
+        else if (index==1){
+          Navigator.of(context).pushNamed('/budget',arguments:eventIndex );
+        }else if (index==2){
+          Navigator.of(context).pushNamed('/todo',arguments:eventIndex);
+        }else if (index==3){
+          Navigator.of(context).pushNamed('/guests',arguments:eventIndex);
+        }
+
+      },
       iconSize: 24.0,
       elevation: 20,
       backgroundColor: soft_blue_grey,
@@ -354,25 +362,23 @@ class _BottomBarState extends State<BottomBar> {
           backgroundColor: mainColor,
         ),
         BottomNavigationBarItem(
-          icon: Icon(CupertinoIcons.money_dollar,color: mainColor,size: 24,),
+          icon: Icon(CupertinoIcons.money_dollar_circle_fill,color: mainColor,size: 24,),
           label: 'Budgets',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.task,color: mainColor,size: 24,),
+          icon: Icon(Icons.task_outlined,color: mainColor,size: 24,),
           label: "Tasks",
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.people,color: mainColor,size: 24,),
           label: 'Guests',
         ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.settings,color: mainColor,size: 24,),
-          label: 'Settings',
-        ),
+
       ],
     );
   }
 }
+
 class RemoveButton extends StatelessWidget {
   final VoidCallback onPressed;
   const RemoveButton({super.key, required this.onPressed});

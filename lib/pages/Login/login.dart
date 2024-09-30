@@ -77,7 +77,7 @@ class Login extends StatelessWidget {
                      borderRadius: BorderRadius.circular(10.0),
                    ),
                    color: Colors.black,
-                   child:const FrenchCannon(text: "Sign In", size: 32.0,color: Colors.white,)
+                   child:const FrenchCannon(text: "Sign In", size: 23.0,color: Colors.white,)
                    ,
                    onPressed: (){
                    Navigator.of(context).pushNamed('/event');
@@ -95,8 +95,8 @@ class Login extends StatelessWidget {
                setState() {
             remember = value!;
                 }}),
-                    const SizedBox(width: 10.0),
-                    const FrenchCannon(text: "Remember me on this device",color:Colors.white,)
+                     SizedBox(width: 10.0),
+                     FrenchCannon(text: "Remember me on this device",color:Colors.white, size: 12.0,)
                   ],
                 ),
                   Row(
@@ -127,8 +127,6 @@ class Login extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       FrenchCannon(text: "Don't have an account",)
-
-                      
                     ],
                   )
                   
