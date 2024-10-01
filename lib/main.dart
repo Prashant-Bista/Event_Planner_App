@@ -18,7 +18,6 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   Directory directory = await getApplicationCacheDirectory();
   Hive.init(directory.path);
-  print(directory.path);
   Hive.registerAdapter(TasksAdapter());
   Hive.registerAdapter(GuestsAdapter());
   Hive.registerAdapter(BudgetAdapter());
@@ -26,10 +25,6 @@ void main() async{
   Hive.registerAdapter(ExpensesAdapter());
   Hive.registerAdapter(VendorsAdapter());
 
-
-
-
-  Box<Event> box =await Hive.openBox<Event>('event');
   if (!Hive.isBoxOpen('todo')) {
     await Hive.openBox<Tasks>('todo');
   }
@@ -49,7 +44,6 @@ void main() async{
   if (!Hive.isBoxOpen('vendors')) {
     await Hive.openBox<Vendors>('vendors');
   }
-  await box.clear();
   runApp(const ProviderScope(child: MyApp()) );
 }
 

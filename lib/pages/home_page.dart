@@ -49,7 +49,7 @@ class _HomePageState extends State<HomePage> {
               Column(
                 children: [
                   SizedBox(
-                    height:180,
+                    height:heightDevice/2.8,
                     child: Wrap(
                           runSpacing:widthDevice/12,
                           spacing: widthDevice/12,
@@ -75,7 +75,7 @@ class _HomePageState extends State<HomePage> {
                           ],
                     ),
                   ),
-                  Image.asset("assets/images/Eventium_nobg.png",height: 300,width:300,)
+                  Image.asset("assets/images/Eventium_nobg.png",height: 250,width:250,)
                 ],
               ),
 

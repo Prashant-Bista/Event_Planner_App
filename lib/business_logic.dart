@@ -3,6 +3,7 @@ import 'package:event_planner_app/pages/Budget/budget.dart';
 import 'package:event_planner_app/pages/Events/event.dart';
 import 'package:event_planner_app/pages/Guests/guests.dart';
 import 'package:event_planner_app/pages/Todo/tasks.dart';
+import 'package:event_planner_app/pages/Vendors/vendors.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
@@ -96,10 +97,14 @@ class BusinessLogic extends ChangeNotifier {
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     List<Expenses> expenses=thisEvent!.eventExpenses;
+    List<Vendors> vendors= thisEvent!.eventVendors;
     double totalExpense=0;
     double budgetRemaining;
     for(Expenses expense in expenses){
       totalExpense=totalExpense+expense.expenses;
+    }
+    for(Vendors vendor in vendors){
+      totalExpense=totalExpense+vendor.price!;
     }
     budgetRemaining = thisEvent.eventBudget.budget-totalExpense;
     return budgetRemaining;
@@ -116,6 +121,13 @@ class BusinessLogic extends ChangeNotifier {
     thisEvent!.eventGuests.removeAt(index);
     eventBox.putAt(eventIndex, thisEvent);
     notifyListeners();
+  }
+  VoidCallback? addVendors(int eventIndex,String name,String contact, bool isBooked,int price){
+    Box<Event> eventBox = Hive.box<Event>('event');
+   Event? thisEvent= eventBox.getAt(eventIndex);
+   thisEvent!.eventVendors.add(Vendors(name: name, contact: contact, isBooked: isBooked,price: price));
+   notifyListeners();
+
   }
 
 }

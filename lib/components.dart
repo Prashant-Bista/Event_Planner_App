@@ -5,6 +5,7 @@ import 'package:event_planner_app/pages/Guests/guests.dart';
 import 'package:event_planner_app/pages/Todo/tasks.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:event_planner_app/business_logic.dart';
@@ -279,6 +280,7 @@ void CommonAlert(BuildContext context,int eventIndex,String title,final provider
       title: SizedBox(
         width: 250,
         child: TextField(
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           controller: titleController,
           focusNode: FocusNode(),
           decoration: InputDecoration(

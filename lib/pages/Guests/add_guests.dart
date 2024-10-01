@@ -1,6 +1,7 @@
 
 import 'package:event_planner_app/business_logic.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -11,9 +12,6 @@ import 'guests.dart';
 class AddGuests extends ConsumerWidget {
   final int eventIndex;
   const AddGuests({super.key, required this.eventIndex});
-
-
-
   @override
   Widget build(BuildContext context,WidgetRef ref) {
     final provider = ref.watch(stateProvider);
@@ -41,7 +39,7 @@ class AddGuests extends ConsumerWidget {
             return const Center(
               child: FrenchCannon(
                 text: "No Guests added yet",
-                size: 32.0,
+                size: 25.0,
                 color: Color.fromRGBO(11, 13, 23, 1),
               ),
             );
@@ -50,55 +48,53 @@ class AddGuests extends ConsumerWidget {
               itemCount: thisEvent!.eventGuests.length,
               itemBuilder: (context, index) {
                 Guests guest = thisEvent!.eventGuests[index];
-                return Column(
-                  children: [
-                    SizedBox(height: 10,),
-                    GestureDetector(
-                        onTap: (){
-                        },
-                        child:    Container(
-                          height: 90,
-                          decoration: BoxDecoration(
-                            color: light_dusty_rose,
-                            borderRadius: BorderRadius.circular(35),
+                return Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: GestureDetector(
+                      onTap: (){
+                      },
+                      child:    Container(
+                        height: 90,
+                        decoration: BoxDecoration(
+                          color: light_dusty_rose,
+                          borderRadius: BorderRadius.circular(35),
+                        ),
+                        child:      ListTile(
+                          trailing: RemoveButton(onPressed: (){
+                            provider.removeGuest(eventIndex, index);
+                          },),
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(width: 20,),
+                              const Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  FrenchCannon(text: 'Name:',size: 13.0,),
+                                  FrenchCannon(text: 'Contact:',size: 13.0),
+                                  FrenchCannon(text: 'No of Members:',size: 13.0),
+                                  FrenchCannon(text: 'Invitation:',size: 13.0),
+                                ],
+                              ),
+                              const SizedBox(width: 20,),
+
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  FrenchCannon(text: guest.guestName,size: 13.0),
+                                  FrenchCannon(text: guest.contact,size: 13.0),
+                                  FrenchCannon(text: '${guest.membersNo}',size: 13.0),
+                                  FrenchCannon(text: guest.invited?'Invited':"Not Invited",size: 13.0),
+
+                                ],
+                              ),
+                            ],
                           ),
-                          child:      ListTile(
-                            trailing: RemoveButton(onPressed: (){
-                              provider.removeGuest(eventIndex, index);
-                            },),
-                            title: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                SizedBox(width: 20,),
-                                const Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    FrenchCannon(text: 'Name:',size: 13.0,),
-                                    FrenchCannon(text: 'Contact:',size: 13.0),
-                                    FrenchCannon(text: 'No of Members:',size: 13.0),
-                                    FrenchCannon(text: 'Invitation:',size: 13.0),
-                                  ],
-                                ),
-                                const SizedBox(width: 20,),
-
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    FrenchCannon(text: guest.guestName,size: 13.0),
-                                    FrenchCannon(text: guest.contact,size: 13.0),
-                                    FrenchCannon(text: '${guest.membersNo}',size: 13.0),
-                                    FrenchCannon(text: guest.invited?'Invited':"Not Invited",size: 13.0),
-
-                                  ],
-                                ),
-                              ],
-                            ),
-                          )  ,
-                        )
-                    ),
-                  ],
+                        )  ,
+                      )
+                  ),
                 );
               },
             );
@@ -135,6 +131,7 @@ class AddGuests extends ConsumerWidget {
                             const SizedBox(height: 20),
                             TextField(
                               controller: contactController,
+                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                               decoration: InputDecoration(
                                 hintText: "Contact No",
                                 border: OutlineInputBorder(
@@ -145,6 +142,7 @@ class AddGuests extends ConsumerWidget {
                             ),
                             const SizedBox(height: 20),
                             TextField(
+                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                               controller: membersController,
                               decoration: InputDecoration(
                                 hintText: "No of Members",

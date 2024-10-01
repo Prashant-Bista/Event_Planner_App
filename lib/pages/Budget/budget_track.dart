@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../components.dart';
@@ -27,7 +28,7 @@ class BudgetTrack extends ConsumerWidget {
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex); // Update thisEvent on change
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: light_dusty_rose,
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: muave,
@@ -54,20 +55,15 @@ class BudgetTrack extends ConsumerWidget {
                 );
               } else if (thisEvent!.eventBudget.budget != 0 &&
                   thisEvent!.eventExpenses.isEmpty) {
-                return Column(
-                  children: [
-                    ListTile(
-
-                      tileColor:Colors.green,
-                      title: FrenchCannon(text: "Budget: ${thisEvent!.eventBudget.budget}",color: Colors.green,),
-                ),
-                    FrenchCannon(
-                      text: "No Expense added yet",
-                      size: 20.0,
-                      color: Colors.black,
-                      weight: FontWeight.bold,
-                    )
-                  ],
+                return                     Container(
+                  height: 40,
+                  width: deviceWidth,
+                  color: dusty_rose,
+                  child: Center(child: FrenchCannon(
+                    text: "Budget: ${thisEvent.eventBudget.budget
+                        .toString()}",
+                    size: 20.0,
+                    weight: FontWeight.bold,color: Colors.green,)),
                 );
               } else if (thisEvent!.eventBudget.budget == 0 &&
                   thisEvent!.eventExpenses.isNotEmpty) {
@@ -79,49 +75,76 @@ class BudgetTrack extends ConsumerWidget {
                       color: Color.fromRGBO(11, 13, 23, 1),
                     ),
                     Container(
-                      height: deviceHeight / 2, // Specify a height
+                      decoration: BoxDecoration(
+                          color: light_dusty_rose,
+                          border: Border.all(color: Colors.black, width: 2)),
+                      height: 450, // Specify a height
                       child: ListView.builder(
+                        shrinkWrap: false,
                         itemCount: thisEvent!.eventExpenses.length,
                         itemBuilder: (context, index) {
-                          return ListTile(
-                            tileColor: Colors.redAccent,
-                            leading: FrenchCannon(
-                              text:
-                              "Expense: ${thisEvent!.eventExpenses[index]
-                                  .expenses}",
-                              size: 20.0,
-                              color: Colors.black,
-                              weight: FontWeight.bold,
-                            ),
+                          return Column(
+                            children: [
+                              SizedBox(height: 15.0),
+                              Container(
+                                decoration: BoxDecoration(
+                                    color: dusty_rose,
+                                    borderRadius: BorderRadius.circular(25)
+                                ),
+                                child: ListTile(
+                                  leading: Column(
+                                    children: [
+                                      FrenchCannon(
+                                        text:
+                                        "Expense: ${thisEvent!.eventExpenses[index]
+                                            .expenses}",
+                                        size: 15.0,
+                                        color: Colors.redAccent,
+                                        weight: FontWeight.bold,
+                                      ),
+                                      FrenchCannon(
+                                        text:
+                                        "For: ${thisEvent!.eventExpenses[index]
+                                            .purpose}",
+                                        size: 15.0,
+                                        color: Colors.redAccent,
+                                        weight: FontWeight.bold,
+                                      )
+                                    ],
+                                  ),
+                                  trailing: RemoveButton(onPressed: (){
+                                    provider.deleteExpense(eventIndex, index);
+                                  },),
+                                ),
+                              ),
+                            ],
                           );
                         },
                       ),
-                    )
-                  ],
+                    )                  ],
                 );
               } else {
                 return Column(
                   mainAxisAlignment: MainAxisAlignment.start,
-
                   children: [
                     Container(
-                      height: 40,
+                      height: 30,
                       width: deviceWidth,
                       color: dusty_rose,
                       child: Center(child: FrenchCannon(
                         text: "Budget: ${thisEvent.eventBudget.budget
                             .toString()}",
-                        size: 20.0,
+                        size: 15.0,
                         weight: FontWeight.bold,color: Colors.green,)),
                     ),
                     Container(
                         width: deviceWidth,
-                        height: 50,
+                        height: 60,
                         color: dusty_rose,
                         child: Center(child: FrenchCannon(
-                          text: "Budget left: ${provider
+                          text: "Budget left(Vendors included): ${provider
                               .calcBudgetLeft(eventIndex).toString()}",
-                          size: 20.0,
+                          size: 15.0,
                           weight: FontWeight.bold,color: Colors.orange,))),
                     Container(
                       decoration: BoxDecoration(
@@ -195,6 +218,7 @@ class BudgetTrack extends ConsumerWidget {
                           child: Column(
                             children: [
                               TextField(
+                                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                 controller: expensecontroller,
                                 focusNode: FocusNode(),
                                 decoration: InputDecoration(
