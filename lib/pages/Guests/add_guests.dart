@@ -55,7 +55,7 @@ class AddGuests extends ConsumerWidget {
     showDialog(
     context: context,
     builder: (BuildContext context) {
-    return GuestAlert(isUpdate: true, eventIndex: eventIndex,guestIndex: index,);
+    return GuestAlert(isUpdate: true, eventIndex: eventIndex,itemIndex: index,isVendor: false,);
                       },
     );
                       },
@@ -130,7 +130,7 @@ class AddGuests extends ConsumerWidget {
             showDialog(
               context: context,
               builder: (BuildContext context) {
-                return GuestAlert(isUpdate: false, eventIndex: eventIndex,guestIndex:0,);
+                return GuestAlert(isUpdate: false, eventIndex: eventIndex,itemIndex:0,isVendor: false,);
               },
           );
         },

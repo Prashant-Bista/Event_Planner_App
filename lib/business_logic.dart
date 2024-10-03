@@ -147,6 +147,25 @@ class BusinessLogic extends ChangeNotifier {
    notifyListeners();
 
   }
+  VoidCallback? updateVendors(int eventIndex,int vendorIndex,String name, int price, bool isInvited, String contact){
+    Box<Event> eventBox = Hive.box<Event>('event');
+    Event? thisEvent = eventBox.getAt(eventIndex);
+    thisEvent!.eventVendors.removeAt(vendorIndex);
+    thisEvent!.eventVendors.insert(vendorIndex,
+      Vendors(
+        name: name,
+        price: price,
+        isBooked: isInvited,
+        contact: contact,
+      ),
+    );
+
+    eventBox.putAt(eventIndex, thisEvent);
+    notifyListeners();
+    return null;
+
+  }
+
 
 }
 

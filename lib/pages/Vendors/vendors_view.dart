@@ -17,9 +17,7 @@ class VendorsView extends ConsumerWidget {
     final provider = ref.watch(stateProvider);
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
-    TextEditingController titleController = TextEditingController();
-    TextEditingController contactController = TextEditingController();
-    TextEditingController priceController = TextEditingController();
+   bool isInvited=false;
 
 
     bool booking = false;
@@ -52,44 +50,65 @@ class VendorsView extends ConsumerWidget {
                 itemCount: thisEvent!.eventVendors.length,
                 itemBuilder: (context, index) {
                   Vendors vendor = box.getAt(eventIndex)!.eventVendors[index];
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 8.0),
-                    child: ListTile(
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25)
-                      ),
-                      tileColor: light_dusty_rose,
-                      // trailing: ,
-                      title: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          SizedBox(width: 20,),
-                          const Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              FrenchCannon(text: 'Vendor:',size: 13.0,),
-                              FrenchCannon(text: 'Contact:',size: 13.0),
-                              FrenchCannon(text: 'Booked:',size: 13.0),
-                              FrenchCannon(text: 'Price:',size: 13.0),
+                  return GestureDetector(
+                    onTap: (){
+                      showDialog(context: context, builder: (context){
+                        return GuestAlert(eventIndex: eventIndex,isVendor: true,isUpdate: true,itemIndex: index,);
+                      });
 
-                            ],
-                          ),
-                          const SizedBox(width: 20,),
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: ListTile(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25)
+                        ),
+                        tileColor: light_dusty_rose,
+                        // trailing: ,
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(width: 20,),
+                            const Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                FrenchCannon(text: 'Vendor:',size: 13.0,),
+                                FrenchCannon(text: 'Contact:',size: 13.0),
+                                FrenchCannon(text: 'Price:',size: 13.0),
+                                FrenchCannon(text: 'Booked:',size: 13.0),
 
-                          Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              FrenchCannon(text: vendor.name,size: 13.0),
-                              FrenchCannon(text: vendor.contact,size: 13.0),
-                              FrenchCannon(text: vendor.isBooked!?'Yes':"No",size: 13.0),
-                              FrenchCannon(text: vendor.price.toString(),size: 13.0),
-                            ],
-                          ),
-                        ],
+
+                              ],
+                            ),
+                            const SizedBox(width: 20,),
+
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                FrenchCannon(text: vendor.name,size: 13.0),
+                                FrenchCannon(text: vendor.contact,size: 13.0),
+                                FrenchCannon(text: vendor.price.toString(),size: 13.0),
+                                StatefulBuilder(builder: (context,setState){
+                                  return Checkbox(
+                                    value: thisEvent!.eventVendors[index].isBooked,
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        isInvited = value!;
+                                        provider.updateVendors(eventIndex, index, thisEvent!.eventVendors[index].name!, thisEvent!.eventVendors[index].price!, isInvited!, thisEvent!.eventVendors[index].contact!);
+                                      });
+                                    },
+                                  );
+
+                                })
+
+                              ],
+                            ),
+                          ],
+                        ),
+                        trailing: RemoveButton(onPressed: (){}),
                       ),
-                      trailing: RemoveButton(onPressed: (){}),
                     ),
                   );
                 });
@@ -104,68 +123,68 @@ class VendorsView extends ConsumerWidget {
         ),
         onPressed: () {
           showDialog(context: context, builder: (BuildContext context){
-            return StatefulBuilder(builder: (context,setState){
-             return AlertDialog(
-                title: SizedBox(
-                  width: 250,
-                  child: Column(
-                    children: [
-                      TextField(
-                        controller: titleController,
-                        focusNode: FocusNode(),
-                        decoration: InputDecoration(
-                            hintText:  "Vendor Type",
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(3),
-                                borderSide: const BorderSide(style: BorderStyle.solid,width: 1)
-                            )
-                        ),
-                      ),
-                      SizedBox(height: 10,),
-                      TextField(
-                        controller: contactController,
-                        focusNode: FocusNode(),
-                        decoration: InputDecoration(
-                            hintText:  "Vendor's Contact",
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(3),
-                                borderSide: const BorderSide(style: BorderStyle.solid,width: 1)
-                            )
-                        ),
-                      ),
-                      SizedBox(height: 10,),
-                      TextField(
-                        controller: priceController,
-                        focusNode: FocusNode(),
-                        decoration: InputDecoration(
-                            hintText:  "Vendor's Price",
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(3),
-                                borderSide: const BorderSide(style: BorderStyle.solid,width: 1)
-                            )
-                        ),
-                      ),
-                      ListTile(
-                        title: FrenchCannon(text: "Booked"),
-                        trailing: Checkbox(
-                          value: booking,
-                          onChanged: (bool? value) {
-                            setState((){
-                              booking = value!;
-
-                            });
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-                content: ElevatedButton(onPressed: (){
-                  provider.addVendors(eventIndex, titleController.text, contactController.text, booking,int.parse(priceController.text));
-                  Navigator.pop(context);
-                }, child: const FrenchCannon(text:"Add")),
-              );
-            }) ;
+            return GuestAlert(eventIndex: eventIndex, isUpdate: false, itemIndex: 0, isVendor: true);
+            //   StatefulBuilder(builder: (context,setState){
+            //  return AlertDialog(
+            //     title: SizedBox(
+            //       width: 250,
+            //       child: Column(
+            //         children: [
+            //           TextField(
+            //             controller: titleController,
+            //             focusNode: FocusNode(),
+            //             decoration: InputDecoration(
+            //                 hintText:  "Vendor Type",
+            //                 border: OutlineInputBorder(
+            //                     borderRadius: BorderRadius.circular(3),
+            //                     borderSide: const BorderSide(style: BorderStyle.solid,width: 1)
+            //                 )
+            //             ),
+            //           ),
+            //           SizedBox(height: 10,),
+            //           TextField(
+            //             controller: contactController,
+            //             focusNode: FocusNode(),
+            //             decoration: InputDecoration(
+            //                 hintText:  "Vendor's Contact",
+            //                 border: OutlineInputBorder(
+            //                     borderRadius: BorderRadius.circular(3),
+            //                     borderSide: const BorderSide(style: BorderStyle.solid,width: 1)
+            //                 )
+            //             ),
+            //           ),
+            //           SizedBox(height: 10,),
+            //           TextField(
+            //             controller: priceController,
+            //             focusNode: FocusNode(),
+            //             decoration: InputDecoration(
+            //                 hintText:  "Vendor's Price",
+            //                 border: OutlineInputBorder(
+            //                     borderRadius: BorderRadius.circular(3),
+            //                     borderSide: const BorderSide(style: BorderStyle.solid,width: 1)
+            //                 )
+            //             ),
+            //           ),
+            //           ListTile(
+            //             title: FrenchCannon(text: "Booked"),
+            //             trailing: Checkbox(
+            //               value: booking,
+            //               onChanged: (bool? value) {
+            //                 setState((){
+            //                   booking = value!;
+            //
+            //                 });
+            //               },
+            //             ),
+            //           )
+            //         ],
+            //       ),
+            //     ),
+            //     content: ElevatedButton(onPressed: (){
+            //       Navigator.pop(context);
+            //     }, child: const FrenchCannon(text:"Add")),
+            //   );
+            // }) ;
           });        },
       ),
       bottomNavigationBar: BottomBar(eventIndex: eventIndex),

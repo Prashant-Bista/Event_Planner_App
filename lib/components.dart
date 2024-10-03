@@ -3,6 +3,7 @@ import 'package:event_planner_app/pages/Budget/budget.dart';
 import 'package:event_planner_app/pages/Events/event.dart';
 import 'package:event_planner_app/pages/Guests/guests.dart';
 import 'package:event_planner_app/pages/Todo/tasks.dart';
+import 'package:event_planner_app/pages/Vendors/vendors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -281,7 +282,6 @@ void CommonAlert(BuildContext context,int eventIndex,String title,final provider
       title: SizedBox(
         width: 250,
         child: TextField(
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           controller: titleController,
           focusNode: FocusNode(),
           decoration: InputDecoration(
@@ -394,11 +394,13 @@ class RemoveButton extends StatelessWidget {
 class GuestAlert extends ConsumerWidget {
   final int eventIndex;
   final bool isUpdate;
-  final int? guestIndex;
-  const GuestAlert ({super.key, required this.eventIndex,required this.isUpdate,required this.guestIndex,});
+  final int? itemIndex;
+  final bool isVendor;
+  const GuestAlert ( {super.key, required this.eventIndex,required this.isUpdate,required this.itemIndex,required this.isVendor,});
   @override
   Widget build(BuildContext context,WidgetRef ref) {
     final provider = ref.watch(stateProvider);
+    Box<Event> eventBox = Hive.box("event");
     TextEditingController nameController = TextEditingController();
     TextEditingController contactController = TextEditingController();
     TextEditingController membersController = TextEditingController();
@@ -406,6 +408,23 @@ class GuestAlert extends ConsumerWidget {
 
     return StatefulBuilder(
       builder: (context, setState) {
+        if(isUpdate) {
+          if (isVendor) {
+            Vendors currentVendor = eventBox.getAt(eventIndex)!
+                .eventVendors[itemIndex!];
+            nameController.text = currentVendor.name!;
+            contactController.text = currentVendor.contact!;
+            membersController.text = currentVendor.price.toString();
+            isInvited = currentVendor.isBooked!;
+          }
+          else{
+            Guests currentGuest=eventBox.getAt(eventIndex)!.eventGuests[itemIndex!];
+            nameController.text= currentGuest.guestName;
+            contactController.text= currentGuest.contact;
+            membersController.text= currentGuest.membersNo.toString();
+            isInvited = currentGuest.invited;
+          }
+        }
         return AlertDialog(
           title: SizedBox(
             width: 250,
@@ -414,7 +433,7 @@ class GuestAlert extends ConsumerWidget {
                 TextField(
                   controller: nameController,
                   decoration: InputDecoration(
-                    hintText: "Name",
+                    hintText: isVendor?"Vendor's Type":"Name",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(3),
                       borderSide: const BorderSide(
@@ -440,7 +459,7 @@ class GuestAlert extends ConsumerWidget {
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   controller: membersController,
                   decoration: InputDecoration(
-                    hintText: "No of Members",
+                    hintText: isVendor?"Price":"No of Members",
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(3),
                       borderSide: const BorderSide(
@@ -469,16 +488,29 @@ class GuestAlert extends ConsumerWidget {
           ),
           content: ElevatedButton(
               onPressed: () {
-                if(isUpdate){
-                  provider.updateGuest(eventIndex, guestIndex!,nameController.text,
+                if (isUpdate) {
+                  if (isVendor) {
+                    provider.updateVendors(
+                        eventIndex, itemIndex!, nameController.text,
+                        int.parse(membersController.text), isInvited,
+                        contactController.text);
+                  }
+                  else
+                    provider.updateGuest(
+                        eventIndex, itemIndex!, nameController.text,
+                        int.parse(membersController.text), isInvited,
+                        contactController.text);
+                }
+                else {
+                  if (isVendor) {
+                    provider.addVendors(eventIndex, nameController.text, contactController.text, isInvited, int.parse(membersController.text));
+                  }
+                    else
+                  provider.addGuest(eventIndex, nameController.text,
                       int.parse(membersController.text), isInvited,
                       contactController.text);
+                  Navigator.pop(context);
                 }
-                else
-                provider.addGuest(eventIndex, nameController.text,
-                    int.parse(membersController.text), isInvited,
-                    contactController.text);
-                Navigator.pop(context);
               },
               child: isUpdate ? Text("Update") : Text("Add")
           ),
