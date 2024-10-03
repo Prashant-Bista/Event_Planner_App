@@ -52,9 +52,15 @@ class AddGuests extends ConsumerWidget {
                   padding: const EdgeInsets.only(top: 8.0),
                   child: GestureDetector(
                       onTap: (){
+    showDialog(
+    context: context,
+    builder: (BuildContext context) {
+    return GuestAlert(isUpdate: true, eventIndex: eventIndex,guestIndex: index,);
+                      },
+    );
                       },
                       child:    Container(
-                        height: 90,
+                        height: 100,
                         decoration: BoxDecoration(
                           color: light_dusty_rose,
                           borderRadius: BorderRadius.circular(35),
@@ -64,7 +70,7 @@ class AddGuests extends ConsumerWidget {
                             provider.removeGuest(eventIndex, index);
                           },),
                           title: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               SizedBox(width: 20,),
                               const Column(
@@ -86,7 +92,20 @@ class AddGuests extends ConsumerWidget {
                                   FrenchCannon(text: guest.guestName,size: 13.0),
                                   FrenchCannon(text: guest.contact,size: 13.0),
                                   FrenchCannon(text: '${guest.membersNo}',size: 13.0),
-                                  FrenchCannon(text: guest.invited?'Invited':"Not Invited",size: 13.0),
+                                  StatefulBuilder(builder: (context,setState){
+                                    return Checkbox(
+                                      value: thisEvent!.eventGuests[index].invited,
+                                      onChanged: (bool? value) {
+                                        setState(() {
+                                          isInvited = value!;
+                                          provider.updateGuest(eventIndex, index, thisEvent!.eventGuests[index].guestName, thisEvent!.eventGuests[index].membersNo, isInvited, thisEvent!.eventGuests[index].contact);
+                                        });
+                                      },
+                                    );
+
+                                  })
+
+                                  // FrenchCannon(text: guest.invited?'Invited':"Not Invited",size: 13.0),
 
                                 ],
                               ),
@@ -111,77 +130,7 @@ class AddGuests extends ConsumerWidget {
             showDialog(
               context: context,
               builder: (BuildContext context) {
-                return StatefulBuilder(
-                  builder: (context, setState) {
-                    return AlertDialog(
-                      title: SizedBox(
-                        width: 250,
-                        child: Column(
-                          children: [
-                            TextField(
-                              controller: nameController,
-                              decoration: InputDecoration(
-                                hintText: "Name",
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(3),
-                                  borderSide: const BorderSide(style: BorderStyle.solid, width: 1),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            TextField(
-                              controller: contactController,
-                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                              decoration: InputDecoration(
-                                hintText: "Contact No",
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(3),
-                                  borderSide: const BorderSide(style: BorderStyle.solid, width: 1),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            TextField(
-                              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                              controller: membersController,
-                              decoration: InputDecoration(
-                                hintText: "No of Members",
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(3),
-                                  borderSide: const BorderSide(style: BorderStyle.solid, width: 1),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            ListTile(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5)
-                              ),
-                              tileColor: dusty_rose,
-                              trailing: Checkbox(
-                                value: isInvited,
-                                onChanged: (bool? value) {
-                                  setState(() {
-                                    isInvited = value!;
-                                  });
-                                },
-                              ),
-                              title: const Text("Invited"),
-                            ),
-                          ],
-                        ),
-                      ),
-                      content: ElevatedButton(
-                        onPressed: () {
-
-                          provider.addGuest(eventIndex, nameController.text,int.parse(membersController.text),isInvited,contactController.text);
-                          Navigator.pop(context);
-                        },
-                        child: const Text("Add"),
-                      ),
-                    );
-                  },
-                );
+                return GuestAlert(isUpdate: false, eventIndex: eventIndex,guestIndex:0,);
               },
           );
         },

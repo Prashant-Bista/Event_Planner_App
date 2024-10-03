@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:event_planner_app/business_logic.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 Color lightPurple= const Color(0xff45267ff);
 TextEditingController valueController =TextEditingController();
@@ -390,4 +391,180 @@ class RemoveButton extends StatelessWidget {
     return IconButton(icon: const Icon(Icons.dangerous,color: Colors.red,),onPressed: onPressed);
     }
   }
+class GuestAlert extends ConsumerWidget {
+  final int eventIndex;
+  final bool isUpdate;
+  final int? guestIndex;
+  const GuestAlert ({super.key, required this.eventIndex,required this.isUpdate,required this.guestIndex,});
+  @override
+  Widget build(BuildContext context,WidgetRef ref) {
+    final provider = ref.watch(stateProvider);
+    TextEditingController nameController = TextEditingController();
+    TextEditingController contactController = TextEditingController();
+    TextEditingController membersController = TextEditingController();
+    bool isInvited = false;
 
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return AlertDialog(
+          title: SizedBox(
+            width: 250,
+            child: Column(
+              children: [
+                TextField(
+                  controller: nameController,
+                  decoration: InputDecoration(
+                    hintText: "Name",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(3),
+                      borderSide: const BorderSide(
+                          style: BorderStyle.solid, width: 1),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  controller: contactController,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  decoration: InputDecoration(
+                    hintText: "Contact No",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(3),
+                      borderSide: const BorderSide(
+                          style: BorderStyle.solid, width: 1),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                TextField(
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  controller: membersController,
+                  decoration: InputDecoration(
+                    hintText: "No of Members",
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(3),
+                      borderSide: const BorderSide(
+                          style: BorderStyle.solid, width: 1),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                ListTile(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5)
+                  ),
+                  tileColor: dusty_rose,
+                  trailing: Checkbox(
+                    value: isInvited,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        isInvited = value!;
+                      });
+                    },
+                  ),
+                  title: const Text("Invited"),
+                ),
+              ],
+            ),
+          ),
+          content: ElevatedButton(
+              onPressed: () {
+                if(isUpdate){
+                  provider.updateGuest(eventIndex, guestIndex!,nameController.text,
+                      int.parse(membersController.text), isInvited,
+                      contactController.text);
+                }
+                else
+                provider.addGuest(eventIndex, nameController.text,
+                    int.parse(membersController.text), isInvited,
+                    contactController.text);
+                Navigator.pop(context);
+              },
+              child: isUpdate ? Text("Update") : Text("Add")
+          ),
+        );
+      },
+    );
+  }
+  }
+
+// void guestAlert(BuildContext context){
+//   TextEditingController nameController = TextEditingController();
+//   TextEditingController contactController = TextEditingController();
+//   TextEditingController membersController = TextEditingController();
+//   bool isInvited = false;
+//   showDialog(
+//     context: context,
+//     builder: (BuildContext context) {
+//       return StatefulBuilder(
+//         builder: (context, setState) {
+//           return AlertDialog(
+//             title: SizedBox(
+//               width: 250,
+//               child: Column(
+//                 children: [
+//                   TextField(
+//                     controller: nameController,
+//                     decoration: InputDecoration(
+//                       hintText: "Name",
+//                       border: OutlineInputBorder(
+//                         borderRadius: BorderRadius.circular(3),
+//                         borderSide: const BorderSide(style: BorderStyle.solid, width: 1),
+//                       ),
+//                     ),
+//                   ),
+//                   const SizedBox(height: 20),
+//                   TextField(
+//                     controller: contactController,
+//                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+//                     decoration: InputDecoration(
+//                       hintText: "Contact No",
+//                       border: OutlineInputBorder(
+//                         borderRadius: BorderRadius.circular(3),
+//                         borderSide: const BorderSide(style: BorderStyle.solid, width: 1),
+//                       ),
+//                     ),
+//                   ),
+//                   const SizedBox(height: 20),
+//                   TextField(
+//                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+//                     controller: membersController,
+//                     decoration: InputDecoration(
+//                       hintText: "No of Members",
+//                       border: OutlineInputBorder(
+//                         borderRadius: BorderRadius.circular(3),
+//                         borderSide: const BorderSide(style: BorderStyle.solid, width: 1),
+//                       ),
+//                     ),
+//                   ),
+//                   const SizedBox(height: 20),
+//                   ListTile(
+//                     shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(5)
+//                     ),
+//                     tileColor: dusty_rose,
+//                     trailing: Checkbox(
+//                       value: isInvited,
+//                       onChanged: (bool? value) {
+//                         setState(() {
+//                           isInvited = value!;
+//                         });
+//                       },
+//                     ),
+//                     title: const Text("Invited"),
+//                   ),
+//                 ],
+//               ),
+//             ),
+//             content: ElevatedButton(
+//               onPressed: () {
+//                 Navigator.pop(context);
+//               },
+//               child: const Text("Add"),
+//             ),
+//           );
+//         },
+//       );
+//     },
+//   );
+// }

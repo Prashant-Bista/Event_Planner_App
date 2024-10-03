@@ -56,7 +56,7 @@ class BudgetTrack extends ConsumerWidget {
               } else if (thisEvent!.eventBudget.budget != 0 &&
                   thisEvent!.eventExpenses.isEmpty) {
                 return                     Container(
-                  height: 40,
+                  height: 50,
                   width: deviceWidth,
                   color: dusty_rose,
                   child: Center(child: FrenchCannon(
