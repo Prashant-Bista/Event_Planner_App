@@ -14,6 +14,7 @@ class AddGuests extends ConsumerWidget {
   const AddGuests({super.key, required this.eventIndex});
   @override
   Widget build(BuildContext context,WidgetRef ref) {
+    double widthDevice = MediaQuery.of(context).size.width;
     final provider = ref.watch(stateProvider);
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
@@ -33,6 +34,7 @@ class AddGuests extends ConsumerWidget {
       body: ValueListenableBuilder(
         valueListenable:eventBox.listenable(), // Listen to the eventBox
         builder: (context, Box<Event> box, _) {
+          provider.counterGuests(eventIndex);
           thisEvent = box.getAt(eventIndex); // Update thisEvent on change
 
           if (thisEvent!.eventGuests.isEmpty) {
@@ -44,79 +46,8 @@ class AddGuests extends ConsumerWidget {
               ),
             );
           } else {
-            return ListView.builder(
-              itemCount: thisEvent!.eventGuests.length,
-              itemBuilder: (context, index) {
-                Guests guest = thisEvent!.eventGuests[index];
-                return Padding(
-                  padding: const EdgeInsets.only(top: 8.0),
-                  child: GestureDetector(
-                      onTap: (){
-    showDialog(
-    context: context,
-    builder: (BuildContext context) {
-    return GuestAlert(isUpdate: true, eventIndex: eventIndex,itemIndex: index,isVendor: false,);
-                      },
-    );
-                      },
-                      child:    Container(
-                        height: 100,
-                        decoration: BoxDecoration(
-                          color: light_dusty_rose,
-                          borderRadius: BorderRadius.circular(35),
-                        ),
-                        child:      ListTile(
-                          trailing: RemoveButton(onPressed: (){
-                            provider.removeGuest(eventIndex, index);
-                          },),
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              SizedBox(width: 20,),
-                              const Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  FrenchCannon(text: 'Name:',size: 13.0,),
-                                  FrenchCannon(text: 'Contact:',size: 13.0),
-                                  FrenchCannon(text: 'No of Members:',size: 13.0),
-                                  FrenchCannon(text: 'Invitation:',size: 13.0),
-                                ],
-                              ),
-                              const SizedBox(width: 20,),
+            return CommonFilledWindow(thisEvent: thisEvent!, isGuest: true, eventIndex: eventIndex);
 
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  FrenchCannon(text: guest.guestName,size: 13.0),
-                                  FrenchCannon(text: guest.contact,size: 13.0),
-                                  FrenchCannon(text: '${guest.membersNo}',size: 13.0),
-                                  StatefulBuilder(builder: (context,setState){
-                                    return Checkbox(
-                                      value: thisEvent!.eventGuests[index].invited,
-                                      onChanged: (bool? value) {
-                                        setState(() {
-                                          isInvited = value!;
-                                          provider.updateGuest(eventIndex, index, thisEvent!.eventGuests[index].guestName, thisEvent!.eventGuests[index].membersNo, isInvited, thisEvent!.eventGuests[index].contact);
-                                        });
-                                      },
-                                    );
-
-                                  })
-
-                                  // FrenchCannon(text: guest.invited?'Invited':"Not Invited",size: 13.0),
-
-                                ],
-                              ),
-                            ],
-                          ),
-                        )  ,
-                      )
-                  ),
-                );
-              },
-            );
           }
         },
       ),

@@ -8,13 +8,13 @@ import 'package:event_planner_app/pages/Todo/tasks.dart';
 import 'package:event_planner_app/pages/Vendors/vendors.dart';
 import 'package:flutter/material.dart';
 import 'package:event_planner_app/routes.dart';
-import 'package:google_fonts/google_fonts.dart';
+// import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 
 void main() async{
-  GoogleFonts.config.allowRuntimeFetching=false;
+  // GoogleFonts.config.allowRuntimeFetching=false;
   WidgetsFlutterBinding.ensureInitialized();
   Directory directory = await getApplicationCacheDirectory();
   Hive.init(directory.path);
@@ -28,6 +28,7 @@ void main() async{
   if (!Hive.isBoxOpen('todo')) {
     await Hive.openBox<Tasks>('todo');
   }
+  print(directory.path);
 
   if (!Hive.isBoxOpen('guests')) {
     await Hive.openBox<Guests>('guests');

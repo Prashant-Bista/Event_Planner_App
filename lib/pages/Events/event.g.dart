@@ -24,13 +24,15 @@ class EventAdapter extends TypeAdapter<Event> {
       eventName: fields[5] as String,
       eventDate: fields[6] as DateTime?,
       eventVendors: (fields[4] as List).cast<Vendors>(),
+      vendorsCount: fields[7] as int,
+      guestsCount: fields[8] as int,
     );
   }
 
   @override
   void write(BinaryWriter writer, Event obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(9)
       ..writeByte(0)
       ..write(obj.eventBudget)
       ..writeByte(1)
@@ -44,7 +46,11 @@ class EventAdapter extends TypeAdapter<Event> {
       ..writeByte(5)
       ..write(obj.eventName)
       ..writeByte(6)
-      ..write(obj.eventDate);
+      ..write(obj.eventDate)
+      ..writeByte(7)
+      ..write(obj.vendorsCount)
+      ..writeByte(8)
+      ..write(obj.guestsCount);
   }
 
   @override

@@ -29,6 +29,11 @@ class Event {
   @HiveField(6)
   final DateTime? eventDate;
 
+  @HiveField(7)
+  final int vendorsCount;
+
+  @HiveField(8)
+  final int guestsCount;
 
   Event({
    required this.eventBudget,
@@ -38,9 +43,8 @@ class Event {
     required this.eventName,
     required this.eventDate,
     required this.eventVendors,
-
-
-
+    required this.vendorsCount,
+    required this.guestsCount
   });
 }
 

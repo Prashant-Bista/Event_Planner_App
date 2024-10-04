@@ -15,16 +15,16 @@ class BusinessLogic extends ChangeNotifier {
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     Event? updatedEvent;
-    Budget thisBudget = thisEvent!.eventBudget;
-    thisBudget =
-        Budget(budget: value, isSet: true);
-    updatedEvent = Event(eventTasks: thisEvent.eventTasks,
-        eventExpenses: thisEvent.eventExpenses,
+    Budget thisBudget = Budget(budget: value, isSet: true);
+    updatedEvent = Event(eventTasks: thisEvent!.eventTasks,
+        eventExpenses: thisEvent!.eventExpenses,
         eventGuests: thisEvent.eventGuests,
         eventName: thisEvent.eventName,
         eventDate: thisEvent.eventDate,
         eventBudget: thisBudget,
       eventVendors: thisEvent.eventVendors,
+      vendorsCount: thisEvent.eventVendors.length,
+      guestsCount: thisEvent.guestsCount
     );
     eventBox.putAt(eventIndex, updatedEvent);
     notifyListeners();
@@ -40,7 +40,6 @@ class BusinessLogic extends ChangeNotifier {
     Box<Event> eventBox = Hive.box<Event>('event');
   Event? thisEvent = eventBox.getAt(eventIndex);
     thisEvent!.eventTasks.add(Tasks(title: task, isDone: false));
-    eventBox.putAt(eventIndex, thisEvent);
     notifyListeners();
     return null;
 
@@ -51,7 +50,8 @@ class BusinessLogic extends ChangeNotifier {
     Event? thisEvent = eventBox.getAt(eventIndex);
     List<Tasks>? updated= thisEvent!.eventTasks;
     updated[index]= Tasks(title: thisEvent.eventTasks[index].title, isDone: value);
-    eventBox.putAt(eventIndex, Event(eventBudget: thisEvent.eventBudget,eventDate: thisEvent.eventDate,eventExpenses: thisEvent.eventExpenses,eventGuests: thisEvent.eventGuests,eventName: thisEvent.eventName,eventTasks: updated,eventVendors: thisEvent.eventVendors));
+    eventBox.putAt(eventIndex, Event(eventBudget: thisEvent.eventBudget,eventDate: thisEvent.eventDate,eventExpenses: thisEvent.eventExpenses,eventGuests: thisEvent.eventGuests,eventName: thisEvent.eventName,eventTasks: updated,eventVendors: thisEvent.eventVendors, vendorsCount: thisEvent.eventVendors.length,
+        guestsCount: thisEvent.guestsCount));
     notifyListeners();
     return null;
 
@@ -60,13 +60,14 @@ class BusinessLogic extends ChangeNotifier {
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     thisEvent!.eventTasks.removeAt(index);
-    eventBox.putAt(eventIndex, thisEvent);
     notifyListeners();
     return null;
   }
   VoidCallback? addGuest(int eventIndex,String name, int members, bool isInvited, String contact){
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
+    int newGuestCount= thisEvent!.guestsCount+members;
+    thisEvent!.guestsCount!=thisEvent!.guestsCount+members;
     thisEvent!.eventGuests.add(
       Guests(
         guestName: name,
@@ -75,8 +76,6 @@ class BusinessLogic extends ChangeNotifier {
         contact: contact,
       ),
     );
-
-    eventBox.putAt(eventIndex, thisEvent);
     notifyListeners();
     return null;
 
@@ -85,7 +84,7 @@ class BusinessLogic extends ChangeNotifier {
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     thisEvent!.eventGuests.removeAt(guestIndex);
-        thisEvent!.eventGuests.insert(guestIndex,
+    thisEvent!.eventGuests.insert(guestIndex,
       Guests(
         guestName: name,
         membersNo: members,
@@ -93,8 +92,6 @@ class BusinessLogic extends ChangeNotifier {
         contact: contact,
       ),
     );
-
-    eventBox.putAt(eventIndex, thisEvent);
     notifyListeners();
     return null;
 
@@ -106,7 +103,6 @@ class BusinessLogic extends ChangeNotifier {
         expenses:value,
       purpose: purpose
     ));
-    eventBox.putAt(eventIndex, thisEvent);
     notifyListeners();
     return null;
 
@@ -136,8 +132,8 @@ class BusinessLogic extends ChangeNotifier {
   VoidCallback? removeGuest (int eventIndex,int index){
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
-    thisEvent!.eventGuests.removeAt(index);
-    eventBox.putAt(eventIndex, thisEvent);
+    thisEvent!.vendorsCount!=thisEvent.vendorsCount-thisEvent.eventGuests[index].membersNo;
+    thisEvent.eventGuests.removeAt(index);
     notifyListeners();
   }
   VoidCallback? addVendors(int eventIndex,String name,String contact, bool isBooked,int price){
@@ -159,13 +155,39 @@ class BusinessLogic extends ChangeNotifier {
         contact: contact,
       ),
     );
-
-    eventBox.putAt(eventIndex, thisEvent);
     notifyListeners();
     return null;
 
   }
+  void counterGuests(int eventIndex){
+    Box<Event> eventBox= Hive.box<Event>('event');
+    Event? thisEvent = eventBox.getAt(eventIndex);
+    int totalGuests=0;
+     List<Guests> guests = thisEvent!.eventGuests;
+     for (Guests guest in guests){
+       totalGuests = totalGuests+ guest.membersNo;
+     }
+eventBox.putAt(eventIndex, Event(eventBudget: thisEvent.eventBudget, eventExpenses: thisEvent.eventExpenses, eventGuests: thisEvent.eventGuests, eventTasks: thisEvent.eventTasks, eventName: thisEvent.eventName, eventDate: thisEvent.eventDate, eventVendors: thisEvent.eventVendors, vendorsCount: thisEvent.eventVendors.length, guestsCount: totalGuests))   ;
+  }
+  
+  void counterVendor(int eventIndex){
+    Box<Event> eventBox= Hive.box<Event>('event');
+    Event? thisEvent = eventBox.getAt(eventIndex);
+    int totalGuests=0;
+    List<Guests> guests = thisEvent!.eventGuests;
+    for (Guests guest in guests){
+      totalGuests = totalGuests+ guest.membersNo;
+    }
+    eventBox.putAt(eventIndex, Event(eventBudget: thisEvent.eventBudget, eventExpenses: thisEvent.eventExpenses, eventGuests: thisEvent.eventGuests, eventTasks: thisEvent.eventTasks, eventName: thisEvent.eventName, eventDate: thisEvent.eventDate, eventVendors: thisEvent.eventVendors, vendorsCount: thisEvent.eventVendors.length, guestsCount: totalGuests))   ;
+  }
+  VoidCallback? removeVendor(int eventIndex,int index){
+    Box<Event> eventBox = Hive.box<Event>('event');
+    Event? thisEvent = eventBox.getAt(eventIndex);
+    thisEvent!.vendorsCount!=thisEvent.vendorsCount-thisEvent.eventGuests[index].membersNo;
+    thisEvent.eventVendors.removeAt(index);
+    notifyListeners();
+    return null;
+  }
 
-
-}
+  }
 

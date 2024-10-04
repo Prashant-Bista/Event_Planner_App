@@ -54,7 +54,7 @@ class _EventPageState extends State<EventPage> {
                     title: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [BulletoKilla(text: event!.eventName,),
-                          ScheduleFont(text: "On :   ${event!.eventDate!.year}/${event!.eventDate!.month}/${event!.eventDate!.day}        At ${event!.eventDate!.hour}:${event!.eventDate!.minute<10?"0${event!.eventDate!.minute}":event!.eventDate!.minute}")
+                          FrenchCannon(text: "On :   ${event!.eventDate!.year}/${event!.eventDate!.month}/${event!.eventDate!.day}        At ${event!.eventDate!.hour}:${event!.eventDate!.minute<10?"0${event!.eventDate!.minute}":event!.eventDate!.minute}",size: 12.0,)
                         ]
                     ),
                     trailing: IconButton(icon: const Icon(Icons.dangerous,color: Colors.red,),onPressed: (){
@@ -137,7 +137,7 @@ class _EventPageState extends State<EventPage> {
                   ),
                 ),
                 content: ElevatedButton(onPressed: (){
-                  event.add(Event(eventBudget: Budget(budget: 0,isSet: false), eventExpenses: [], eventGuests: [], eventTasks: [], eventName: nameController.text, eventDate: picked,eventVendors: []));
+                  event.add(Event(eventBudget: Budget(budget: 0,isSet: false), eventExpenses: [], eventGuests: [], eventTasks: [], eventName: nameController.text, eventDate: picked,eventVendors: [],vendorsCount: 0,guestsCount: 0));
                   Navigator.pop(context);
                 }, child: const FrenchCannon(text: "Add")),
               );},

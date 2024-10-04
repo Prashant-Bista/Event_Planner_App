@@ -1,8 +1,6 @@
 
-import 'package:event_planner_app/pages/Budget/budget.dart';
 import 'package:event_planner_app/pages/Events/event.dart';
 import 'package:event_planner_app/pages/Guests/guests.dart';
-import 'package:event_planner_app/pages/Todo/tasks.dart';
 import 'package:event_planner_app/pages/Vendors/vendors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -48,16 +46,16 @@ class FrenchCannon extends StatelessWidget {
     ;
   }
 }
-class ScheduleFont extends StatelessWidget {
-  final text;
-  const ScheduleFont({super.key, @required this.text,});
-
-  @override
-  Widget build(BuildContext context) {
-    return   Text(text,style: GoogleFonts.manrope(fontSize: 14),)
-    ;
-  }
-}
+// class ScheduleFont extends StatelessWidget {
+//   final text;
+//   const ScheduleFont({super.key, @required this.text,});
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return   Text(text,style: GoogleFonts.manrope(fontSize: 14),)
+//     ;
+//   }
+// }
 class EventTile extends StatelessWidget {
   final Event thisEvent;
   const EventTile({super.key, required this.thisEvent});
@@ -73,7 +71,7 @@ class EventTile extends StatelessWidget {
       title: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [BulletoKilla(text: thisEvent!.eventName,),
-            ScheduleFont(text: "On :   ${thisEvent!.eventDate!.year}/${thisEvent!.eventDate!.month}/${thisEvent!.eventDate!.day}        At ${thisEvent!.eventDate!.hour}:${thisEvent!.eventDate!.minute<10?"0${thisEvent!.eventDate!.minute}":thisEvent!.eventDate!.minute}")
+            FrenchCannon(text: "On :   ${thisEvent!.eventDate!.year}/${thisEvent!.eventDate!.month}/${thisEvent!.eventDate!.day}        At ${thisEvent!.eventDate!.hour}:${thisEvent!.eventDate!.minute<10?"0${thisEvent!.eventDate!.minute}":thisEvent!.eventDate!.minute}",size: 13.0,)
           ]
       ),
     );
@@ -408,9 +406,12 @@ class GuestAlert extends ConsumerWidget {
 
     return StatefulBuilder(
       builder: (context, setState) {
+        Vendors currentVendor=Vendors(name: "", contact: "", isBooked: false, price: 0);
+        Guests currentGuest=Guests(guestName: "", contact: "", invited: false, membersNo: 0);
+
         if(isUpdate) {
           if (isVendor) {
-            Vendors currentVendor = eventBox.getAt(eventIndex)!
+             currentVendor = eventBox.getAt(eventIndex)!
                 .eventVendors[itemIndex!];
             nameController.text = currentVendor.name!;
             contactController.text = currentVendor.contact!;
@@ -418,7 +419,7 @@ class GuestAlert extends ConsumerWidget {
             isInvited = currentVendor.isBooked!;
           }
           else{
-            Guests currentGuest=eventBox.getAt(eventIndex)!.eventGuests[itemIndex!];
+             currentGuest=eventBox.getAt(eventIndex)!.eventGuests[itemIndex!];
             nameController.text= currentGuest.guestName;
             contactController.text= currentGuest.contact;
             membersController.text= currentGuest.membersNo.toString();
@@ -478,7 +479,13 @@ class GuestAlert extends ConsumerWidget {
                     onChanged: (bool? value) {
                       setState(() {
                         isInvited = value!;
+                        if(isVendor)
+                          provider.updateVendors(eventIndex, itemIndex!, currentVendor.name!, currentVendor.price!, isInvited, currentVendor.contact!);
+                        else
+                          provider.updateGuest(eventIndex, itemIndex!, currentGuest.guestName, currentGuest.membersNo, isInvited, currentGuest.contact);
+
                       });
+
                     },
                   ),
                   title: const Text("Invited"),
@@ -519,84 +526,128 @@ class GuestAlert extends ConsumerWidget {
     );
   }
   }
+class CommonFilledWindow extends ConsumerWidget {
+  final Event thisEvent;
+  final int eventIndex;
+  final bool isGuest;
+  const CommonFilledWindow({super.key, required this.thisEvent, required this.isGuest,required this.eventIndex,});
 
-// void guestAlert(BuildContext context){
-//   TextEditingController nameController = TextEditingController();
-//   TextEditingController contactController = TextEditingController();
-//   TextEditingController membersController = TextEditingController();
-//   bool isInvited = false;
-//   showDialog(
-//     context: context,
-//     builder: (BuildContext context) {
-//       return StatefulBuilder(
-//         builder: (context, setState) {
-//           return AlertDialog(
-//             title: SizedBox(
-//               width: 250,
-//               child: Column(
-//                 children: [
-//                   TextField(
-//                     controller: nameController,
-//                     decoration: InputDecoration(
-//                       hintText: "Name",
-//                       border: OutlineInputBorder(
-//                         borderRadius: BorderRadius.circular(3),
-//                         borderSide: const BorderSide(style: BorderStyle.solid, width: 1),
-//                       ),
-//                     ),
-//                   ),
-//                   const SizedBox(height: 20),
-//                   TextField(
-//                     controller: contactController,
-//                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-//                     decoration: InputDecoration(
-//                       hintText: "Contact No",
-//                       border: OutlineInputBorder(
-//                         borderRadius: BorderRadius.circular(3),
-//                         borderSide: const BorderSide(style: BorderStyle.solid, width: 1),
-//                       ),
-//                     ),
-//                   ),
-//                   const SizedBox(height: 20),
-//                   TextField(
-//                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-//                     controller: membersController,
-//                     decoration: InputDecoration(
-//                       hintText: "No of Members",
-//                       border: OutlineInputBorder(
-//                         borderRadius: BorderRadius.circular(3),
-//                         borderSide: const BorderSide(style: BorderStyle.solid, width: 1),
-//                       ),
-//                     ),
-//                   ),
-//                   const SizedBox(height: 20),
-//                   ListTile(
-//                     shape: RoundedRectangleBorder(
-//                         borderRadius: BorderRadius.circular(5)
-//                     ),
-//                     tileColor: dusty_rose,
-//                     trailing: Checkbox(
-//                       value: isInvited,
-//                       onChanged: (bool? value) {
-//                         setState(() {
-//                           isInvited = value!;
-//                         });
-//                       },
-//                     ),
-//                     title: const Text("Invited"),
-//                   ),
-//                 ],
-//               ),
-//             ),
-//             content: ElevatedButton(
-//               onPressed: () {
-//                 Navigator.pop(context);
-//               },
-//               child: const Text("Add"),
-//             ),
-//           );
-//         },
-//       );
-//     },
-//   );
-// }
+  @override
+  Widget build(BuildContext context,WidgetRef ref) {
+    final provider = ref.watch(stateProvider);
+    double widthDevice = MediaQuery.of(context).size.width;
+    bool? isInvited=null;
+    return  Column(
+      children: [Container(
+        alignment: Alignment.center,
+        height:50,
+        width: widthDevice,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(35),
+        ),
+        child: FrenchCannon(text: "Total Guests: ${thisEvent!.guestsCount}"),
+      ),
+        Container(
+          height: 520,
+          width: widthDevice/1.05,
+          decoration: BoxDecoration(
+              border: Border.all(style: BorderStyle.solid,color: dark_dusty_rose,width: 2),
+              borderRadius: BorderRadius.circular(5)
+          ),
+          child: ListView.builder(
+            itemCount: isGuest?thisEvent!.eventGuests.length:thisEvent!.eventVendors.length,
+            itemBuilder: (context, index) {
+              late Guests guest;
+              late Vendors vendor;
+              if (isGuest)
+                guest= thisEvent!.eventGuests[index];
+              else
+                 vendor = thisEvent!.eventVendors[index];
+
+              return Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: GestureDetector(
+                    onTap: (){
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          if (isGuest)
+                          return GuestAlert(isUpdate: true, eventIndex: eventIndex,itemIndex: index,isVendor: false,);
+                          else
+                            return GuestAlert(eventIndex: eventIndex, isUpdate: true, itemIndex: index, isVendor: true);
+                        },
+                      );
+                    },
+                    child:    Container(
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: light_dusty_rose,
+                        borderRadius: BorderRadius.circular(35),
+                      ),
+                      child:      ListTile(
+                        trailing: RemoveButton(onPressed: (){
+                          if (isGuest)
+                            provider.removeGuest(eventIndex, index);
+                          else
+                            provider.removeVendor(eventIndex, index);
+
+
+                        },),
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(width: 20,),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                FrenchCannon(text: isGuest?'Name:':"Vendor",size: 13.0,),
+                                FrenchCannon(text: 'Contact:',size: 13.0),
+                                FrenchCannon(text: isGuest?'No of Members:':"Price",size: 13.0),
+                                FrenchCannon(text: isGuest?'Invitation:':"Booked",size: 13.0),
+                              ],
+                            ),
+                            const SizedBox(width: 20,),
+
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                FrenchCannon(text: isGuest?guest.guestName:vendor.name,size: 13.0),
+                                FrenchCannon(text: isGuest?guest.contact:vendor.contact,size: 13.0),
+                                FrenchCannon(text: isGuest?'${guest.membersNo}':'${vendor.price}',size: 13.0),
+                                StatefulBuilder(builder: (context,setState){
+                                  return Checkbox(
+                                    value: isGuest?thisEvent!.eventGuests[index].invited:thisEvent!.eventVendors[index].isBooked,
+                                    onChanged: (bool? value) {
+                                      setState(() {
+                                        isInvited = value!;
+                                        if (isGuest)
+                                          provider.updateGuest(eventIndex, index, thisEvent!.eventGuests[index].guestName, thisEvent!.eventGuests[index].membersNo, isInvited!, thisEvent!.eventGuests[index].contact);
+                                        else
+                                          provider.updateVendors(eventIndex, index, thisEvent.eventVendors[index].name!, thisEvent.eventVendors[index].price!, isInvited!, thisEvent.eventVendors[index].contact!);
+
+                                      });
+                                    },
+                                  );
+
+                                })
+
+                                // FrenchCannon(text: guest.invited?'Invited':"Not Invited",size: 13.0),
+
+                              ],
+                            ),
+                          ],
+                        ),
+                      )  ,
+                    )
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );;
+  }
+}
+

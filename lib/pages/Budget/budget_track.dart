@@ -128,29 +128,31 @@ class BudgetTrack extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Container(
-                      height: 30,
+                      height: 50,
                       width: deviceWidth,
                       color: dusty_rose,
-                      child: Center(child: FrenchCannon(
-                        text: "Budget: ${thisEvent.eventBudget.budget
-                            .toString()}",
-                        size: 15.0,
-                        weight: FontWeight.bold,color: Colors.green,)),
-                    ),
-                    Container(
-                        width: deviceWidth,
-                        height: 60,
-                        color: dusty_rose,
-                        child: Center(child: FrenchCannon(
-                          text: "Budget left(Vendors included): ${provider
-                              .calcBudgetLeft(eventIndex).toString()}",
-                          size: 15.0,
-                          weight: FontWeight.bold,color: Colors.orange,))),
+                      child: Center(child: RichText(
+                        textAlign: TextAlign.center,
+                          text: TextSpan(children: [
+                        TextSpan(text: "Budget: ${thisEvent.eventBudget.budget.toString()}\n\n",style: TextStyle(fontFamily: "FrenchCannon",color: Colors.green,fontSize: 15.0,),),
+                        TextSpan(text: "Budget left(Vendors included): ${provider
+                            .calcBudgetLeft(eventIndex).toString()}",style: TextStyle(fontFamily: "FrenchCannon",color: Colors.orange,fontSize: 15.0))
+
+
+                      ]))
+
+                      // FrenchCannon(
+                      //   text: "Budget: ${thisEvent.eventBudget.budget
+                      //       .toString()}",
+                      //   size: 15.0,
+                      //   weight: FontWeight.bold,color: Colors.green,)),
+                      )),
+
                     Container(
                       decoration: BoxDecoration(
                           color: light_dusty_rose,
                           border: Border.all(color: Colors.black, width: 2)),
-                      height: 450, // Specify a height
+                      height: 510, // Specify a height
                       child: ListView.builder(
                         shrinkWrap: false,
                         itemCount: thisEvent!.eventExpenses.length,
@@ -199,7 +201,7 @@ class BudgetTrack extends ConsumerWidget {
               }
             },
           ),
-          SizedBox(height: 10,),
+          SizedBox(height: 30,),
           Container(
             height: 40,
             child: Row(
