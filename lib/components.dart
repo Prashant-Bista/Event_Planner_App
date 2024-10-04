@@ -406,9 +406,8 @@ class GuestAlert extends ConsumerWidget {
 
     return StatefulBuilder(
       builder: (context, setState) {
-        Vendors currentVendor=Vendors(name: "", contact: "", isBooked: false, price: 0);
-        Guests currentGuest=Guests(guestName: "", contact: "", invited: false, membersNo: 0);
-
+        late Vendors currentVendor;
+        late Guests currentGuest;
         if(isUpdate) {
           if (isVendor) {
              currentVendor = eventBox.getAt(eventIndex)!
@@ -477,17 +476,23 @@ class GuestAlert extends ConsumerWidget {
                   trailing: Checkbox(
                     value: isInvited,
                     onChanged: (bool? value) {
-                      setState(() {
-                        isInvited = value!;
-                        if(isVendor)
-                          provider.updateVendors(eventIndex, itemIndex!, currentVendor.name!, currentVendor.price!, isInvited, currentVendor.contact!);
-                        else
-                          provider.updateGuest(eventIndex, itemIndex!, currentGuest.guestName, currentGuest.membersNo, isInvited, currentGuest.contact);
-
-                      });
-
-                    },
-                  ),
+                        setState((){
+        isInvited = value!;
+        if (isUpdate){
+        if (isVendor)
+        provider.updateVendors(
+        eventIndex, itemIndex!, currentVendor.name!,
+        currentVendor.price!, isInvited,
+        currentVendor.contact!);
+        else
+        provider.updateGuest(
+        eventIndex, itemIndex!, currentGuest.guestName,
+        currentGuest.membersNo, isInvited,
+        currentGuest.contact);
+        }
+                        }
+        );}
+                     ),
                   title: const Text("Invited"),
                 ),
               ],
@@ -510,6 +515,7 @@ class GuestAlert extends ConsumerWidget {
                 }
                 else {
                   if (isVendor) {
+
                     provider.addVendors(eventIndex, nameController.text, contactController.text, isInvited, int.parse(membersController.text));
                   }
                     else
@@ -545,7 +551,7 @@ class CommonFilledWindow extends ConsumerWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(35),
         ),
-        child: FrenchCannon(text: "Total Guests: ${thisEvent!.guestsCount}"),
+        child: isGuest?FrenchCannon(text: "Total Guests: ${thisEvent!.guestsCount}"):FrenchCannon(text: "Total Vendors: ${thisEvent!.vendorsCount}"),
       ),
         Container(
           height: 520,
