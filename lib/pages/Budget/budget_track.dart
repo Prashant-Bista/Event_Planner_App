@@ -128,7 +128,7 @@ class BudgetTrack extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Container(
-                      height: 50,
+                      height: 100,
                       width: deviceWidth,
                       color: dusty_rose,
                       child: Center(child: RichText(
@@ -136,7 +136,8 @@ class BudgetTrack extends ConsumerWidget {
                           text: TextSpan(children: [
                         TextSpan(text: "Budget: ${thisEvent.eventBudget.budget.toString()}\n\n",style: TextStyle(fontFamily: "FrenchCannon",color: Colors.green,fontSize: 15.0,),),
                         TextSpan(text: "Budget left(Vendors included): ${provider
-                            .calcBudgetLeft(eventIndex).toString()}",style: TextStyle(fontFamily: "FrenchCannon",color: Colors.orange,fontSize: 15.0))
+                            .calcBudgetLeft(eventIndex).toString()}\n\n",style: TextStyle(fontFamily: "FrenchCannon",color: Colors.orange,fontSize: 15.0)),
+                            TextSpan(text:"Predicted Budget:",style: TextStyle(color:mainColor,fontFamily: "FrenchCannon")),
 
 
                       ]))
@@ -201,7 +202,7 @@ class BudgetTrack extends ConsumerWidget {
               }
             },
           ),
-          SizedBox(height: 30,),
+          // SizedBox(height: 30,),
           Container(
             height: 40,
             child: Row(

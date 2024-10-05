@@ -1,6 +1,7 @@
 import 'package:event_planner_app/pages/Budget/budget_track.dart';
 import 'package:event_planner_app/pages/Events/event_page.dart';
 import 'package:event_planner_app/pages/Guests/add_guests.dart';
+import 'package:event_planner_app/pages/Schedule/schedule_view.dart';
 import 'package:event_planner_app/pages/Todo/todo_view.dart';
 import 'package:event_planner_app/pages/Login/login.dart';
 import 'package:event_planner_app/pages/Vendors/vendors_view.dart';
@@ -40,6 +41,10 @@ class Routes{
     if (settings.name=='/vendors'){
       final int args = int.parse(settings.arguments.toString());
       return MaterialPageRoute(builder: (_)=>VendorsView(eventIndex: args));
+    }
+    if (settings.name=='/schedule'){
+      final int args = int.parse(settings.arguments.toString());
+      return MaterialPageRoute(builder: (_)=>ScheduleView(eventIndex: args));
     }
     return null;
   }

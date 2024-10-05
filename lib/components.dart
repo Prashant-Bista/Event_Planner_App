@@ -1,14 +1,15 @@
 
+import 'package:event_planner_app/pages/Budget/budget.dart';
 import 'package:event_planner_app/pages/Events/event.dart';
 import 'package:event_planner_app/pages/Guests/guests.dart';
 import 'package:event_planner_app/pages/Vendors/vendors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hive/hive.dart';
 import 'package:event_planner_app/business_logic.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 
 Color lightPurple= const Color(0xff45267ff);
 TextEditingController valueController =TextEditingController();
@@ -56,13 +57,18 @@ class FrenchCannon extends StatelessWidget {
 //     ;
 //   }
 // }
-class EventTile extends StatelessWidget {
+class EventTile extends ConsumerWidget {
+  final bool isHome;
   final Event thisEvent;
-  const EventTile({super.key, required this.thisEvent});
+  final VoidCallback onPressed;
+  final bool isUpdate;
+  final bool isSchedule;
+  const EventTile({super.key, required this.thisEvent,required this.isHome,required this.onPressed,required this.isUpdate,required this.isSchedule});
 
   @override
-  Widget build(BuildContext context) {
-    return           ListTile(
+  Widget build(BuildContext context,WidgetRef ref) {
+    final provider=ref.watch(stateProvider);
+    return ListTile(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(25)
       ),
@@ -70,13 +76,21 @@ class EventTile extends StatelessWidget {
       // trailing: ,
       title: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          children: [BulletoKilla(text: thisEvent!.eventName,),
-            FrenchCannon(text: "On :   ${thisEvent!.eventDate!.year}/${thisEvent!.eventDate!.month}/${thisEvent!.eventDate!.day}        At ${thisEvent!.eventDate!.hour}:${thisEvent!.eventDate!.minute<10?"0${thisEvent!.eventDate!.minute}":thisEvent!.eventDate!.minute}",size: 13.0,)
+          children: [isSchedule?FrenchCannon(text: "Schedule",):BulletoKilla(text: thisEvent!.eventName,),
+            FrenchCannon(text: isSchedule?"Time remaining: ${provider.timeRemaining(thisEvent.eventDate!)}":"On :   ${thisEvent!.eventDate!.year}/${thisEvent!.eventDate!.month}/${thisEvent!.eventDate!.day}        At ${thisEvent!.eventDate!.hour}:${thisEvent!.eventDate!.minute<10?"0${thisEvent!.eventDate!.minute}":thisEvent!.eventDate!.minute}",size: 13.0,)
           ]
       ),
-    );
+      trailing: isHome?null:RemoveButton(onPressed: (){
+       if (isSchedule){}
+       else{
+
+       }
+        ;}),
+      )
+         ;
+      }
   }
-}
+
 
 class BulletoKilla extends StatelessWidget {
   final text;
@@ -654,6 +668,134 @@ class CommonFilledWindow extends ConsumerWidget {
         ),
       ],
     );;
+  }
+}
+
+class EventAlert extends ConsumerWidget {
+  late int eventIndex;
+  late bool isSchedule;
+  late bool isUpdate;
+  EventAlert ( {super.key, required this.eventIndex,required this.isSchedule,required this.isUpdate});
+  @override
+  Widget build(BuildContext context,WidgetRef ref) {
+    double deviceWidth=MediaQuery.of(context).size.width;
+    final provider = ref.watch(stateProvider);
+    Box<Event> eventBox = Hive.box("event");
+    Event? thisEvent = eventBox.getAt(eventIndex);
+    TextEditingController nameController = TextEditingController();
+    bool isInvited = false;
+    DateTime? picked;
+    return StatefulBuilder(
+      builder: (BuildContext context,StateSetter setState){
+        return AlertDialog(
+          title: SizedBox(
+            width: 500,
+            child: Column(
+              children: [
+                TextField(
+                  textAlign: TextAlign.center,
+                  focusNode: FocusNode(),
+                  controller: nameController,
+                  decoration: InputDecoration(
+                      hintStyle: const TextStyle(fontSize: 13,fontFamily: "FrenchCannon"),
+                      hintText:  isSchedule?"Task":"Name of Event",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(3),
+                          borderSide: BorderSide(style: BorderStyle.solid,width: 1,color: lightPurple)
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(3),
+                          borderSide: BorderSide(style: BorderStyle.solid,width: 1,color: lightPurple)
+                      )
+                  ),
+                ),
+                const SizedBox(height: 10,),
+                FrenchCannon(text: isSchedule?"Deadline: ":"Date Time",size: 13.0,weight: FontWeight.bold,),
+                const SizedBox(height: 10,),
+
+                SizedBox(
+                  height: 30,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+
+                      Container(
+                          width: deviceWidth/2.1,
+                          decoration:BoxDecoration(
+                              border: Border.all(width: 1,color: lightPurple)
+                          ),child: Center(child: FrenchCannon(size:13.0,text: picked==null?"Not selected": DateFormat('yyyy/MM/dd/hh:mm a').format(picked!),))),
+                      IconButton(
+                          padding: EdgeInsets.zero,
+                          icon: const Icon(Icons.date_range,color:Color(0xff45267ff),size: 25,),
+                          onPressed: () async{
+                            final DateTime? selectedDate =  await showDatePicker(context: context, firstDate: DateTime(2000,1,1), lastDate: DateTime(2100,1,1),initialDate: DateTime.now(),);
+                            if (selectedDate==null){
+                              return;
+                            }
+                            final TimeOfDay? selectedTime =  await showTimePicker(context: context, initialTime: TimeOfDay.now() );
+                            if (selectedTime==null){
+                              return;
+                            }
+                            setState(() {
+                              picked =DateTime(selectedDate.year,selectedDate.month,selectedDate.day,selectedTime.hour,selectedTime.minute);
+                            });
+                          }
+                      ),
+                    ],
+                  ),
+                )
+
+
+              ],
+            ),
+          ),
+          content: ElevatedButton(onPressed: (){
+            if(isUpdate){
+              if (isSchedule){}
+
+            }
+            else{
+              if (isSchedule){}
+              else{
+                eventBox.add(Event(eventBudget:Budget(budget: 0, isSet: false), eventExpenses: [], eventGuests: [], eventTasks: [], eventName: nameController.text, eventDate: picked, eventVendors: [], vendorsCount: 0, guestsCount: 0));
+              }
+            }
+            Navigator.pop(context);
+          }, child: isUpdate?FrenchCannon(text: "Update"): FrenchCannon(text: "Add")),
+        );},
+    );
+  }
+}
+class EventWindow extends ConsumerWidget {
+  late int eventIndex;
+  late bool isSchedule;
+  late Box box;
+  late bool isUpdate;
+  EventWindow({super.key,required this.isSchedule,required this.eventIndex,required this.box,required this.isUpdate});
+
+  @override
+  Widget build(BuildContext context,WidgetRef ref) {
+    Event? thisEvent = box.getAt(eventIndex);
+    return Column(
+      children: [
+        SizedBox(height: 20,),
+        GestureDetector(
+          onTap: (){
+            if (isUpdate){
+              if (isSchedule){
+                showDialog(context: context, builder: (context){
+                  return EventAlert(eventIndex: eventIndex, isSchedule: isSchedule, isUpdate: isUpdate);
+                });
+              }
+            }
+            else{
+              Navigator.of(context).pushNamed('/home',arguments: eventIndex);
+            }
+          },
+          child: EventTile(thisEvent: thisEvent!,isHome:false,onPressed: (){},isUpdate: isUpdate, isSchedule:isSchedule),),
+      ],
+    );
   }
 }
 

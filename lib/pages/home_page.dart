@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
             SizedBox(
               height: 15,
             ),
-        EventTile( thisEvent: thisEvent!),
+        EventTile( thisEvent: thisEvent!,isHome: true,onPressed: (){},isUpdate: false,isSchedule: false,),
         //   ListTile(
        Padding(
           padding: const EdgeInsets.only(top: 12.0),
