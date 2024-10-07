@@ -20,7 +20,6 @@ class _EventPageState extends State<EventPage> {
   Box<Event> event = Hive.box<Event>('event');
   @override
   Widget build(BuildContext context) {
-    double deveiceWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: dusty_rose,
       appBar: AppBar(
@@ -36,9 +35,7 @@ class _EventPageState extends State<EventPage> {
         }
         else{
           return ListView.builder(itemCount:box.length,itemBuilder: (context,index){
-            Event event = box.getAt(index);
-            DateTime? eventDate = event.eventDate;
-            return EventWindow(isSchedule: false, eventIndex: index, box: box,isUpdate: false,);}
+            return EventWindow(isSchedule: false, eventIndex: index, box: box,isUpdate: false,index: index,);}
           );
         }
       }),
@@ -46,7 +43,7 @@ class _EventPageState extends State<EventPage> {
 
           picked=null;
           showDialog(context: context, builder: (BuildContext context){
-            return EventAlert(eventIndex: 0, isSchedule: false, isUpdate: false);
+            return EventAlert(eventIndex: 0, isSchedule: false, isUpdate: false,itemIndex: 0,);
           });
 
       }, child: const Icon(Icons.add),),

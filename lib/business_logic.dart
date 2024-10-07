@@ -2,6 +2,7 @@
 import 'package:event_planner_app/pages/Budget/budget.dart';
 import 'package:event_planner_app/pages/Events/event.dart';
 import 'package:event_planner_app/pages/Guests/guests.dart';
+import 'package:event_planner_app/pages/Schedule/schedule.dart';
 import 'package:event_planner_app/pages/Todo/tasks.dart';
 import 'package:event_planner_app/pages/Vendors/vendors.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +13,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final stateProvider = ChangeNotifierProvider.autoDispose<BusinessLogic>((ref)=>BusinessLogic());
 class BusinessLogic extends ChangeNotifier {
+  VoidCallback? removeEvent(int eventIndex){
+    Box<Event> eventBox = Hive.box<Event>('event');
+    eventBox.deleteAt(eventIndex);
+    notifyListeners();
+  }
   VoidCallback? AddBudget(int eventIndex, double value) {
     Box<Event> eventBox = Hive.box<Event>('event');
+
     Event? thisEvent = eventBox.getAt(eventIndex);
     Event? updatedEvent;
     Budget thisBudget = Budget(budget: value, isSet: true);
@@ -25,7 +32,9 @@ class BusinessLogic extends ChangeNotifier {
         eventBudget: thisBudget,
         eventVendors: thisEvent.eventVendors,
         vendorsCount: thisEvent.eventVendors.length,
-        guestsCount: thisEvent.guestsCount
+        guestsCount: thisEvent.guestsCount,
+        eventSchedule:thisEvent.eventSchedule
+
     );
     eventBox.putAt(eventIndex, updatedEvent);
     notifyListeners();
@@ -60,7 +69,9 @@ class BusinessLogic extends ChangeNotifier {
         eventTasks: updated,
         eventVendors: thisEvent.eventVendors,
         vendorsCount: thisEvent.eventVendors.length,
-        guestsCount: thisEvent.guestsCount));
+        guestsCount: thisEvent.guestsCount,
+        eventSchedule:thisEvent.eventSchedule,
+    ));
     notifyListeners();
     return null;
   }
@@ -194,7 +205,9 @@ class BusinessLogic extends ChangeNotifier {
         eventDate: thisEvent.eventDate,
         eventVendors: thisEvent.eventVendors,
         vendorsCount: thisEvent.eventVendors.length,
-        guestsCount: totalGuests));
+        guestsCount: totalGuests,
+        eventSchedule:thisEvent.eventSchedule
+    ));
   }
 
   void counterVendor(int eventIndex) {
@@ -213,7 +226,8 @@ class BusinessLogic extends ChangeNotifier {
         eventDate: thisEvent.eventDate,
         eventVendors: thisEvent.eventVendors,
         vendorsCount: thisEvent.eventVendors.length,
-        guestsCount: totalGuests));
+        guestsCount: totalGuests,
+    eventSchedule: thisEvent.eventSchedule));
   }
 
   VoidCallback? removeVendor(int eventIndex, int index) {
@@ -226,17 +240,26 @@ class BusinessLogic extends ChangeNotifier {
     return null;
   }
 
+  VoidCallback? updateSchedule(int itemIndex,int eventIndex,String title,DateTime? picked){
+    Box<Event> eventBox = Hive.box<Event>('event');
+    Event? thisEvent = eventBox.getAt(eventIndex);
+    thisEvent!.eventSchedule.removeAt(itemIndex);
+    thisEvent!.eventSchedule.insert(itemIndex, Schedule(title: title, completeWithin: picked!));
+    notifyListeners();
+  }
+  VoidCallback? removeSchedule(int itemIndex,Event? thisEvent){
+    thisEvent!.eventSchedule.removeAt(itemIndex);
+    notifyListeners();
+  }
+  VoidCallback? addSchedule(int eventIndex,String title,DateTime? picked){
+    Box<Event> eventBox = Hive.box<Event>('event');
+    Event? thisEvent = eventBox.getAt(eventIndex);
+    thisEvent!.eventSchedule.add(Schedule(title: title, completeWithin: picked!));
+    notifyListeners();
+  }
+
   Duration timeRemaining(DateTime setDateTime) {
     Duration diff = DateTime.now().difference(setDateTime);
-//     if (diff.inDays!=0) {
-//       return diff.inDays;
-//       if (diff.inHours != 0) {
-//         if (diff.inMinutes != 0) {
-//           return diff
-//
-// }
-// }
-// }
     print("difference${diff.inMinutes}");
     return diff;
   }

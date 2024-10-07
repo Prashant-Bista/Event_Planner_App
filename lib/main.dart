@@ -4,6 +4,7 @@ import 'package:event_planner_app/pages/Budget/budget.dart';
 import 'package:event_planner_app/pages/Events/event.dart';
 import 'package:event_planner_app/pages/Events/event_page.dart';
 import 'package:event_planner_app/pages/Guests/guests.dart';
+import 'package:event_planner_app/pages/Schedule/schedule.dart';
 import 'package:event_planner_app/pages/Todo/tasks.dart';
 import 'package:event_planner_app/pages/Vendors/vendors.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,7 @@ void main() async{
   Hive.registerAdapter(EventAdapter());
   Hive.registerAdapter(ExpensesAdapter());
   Hive.registerAdapter(VendorsAdapter());
+  Hive.registerAdapter(ScheduleAdapter());
 
   if (!Hive.isBoxOpen('todo')) {
     await Hive.openBox<Tasks>('todo');
@@ -44,6 +46,9 @@ void main() async{
   }
   if (!Hive.isBoxOpen('vendors')) {
     await Hive.openBox<Vendors>('vendors');
+  }
+  if (!Hive.isBoxOpen('schedule')) {
+    await Hive.openBox<Schedule>('schedule');
   }
   runApp(const ProviderScope(child: MyApp()) );
 }

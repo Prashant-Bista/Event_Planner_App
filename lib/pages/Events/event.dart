@@ -1,3 +1,4 @@
+import 'package:event_planner_app/pages/Schedule/schedule.dart';
 import 'package:hive/hive.dart';
 import '../Budget/budget.dart';
 import '../Guests/guests.dart';
@@ -6,7 +7,7 @@ import '../Vendors/vendors.dart';
 
 part 'event.g.dart';
 
-@HiveType(typeId: 5)
+@HiveType(typeId: 6)
 class Event {
   @HiveField(0)
   final Budget eventBudget;
@@ -35,6 +36,9 @@ class Event {
   @HiveField(8)
   final int guestsCount;
 
+  @HiveField(9)
+  final List<Schedule> eventSchedule;
+
   Event({
    required this.eventBudget,
     required this.eventExpenses,
@@ -44,7 +48,9 @@ class Event {
     required this.eventDate,
     required this.eventVendors,
     required this.vendorsCount,
-    required this.guestsCount
+    required this.guestsCount,
+    required this.eventSchedule
+
   });
 }
 

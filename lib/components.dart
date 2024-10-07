@@ -21,19 +21,7 @@ Color dark_dusty_rose = const Color.fromRGBO(244, 175, 168, 1.0);
 Color light_dusty_rose = const Color.fromRGBO(242, 223, 223, 1.0);
 
 Color soft_blue_grey = const Color.fromRGBO(206, 230, 242, 1);
-// class FrenchCannon extends StatelessWidget {
-//   final text;
-//   final size;
-//   final weight;
-//   final color;
-//   const FrenchCannon({super.key, @required this.text,  this.size, this.weight,  this.color});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return   Text(text,style: GoogleFonts.FrenchCannon(fontSize: size,fontWeight: weight,color: color),)
-//     ;
-//   }
-// }
+
 class FrenchCannon extends StatelessWidget {
   final text;
   final size;
@@ -58,17 +46,21 @@ class FrenchCannon extends StatelessWidget {
 //   }
 // }
 class EventTile extends ConsumerWidget {
+  final int index;
   final bool isHome;
-  final Event thisEvent;
+  final int eventIndex;
   final VoidCallback onPressed;
   final bool isUpdate;
   final bool isSchedule;
-  const EventTile({super.key, required this.thisEvent,required this.isHome,required this.onPressed,required this.isUpdate,required this.isSchedule});
+  const EventTile({super.key,required this.index, required this.eventIndex,required this.isHome,required this.onPressed,required this.isUpdate,required this.isSchedule});
 
   @override
   Widget build(BuildContext context,WidgetRef ref) {
     final provider=ref.watch(stateProvider);
-    return ListTile(
+    Box<Event> eventBox = Hive.box('event');
+    Event? thisEvent = eventBox.getAt(eventIndex);
+    return
+     ListTile(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(25)
       ),
@@ -76,16 +68,17 @@ class EventTile extends ConsumerWidget {
       // trailing: ,
       title: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          children: [isSchedule?FrenchCannon(text: "Schedule",):BulletoKilla(text: thisEvent!.eventName,),
+          children: [isSchedule?FrenchCannon(text:thisEvent!.eventSchedule[index].title ,):BulletoKilla(text: thisEvent!.eventName,),
             FrenchCannon(text: isSchedule?"Time remaining: ${provider.timeRemaining(thisEvent.eventDate!)}":"On :   ${thisEvent!.eventDate!.year}/${thisEvent!.eventDate!.month}/${thisEvent!.eventDate!.day}        At ${thisEvent!.eventDate!.hour}:${thisEvent!.eventDate!.minute<10?"0${thisEvent!.eventDate!.minute}":thisEvent!.eventDate!.minute}",size: 13.0,)
           ]
       ),
       trailing: isHome?null:RemoveButton(onPressed: (){
-       if (isSchedule){}
-       else{
-
+       if (isSchedule){
+         provider.removeSchedule(index, thisEvent);
        }
-        ;}),
+       else{
+provider.removeEvent(eventIndex);
+       }}),
       )
          ;
       }
@@ -675,16 +668,22 @@ class EventAlert extends ConsumerWidget {
   late int eventIndex;
   late bool isSchedule;
   late bool isUpdate;
-  EventAlert ( {super.key, required this.eventIndex,required this.isSchedule,required this.isUpdate});
+  late int itemIndex;
+  EventAlert ( {super.key, required this.eventIndex,required this.isSchedule,required this.isUpdate,required this.itemIndex});
   @override
   Widget build(BuildContext context,WidgetRef ref) {
-    double deviceWidth=MediaQuery.of(context).size.width;
     final provider = ref.watch(stateProvider);
+    double deviceWidth=MediaQuery.of(context).size.width;
     Box<Event> eventBox = Hive.box("event");
     Event? thisEvent = eventBox.getAt(eventIndex);
     TextEditingController nameController = TextEditingController();
-    bool isInvited = false;
     DateTime? picked;
+    if(isUpdate) {
+      if (isSchedule) {
+        nameController.text = thisEvent!.eventSchedule[itemIndex].title;
+        picked = thisEvent!.eventSchedule[itemIndex].completeWithin;
+      }
+    }
     return StatefulBuilder(
       builder: (BuildContext context,StateSetter setState){
         return AlertDialog(
@@ -752,13 +751,16 @@ class EventAlert extends ConsumerWidget {
           ),
           content: ElevatedButton(onPressed: (){
             if(isUpdate){
-              if (isSchedule){}
-
+              if (isSchedule){
+                provider.updateSchedule(itemIndex, eventIndex, nameController.text, picked);
+              }
             }
             else{
-              if (isSchedule){}
+              if (isSchedule){
+                provider.addSchedule( eventIndex, nameController.text, picked);
+              }
               else{
-                eventBox.add(Event(eventBudget:Budget(budget: 0, isSet: false), eventExpenses: [], eventGuests: [], eventTasks: [], eventName: nameController.text, eventDate: picked, eventVendors: [], vendorsCount: 0, guestsCount: 0));
+                eventBox.add(Event(eventBudget:Budget(budget: 0, isSet: false), eventExpenses: [], eventGuests: [], eventTasks: [], eventName: nameController.text, eventDate: picked, eventVendors: [], vendorsCount: 0, guestsCount: 0,eventSchedule: []));
               }
             }
             Navigator.pop(context);
@@ -767,16 +769,18 @@ class EventAlert extends ConsumerWidget {
     );
   }
 }
+
 class EventWindow extends ConsumerWidget {
   late int eventIndex;
+  late int? index;
+
   late bool isSchedule;
   late Box box;
   late bool isUpdate;
-  EventWindow({super.key,required this.isSchedule,required this.eventIndex,required this.box,required this.isUpdate});
+  EventWindow({super.key,required this.isSchedule,required this.index,required this.eventIndex,required this.box,required this.isUpdate});
 
   @override
   Widget build(BuildContext context,WidgetRef ref) {
-    Event? thisEvent = box.getAt(eventIndex);
     return Column(
       children: [
         SizedBox(height: 20,),
@@ -785,7 +789,8 @@ class EventWindow extends ConsumerWidget {
             if (isUpdate){
               if (isSchedule){
                 showDialog(context: context, builder: (context){
-                  return EventAlert(eventIndex: eventIndex, isSchedule: isSchedule, isUpdate: isUpdate);
+                  return
+                    EventAlert(eventIndex: eventIndex, isSchedule: isSchedule, isUpdate: isUpdate,itemIndex: index!,);
                 });
               }
             }
@@ -793,7 +798,7 @@ class EventWindow extends ConsumerWidget {
               Navigator.of(context).pushNamed('/home',arguments: eventIndex);
             }
           },
-          child: EventTile(thisEvent: thisEvent!,isHome:false,onPressed: (){},isUpdate: isUpdate, isSchedule:isSchedule),),
+          child: EventTile(eventIndex: eventIndex,isHome:false,onPressed: (){},isUpdate: isUpdate, isSchedule:isSchedule,index:index! ),),
       ],
     );
   }
