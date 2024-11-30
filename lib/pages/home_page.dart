@@ -67,7 +67,10 @@ class _HomePageState extends State<HomePage> {
                               Navigator.of(context).pushNamed('/schedule',arguments: widget.eventIndex );
                   
                             },),
-                            HomeTile(height: tileHeight,width: tileWidth, tileIcon: CupertinoIcons.house_fill,tileName: "Venue",perform: (){},),
+                            HomeTile(height: tileHeight,width: tileWidth, tileIcon: CupertinoIcons.house_fill,tileName: "Venue",perform: (){
+                              Navigator.of(context).pushNamed('/venue' ,arguments: widget.eventIndex);
+
+                            },),
                             HomeTile(height: tileHeight,width: tileWidth, tileIcon: Icons.store_sharp,tileName: "Vendors",perform: (){
                               Navigator.of(context).pushNamed('/vendors',arguments: widget.eventIndex);
                             },),
@@ -75,7 +78,7 @@ class _HomePageState extends State<HomePage> {
                           ],
                     ),
                   ),
-                  Image.asset("assets/images/Eventium_nobg.png",height: 250,width:250,)
+                  Image.asset("assets/images/Eventium_nobg.png",height: 200,width:250,)
                 ],
               ),
 

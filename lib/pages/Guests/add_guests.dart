@@ -7,29 +7,19 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../components.dart';
 import '../Events/event.dart';
-import 'guests.dart';
 
 class AddGuests extends ConsumerWidget {
   final int eventIndex;
   const AddGuests({super.key, required this.eventIndex});
   @override
   Widget build(BuildContext context,WidgetRef ref) {
-    double widthDevice = MediaQuery.of(context).size.width;
     final provider = ref.watch(stateProvider);
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
-    TextEditingController nameController = TextEditingController();
-    TextEditingController contactController = TextEditingController();
-    TextEditingController membersController = TextEditingController();
-    bool isInvited = false;
     return Scaffold(
-      backgroundColor: dusty_rose,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: muave,
         title: const FrenchCannon(text: "Guest Management", color: Colors.white),
-        elevation: 20.0,
-        shadowColor: Colors.grey,
       ),
       body: ValueListenableBuilder(
         valueListenable:eventBox.listenable(), // Listen to the eventBox

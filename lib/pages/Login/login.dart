@@ -1,20 +1,26 @@
 import 'package:event_planner_app/components.dart';
+import 'package:event_planner_app/services/authentication_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:sign_button/constants.dart';
 import 'package:sign_button/create_button.dart';
 
-class Login extends StatelessWidget {
+class Login extends ConsumerWidget {
   const Login({super.key});
-
   @override
-  Widget build(BuildContext context) {
-    GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  Widget build(BuildContext context,WidgetRef ref) {
+    double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+    GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
+    FocusNode emailFocusNode = FocusNode();
+    FocusNode passwordFocusNode = FocusNode();
     double widthDevice = MediaQuery.of(context).size.width;
-    double heightDevice = MediaQuery.of(context).size.height;
-    String email;
-    String password;
+    final authProvider= ref.watch(authenticationProvider);
+    late String email;
+    late String password;
     bool remember=false;
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -27,12 +33,16 @@ class Login extends StatelessWidget {
             const SizedBox(height: 20.0,),
             const FrenchCannon(text: "Welcome!",size: 32.0,weight: FontWeight.bold,),
             const SizedBox(height: 20.0,),
-            Form(child: Container(
-
+            Form(
+                key:loginFormKey,
+                child: Container(
               child: Column(
                 children: [
-
-                  InputField(width: widthDevice/1.5, onSaved: (value){}, prefixIcon: const Icon(Icons.email,color: Colors.black,), isObscure: false, hinttext: "Enter your Email", validator: (value){
+                  InputField(
+                    focusNode:emailFocusNode,
+                      width: widthDevice/1.5, onSaved: (value){
+                        email=value;
+                  }, prefixIcon: const Icon(Icons.email,color: Colors.black,), isObscure: false, hinttext: "Enter your Email", validator: (value){
                     if (value.toString().isEmpty){
                       return "Email is required";
                     }
@@ -43,8 +53,10 @@ class Login extends StatelessWidget {
                       return null;
                   }),
                   const SizedBox(height: 20,),
-                  InputField(width: widthDevice/1.5, onSaved: (value){
-                    password=value.toString();
+                  InputField(
+                    focusNode: passwordFocusNode,
+                    width: widthDevice/1.5, onSaved: (value){
+                    password=value;
                   }, prefixIcon: const Icon(Icons.password,color: Colors.black,), isObscure: true, hinttext: "Enter your Password", validator: (value) {
                   if (value == null || value.isEmpty) {
                   return "Password cannot be empty";
@@ -64,8 +76,8 @@ class Login extends StatelessWidget {
                  mainAxisAlignment: MainAxisAlignment.end,
                  crossAxisAlignment: CrossAxisAlignment.center,
                  children: [
-                   TextButton(onPressed: (){}, child:const FrenchCannon(text: "Forgot Password",color: Colors.blue,),
-                   ),
+                   // TextButton(onPressed: (){}, child:const FrenchCannon(text: "Forgot Password",color: Colors.blue,),
+                   // ),
                    SizedBox(width: widthDevice/6.0,)
                  ],
                ),
@@ -77,28 +89,15 @@ class Login extends StatelessWidget {
                      borderRadius: BorderRadius.circular(10.0),
                    ),
                    color: Colors.black,
-                   child:const FrenchCannon(text: "Sign In", size: 23.0,color: Colors.white,)
-                   ,
+                   child:const FrenchCannon(text: "Sign In", size: 23.0,color: Colors.white,),
                    onPressed: (){
-                   Navigator.of(context).pushNamed('/event');
 
+                     if(loginFormKey.currentState!.validate()){
+                       loginFormKey.currentState!.save();
+                       authProvider.loginWithEmailAndPassword(context,email, password);
+                       Navigator.of(context).pushNamed('/event');
+                     }
                    }),
-                  Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(width: widthDevice/6,),
-                  Checkbox(
-                    checkColor: Colors.grey,
-                  value: remember,
-                  onChanged: (bool? value) {
-               setState() {
-            remember = value!;
-                }}),
-                     SizedBox(width: 10.0),
-                     FrenchCannon(text: "Remember me on this device",color:Colors.white, size: 12.0,)
-                  ],
-                ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -129,11 +128,7 @@ class Login extends StatelessWidget {
                       FrenchCannon(text: "Don't have an account",)
                     ],
                   )
-                  
-
                     ],
-
-
               ),
             ))
           ],

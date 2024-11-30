@@ -19,16 +19,13 @@ class TodoView extends ConsumerWidget {
     Event? thisEvent = eventBox.getAt(eventIndex);
     TextEditingController titleController = TextEditingController();
     return Scaffold(
-      backgroundColor: dusty_rose,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: muave,
         title: const FrenchCannon(
           text: "Todo",
           color: Colors.white,
+          weight: FontWeight.bold,
         ),
-        elevation: 20.0,
-        shadowColor: Colors.grey,
       ),
       body: ValueListenableBuilder(
         valueListenable: eventBox.listenable(), // Listen to the eventBox

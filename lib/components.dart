@@ -3,6 +3,7 @@ import 'package:event_planner_app/pages/Budget/budget.dart';
 import 'package:event_planner_app/pages/Events/event.dart';
 import 'package:event_planner_app/pages/Guests/guests.dart';
 import 'package:event_planner_app/pages/Vendors/vendors.dart';
+import 'package:event_planner_app/pages/Venue/venue_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -31,20 +32,11 @@ class FrenchCannon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return   Text(text,style: TextStyle(fontFamily: "FrenchCannon",fontSize: size,color: color),)
+    return   Text(text,style: TextStyle(fontFamily: "FrenchCannon",fontSize: size,color: color,fontWeight: this.weight),)
     ;
   }
 }
-// class ScheduleFont extends StatelessWidget {
-//   final text;
-//   const ScheduleFont({super.key, @required this.text,});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return   Text(text,style: GoogleFonts.manrope(fontSize: 14),)
-//     ;
-//   }
-// }
+
 class EventTile extends ConsumerWidget {
   final int index;
   final bool isHome;
@@ -68,9 +60,14 @@ class EventTile extends ConsumerWidget {
       // trailing: ,
       title: Column(
           mainAxisAlignment: MainAxisAlignment.start,
-          children: [isSchedule?FrenchCannon(text:thisEvent!.eventSchedule[index].title ,):BulletoKilla(text: thisEvent!.eventName,),
-            FrenchCannon(text: isSchedule?"Time remaining: ${provider.timeRemaining(thisEvent.eventDate!)}":"On :   ${thisEvent!.eventDate!.year}/${thisEvent!.eventDate!.month}/${thisEvent!.eventDate!.day}        At ${thisEvent!.eventDate!.hour}:${thisEvent!.eventDate!.minute<10?"0${thisEvent!.eventDate!.minute}":thisEvent!.eventDate!.minute}",size: 13.0,)
-          ]
+          children: [ isSchedule
+      ? FrenchCannon(text: thisEvent!.eventSchedule[index].title)
+             :         BulletoKilla(text: thisEvent!.eventName,size: 25.0,),
+    FrenchCannon(
+    text: isSchedule && index < thisEvent.eventSchedule.length
+    ? "Time remaining: ${provider.timeRemaining(thisEvent.eventSchedule[index].completeWithin)}"
+        : "On :   ${thisEvent.eventDate!.year}/${thisEvent.eventDate!.month}/${thisEvent.eventDate!.day}        At ${thisEvent.eventDate!.hour}:${thisEvent.eventDate!.minute < 10 ? "0${thisEvent.eventDate!.minute}" : thisEvent.eventDate!.minute}",
+    size: 13.0,)]
       ),
       trailing: isHome?null:RemoveButton(onPressed: (){
        if (isSchedule){
@@ -78,6 +75,7 @@ class EventTile extends ConsumerWidget {
        }
        else{
 provider.removeEvent(eventIndex);
+
        }}),
       )
          ;
@@ -88,11 +86,12 @@ provider.removeEvent(eventIndex);
 class BulletoKilla extends StatelessWidget {
   final text;
   final color;
-  const BulletoKilla({super.key, @required this.text,  this.color});
+  final size;
+  const BulletoKilla({super.key, @required this.text,  this.color, this.size});
 
   @override
   Widget build(BuildContext context) {
-    return   Text(text,style: TextStyle(fontFamily: "Bulletto Killa",fontSize: 25))
+    return   Text(text,style: TextStyle(fontFamily: "Bulletto Killa",fontSize: size),maxLines: 2,)
     ;
   }
 }
@@ -107,8 +106,8 @@ class InputField extends StatefulWidget {
   final SuffixIcon;
   final String hinttext;
   final validator;
-
-  const InputField({super.key, required this.width, @required this.onSaved, @required this.prefixIcon, required this.isObscure, this.SuffixIcon, required this.hinttext, @required this.validator});
+  final focusNode;
+  const InputField({super.key, required this.width, @required this.onSaved, @required this.prefixIcon, required this.isObscure, this.SuffixIcon, required this.hinttext, @required this.validator, this.focusNode});
 
   @override
   State<InputField> createState() => _InputFieldState();
@@ -132,6 +131,7 @@ class _InputFieldState extends State<InputField> {
     return               SizedBox(
       width: widget.width,
       child: TextFormField(
+        focusNode: widget.focusNode,
         obscureText: isInvisible,
         onSaved: widget.onSaved,
         validator: widget.validator,
@@ -558,24 +558,24 @@ class CommonFilledWindow extends ConsumerWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(35),
         ),
-        child: isGuest?FrenchCannon(text: "Total Guests: ${thisEvent!.guestsCount}"):FrenchCannon(text: "Total Vendors: ${thisEvent!.vendorsCount}"),
+        child: isGuest?FrenchCannon(text: "Total Guests: ${thisEvent.guestsCount}"):FrenchCannon(text: "Total Vendors: ${thisEvent.vendorsCount}"),
       ),
         Container(
-          height: 520,
+          height: 550,
           width: widthDevice/1.05,
           decoration: BoxDecoration(
               border: Border.all(style: BorderStyle.solid,color: dark_dusty_rose,width: 2),
               borderRadius: BorderRadius.circular(5)
           ),
           child: ListView.builder(
-            itemCount: isGuest?thisEvent!.eventGuests.length:thisEvent!.eventVendors.length,
+            itemCount: isGuest?thisEvent.eventGuests.length:thisEvent.eventVendors.length,
             itemBuilder: (context, index) {
               late Guests guest;
               late Vendors vendor;
               if (isGuest)
-                guest= thisEvent!.eventGuests[index];
+                guest= thisEvent.eventGuests[index];
               else
-                 vendor = thisEvent!.eventVendors[index];
+                 vendor = thisEvent.eventVendors[index];
 
               return Padding(
                 padding: const EdgeInsets.only(top: 8.0),
@@ -592,7 +592,7 @@ class CommonFilledWindow extends ConsumerWidget {
                       );
                     },
                     child:    Container(
-                      height: 100,
+                      height: 110,
                       decoration: BoxDecoration(
                         color: light_dusty_rose,
                         borderRadius: BorderRadius.circular(35),
@@ -631,12 +631,12 @@ class CommonFilledWindow extends ConsumerWidget {
                                 FrenchCannon(text: isGuest?'${guest.membersNo}':'${vendor.price}',size: 13.0),
                                 StatefulBuilder(builder: (context,setState){
                                   return Checkbox(
-                                    value: isGuest?thisEvent!.eventGuests[index].invited:thisEvent!.eventVendors[index].isBooked,
+                                    value: isGuest?thisEvent.eventGuests[index].invited:thisEvent.eventVendors[index].isBooked,
                                     onChanged: (bool? value) {
                                       setState(() {
                                         isInvited = value!;
                                         if (isGuest)
-                                          provider.updateGuest(eventIndex, index, thisEvent!.eventGuests[index].guestName, thisEvent!.eventGuests[index].membersNo, isInvited!, thisEvent!.eventGuests[index].contact);
+                                          provider.updateGuest(eventIndex, index, thisEvent.eventGuests[index].guestName, thisEvent.eventGuests[index].membersNo, isInvited!, thisEvent.eventGuests[index].contact);
                                         else
                                           provider.updateVendors(eventIndex, index, thisEvent.eventVendors[index].name!, thisEvent.eventVendors[index].price!, isInvited!, thisEvent.eventVendors[index].contact!);
 
@@ -660,28 +660,31 @@ class CommonFilledWindow extends ConsumerWidget {
           ),
         ),
       ],
-    );;
+    );
   }
 }
 
 class EventAlert extends ConsumerWidget {
-  late int eventIndex;
-  late bool isSchedule;
-  late bool isUpdate;
-  late int itemIndex;
-  EventAlert ( {super.key, required this.eventIndex,required this.isSchedule,required this.isUpdate,required this.itemIndex});
+  final int? eventIndex;
+  final bool isSchedule;
+  final bool isUpdate;
+  final int? itemIndex;
+  EventAlert ( {super.key, this.eventIndex,required this.isUpdate,required this.isSchedule, this.itemIndex});
   @override
   Widget build(BuildContext context,WidgetRef ref) {
     final provider = ref.watch(stateProvider);
     double deviceWidth=MediaQuery.of(context).size.width;
-    Box<Event> eventBox = Hive.box("event");
-    Event? thisEvent = eventBox.getAt(eventIndex);
+    Box<Event> eventBox= Hive.box("event");
+    Event? thisEvent;
+    if(eventIndex!=null){
+      thisEvent = eventBox.getAt(eventIndex!);
+    }
     TextEditingController nameController = TextEditingController();
     DateTime? picked;
     if(isUpdate) {
       if (isSchedule) {
-        nameController.text = thisEvent!.eventSchedule[itemIndex].title;
-        picked = thisEvent!.eventSchedule[itemIndex].completeWithin;
+        nameController.text = thisEvent!.eventSchedule[itemIndex!].title;
+        picked = thisEvent.eventSchedule[itemIndex!].completeWithin;
       }
     }
     return StatefulBuilder(
@@ -752,15 +755,15 @@ class EventAlert extends ConsumerWidget {
           content: ElevatedButton(onPressed: (){
             if(isUpdate){
               if (isSchedule){
-                provider.updateSchedule(itemIndex, eventIndex, nameController.text, picked);
+                provider.updateSchedule(itemIndex!, eventIndex!, nameController.text, picked);
               }
             }
             else{
               if (isSchedule){
-                provider.addSchedule( eventIndex, nameController.text, picked);
+                provider.addSchedule( eventIndex!, nameController.text, picked);
               }
               else{
-                eventBox.add(Event(eventBudget:Budget(budget: 0, isSet: false), eventExpenses: [], eventGuests: [], eventTasks: [], eventName: nameController.text, eventDate: picked, eventVendors: [], vendorsCount: 0, guestsCount: 0,eventSchedule: []));
+                eventBox.add(Event(eventBudget:Budget(budget: 0, isSet: false), eventExpenses: [], eventGuests: [], eventTasks: [], eventName: nameController.text, eventDate: picked, eventVendors: [], vendorsCount: 0, guestsCount: 0,eventSchedule: [],eventVenue: Venue(selectedDocumentIndex: null,venueCost: 0)));
               }
             }
             Navigator.pop(context);
@@ -768,39 +771,12 @@ class EventAlert extends ConsumerWidget {
         );},
     );
   }
-}
-
-class EventWindow extends ConsumerWidget {
-  late int eventIndex;
-  late int? index;
-
-  late bool isSchedule;
-  late Box box;
-  late bool isUpdate;
-  EventWindow({super.key,required this.isSchedule,required this.index,required this.eventIndex,required this.box,required this.isUpdate});
-
-  @override
-  Widget build(BuildContext context,WidgetRef ref) {
-    return Column(
-      children: [
-        SizedBox(height: 20,),
-        GestureDetector(
-          onTap: (){
-            if (isUpdate){
-              if (isSchedule){
-                showDialog(context: context, builder: (context){
-                  return
-                    EventAlert(eventIndex: eventIndex, isSchedule: isSchedule, isUpdate: isUpdate,itemIndex: index!,);
-                });
-              }
-            }
-            else{
-              Navigator.of(context).pushNamed('/home',arguments: eventIndex);
-            }
-          },
-          child: EventTile(eventIndex: eventIndex,isHome:false,onPressed: (){},isUpdate: isUpdate, isSchedule:isSchedule,index:index! ),),
-      ],
-    );
   }
-}
+void alertMessages({required BuildContext context,required String message}){
+   showDialog(context: context, builder: (_)=>AlertDialog(
+     title: Text("Error"),
+     content: Text(message),
+     actions: [TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Ok"))],
+   ));}
+
 

@@ -13,22 +13,17 @@ class VendorsView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final provider = ref.watch(stateProvider);
-    double widthDevice= MediaQuery.of(context).size.width;
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
-   bool isInvited=false;
 
-    bool booking = false;
     return Scaffold(
-      backgroundColor: dusty_rose,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: muave,
         title: const FrenchCannon(
           text: "Vendors",
           color: Colors.white,
+          weight: FontWeight.bold,
         ),
-        elevation: 20.0,
       ),
       body: ValueListenableBuilder(
         valueListenable: eventBox.listenable(), // Listen to the eventBox

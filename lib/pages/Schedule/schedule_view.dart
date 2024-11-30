@@ -1,3 +1,4 @@
+import 'package:event_planner_app/business_logic.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -13,14 +14,11 @@ class ScheduleView extends ConsumerWidget {
   @override
   Widget build(BuildContext context,WidgetRef ref) {
     Box<Event> eventBox = Hive.box<Event>('event');
+    final provider = ref.watch(stateProvider);
     return Scaffold(
-      backgroundColor: dusty_rose,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: muave,
         title: const FrenchCannon(text:"Schedule", color: Colors.white,weight: FontWeight.bold,),
-        elevation: 20.0,
-        shadowColor: Colors.grey,
       ),
       body: ValueListenableBuilder(valueListenable: eventBox.listenable(), builder: (context,Box<Event> box,widget){
         Event? thisEvent = eventBox.getAt(eventIndex);
@@ -28,15 +26,47 @@ class ScheduleView extends ConsumerWidget {
           return const Center(child: FrenchCannon(text: "No Schedule yet",size: 30.0,));
         }
         else{
-          return  ListView.builder(itemCount:thisEvent!.eventSchedule.length,itemBuilder: (context,index){
-            return EventWindow(isSchedule: true, eventIndex: eventIndex,box:box,isUpdate: true,index:index);}
+          return  ListView.builder(itemCount:thisEvent.eventSchedule.length,itemBuilder: (context,index){
+           return Column(
+             children: [
+               SizedBox(height: 20,),
+               GestureDetector(
+                 onTap: (){
+                       showDialog(context: context, builder: (context){
+                         return
+                           EventAlert(eventIndex: eventIndex, isSchedule: true, isUpdate: true,itemIndex: index,);
+                       });
+                     },
+                 child:
+                 ListTile(
+                   shape: RoundedRectangleBorder(
+                       borderRadius: BorderRadius.circular(25)
+                   ),
+                   tileColor: light_dusty_rose,
+                   // trailing: ,
+                   title: Column(
+                       mainAxisAlignment: MainAxisAlignment.start,
+                       children: [  FrenchCannon(text: thisEvent.eventSchedule[index].title),
+                         FrenchCannon(
+
+                           text: "Time remaining: ${provider.timeRemaining(thisEvent.eventSchedule[index].completeWithin,)}",size: 13.0,)]
+                   ),
+                   trailing: RemoveButton(onPressed: (){
+            provider.removeSchedule(index, thisEvent);
+            }),
+                 )
+
+               )],
+           );
+
+          }
           );
         }
       }),
       floatingActionButton: FloatingActionButton(onPressed: (){
 
         showDialog(context: context, builder: (BuildContext context){
-          return EventAlert(eventIndex: eventIndex, isSchedule: true, isUpdate: false,itemIndex: 0,);
+          return EventAlert(eventIndex: eventIndex, isSchedule: true, isUpdate: false,);
         });
 
       }, child: const Icon(Icons.add),),

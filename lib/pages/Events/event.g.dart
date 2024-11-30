@@ -27,13 +27,14 @@ class EventAdapter extends TypeAdapter<Event> {
       vendorsCount: fields[7] as int,
       guestsCount: fields[8] as int,
       eventSchedule: (fields[9] as List).cast<Schedule>(),
+      eventVenue: fields[10] as Venue?,  // Make sure to handle nullable Venue
     );
   }
 
   @override
   void write(BinaryWriter writer, Event obj) {
     writer
-      ..writeByte(10)
+      ..writeByte(11)
       ..writeByte(0)
       ..write(obj.eventBudget)
       ..writeByte(1)
@@ -53,7 +54,9 @@ class EventAdapter extends TypeAdapter<Event> {
       ..writeByte(8)
       ..write(obj.guestsCount)
       ..writeByte(9)
-      ..write(obj.eventSchedule);
+      ..write(obj.eventSchedule)
+      ..writeByte(10)
+      ..write(obj.eventVenue);  // Ensure this is written as well
   }
 
   @override
@@ -62,7 +65,7 @@ class EventAdapter extends TypeAdapter<Event> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is EventAdapter &&
-          runtimeType == other.runtimeType &&
-          typeId == other.typeId;
+          other is EventAdapter &&
+              runtimeType == other.runtimeType &&
+              typeId == other.typeId;
 }

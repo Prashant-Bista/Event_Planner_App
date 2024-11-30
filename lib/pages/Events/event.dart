@@ -1,9 +1,11 @@
 import 'package:event_planner_app/pages/Schedule/schedule.dart';
+import 'package:event_planner_app/pages/Venue/venueList_view.dart';
 import 'package:hive/hive.dart';
 import '../Budget/budget.dart';
 import '../Guests/guests.dart';
 import '../Todo/tasks.dart';
 import '../Vendors/vendors.dart';
+import '../Venue/venue_model.dart';
 
 part 'event.g.dart';
 
@@ -39,6 +41,9 @@ class Event {
   @HiveField(9)
   final List<Schedule> eventSchedule;
 
+  @HiveField(10)
+  final Venue? eventVenue ;
+
   Event({
    required this.eventBudget,
     required this.eventExpenses,
@@ -49,7 +54,8 @@ class Event {
     required this.eventVendors,
     required this.vendorsCount,
     required this.guestsCount,
-    required this.eventSchedule
+    required this.eventSchedule,
+    required this.eventVenue
 
   });
 }

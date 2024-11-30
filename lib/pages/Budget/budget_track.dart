@@ -28,17 +28,13 @@ class BudgetTrack extends ConsumerWidget {
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex); // Update thisEvent on change
     return Scaffold(
-      backgroundColor: light_dusty_rose,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: muave,
         title: FrenchCannon(
           text: "Budgeting",
           color: Colors.white,
           weight: FontWeight.bold,
         ),
-        elevation: 20.0,
-        shadowColor: Colors.grey,
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -125,14 +121,15 @@ class BudgetTrack extends ConsumerWidget {
                 );
               } else {
                 return Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
+
                   children: [
                     Container(
+                      padding: EdgeInsets.only(top: 5,left: 5),
                       height: 100,
                       width: deviceWidth,
                       color: dusty_rose,
-                      child: Center(child: RichText(
-                        textAlign: TextAlign.center,
+                      child: RichText(
+                        textAlign: TextAlign.start,
                           text: TextSpan(children: [
                         TextSpan(text: "Budget: ${thisEvent.eventBudget.budget.toString()}\n\n",style: TextStyle(fontFamily: "FrenchCannon",color: Colors.green,fontSize: 15.0,),),
                         TextSpan(text: "Budget left(Vendors included): ${provider
@@ -140,20 +137,13 @@ class BudgetTrack extends ConsumerWidget {
                             TextSpan(text:"Predicted Budget:",style: TextStyle(color:mainColor,fontFamily: "FrenchCannon")),
 
 
-                      ]))
-
-                      // FrenchCannon(
-                      //   text: "Budget: ${thisEvent.eventBudget.budget
-                      //       .toString()}",
-                      //   size: 15.0,
-                      //   weight: FontWeight.bold,color: Colors.green,)),
-                      )),
+                      ]))),
 
                     Container(
                       decoration: BoxDecoration(
                           color: light_dusty_rose,
                           border: Border.all(color: Colors.black, width: 2)),
-                      height: 510, // Specify a height
+                      height: 450, // Specify a height
                       child: ListView.builder(
                         shrinkWrap: false,
                         itemCount: thisEvent!.eventExpenses.length,
@@ -212,7 +202,7 @@ class BudgetTrack extends ConsumerWidget {
                 MaterialButton(
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
-                  color: dusty_rose,
+                  color: light_dusty_rose,
                   onPressed: () {
                     showDialog(context: context, builder: (BuildContext context){
                       return AlertDialog(
@@ -249,6 +239,7 @@ class BudgetTrack extends ConsumerWidget {
                         ),
                         content: ElevatedButton(child: const FrenchCannon(text:"Add"),onPressed: (){
                             provider.addExpense(double.parse(expensecontroller.text), eventIndex,titleController.text);
+                            Navigator.of(context).pop();
                         }
                         ));
                     });
@@ -259,7 +250,7 @@ class BudgetTrack extends ConsumerWidget {
                 MaterialButton(
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
-                  color: dusty_rose,
+                  color: light_dusty_rose,
                   onPressed: () {
                     CommonAlert(context, eventIndex, "Budget", provider);
                   },

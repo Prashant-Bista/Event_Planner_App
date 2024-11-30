@@ -1,4 +1,5 @@
 
+import 'package:event_planner_app/components.dart';
 import 'package:event_planner_app/pages/Budget/budget.dart';
 import 'package:event_planner_app/pages/Events/event.dart';
 import 'package:event_planner_app/pages/Guests/guests.dart';
@@ -6,10 +7,11 @@ import 'package:event_planner_app/pages/Schedule/schedule.dart';
 import 'package:event_planner_app/pages/Todo/tasks.dart';
 import 'package:event_planner_app/pages/Vendors/vendors.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:hive/hive.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:tflite_flutter/tflite_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 final stateProvider = ChangeNotifierProvider.autoDispose<BusinessLogic>((ref)=>BusinessLogic());
 class BusinessLogic extends ChangeNotifier {
@@ -33,7 +35,8 @@ class BusinessLogic extends ChangeNotifier {
         eventVendors: thisEvent.eventVendors,
         vendorsCount: thisEvent.eventVendors.length,
         guestsCount: thisEvent.guestsCount,
-        eventSchedule:thisEvent.eventSchedule
+        eventSchedule:thisEvent.eventSchedule,
+      eventVenue: thisEvent.eventVenue
 
     );
     eventBox.putAt(eventIndex, updatedEvent);
@@ -71,6 +74,8 @@ class BusinessLogic extends ChangeNotifier {
         vendorsCount: thisEvent.eventVendors.length,
         guestsCount: thisEvent.guestsCount,
         eventSchedule:thisEvent.eventSchedule,
+        eventVenue: thisEvent.eventVenue
+
     ));
     notifyListeners();
     return null;
@@ -206,8 +211,20 @@ class BusinessLogic extends ChangeNotifier {
         eventVendors: thisEvent.eventVendors,
         vendorsCount: thisEvent.eventVendors.length,
         guestsCount: totalGuests,
-        eventSchedule:thisEvent.eventSchedule
+        eventSchedule:thisEvent.eventSchedule,
+        eventVenue: thisEvent.eventVenue
+
     ));
+    notifyListeners();
+
+  }
+  void assignVenue(int eventIndex,int venueIndex,int pricePerplate){
+    Box<Event> eventBox = Hive.box<Event>('event');
+    Event? thisEvent = eventBox.getAt(eventIndex);
+    thisEvent!.eventVenue!.selectedDocumentIndex=venueIndex;
+    thisEvent.eventVenue!.venueCost= double.parse(((thisEvent.guestsCount+thisEvent.vendorsCount)*pricePerplate).toString());
+
+    notifyListeners();
   }
 
   void counterVendor(int eventIndex) {
@@ -227,9 +244,21 @@ class BusinessLogic extends ChangeNotifier {
         eventVendors: thisEvent.eventVendors,
         vendorsCount: thisEvent.eventVendors.length,
         guestsCount: totalGuests,
-    eventSchedule: thisEvent.eventSchedule));
-  }
+    eventSchedule: thisEvent.eventSchedule,
+        eventVenue: thisEvent.eventVenue
+    ));
+    notifyListeners();
 
+  }
+  Future<double> predictBudget(int eventIndex) async{
+    Box<Event> eventBox = Hive.box<Event>('event');
+    Event? thisEvent = eventBox.getAt(eventIndex);
+    final model = await Interpreter.fromAsset("assets/models/model.tflite");
+    var input=[[thisEvent!.guestsCount,thisEvent.eventVenue!.venueCost],thisEvent.eventTasks.length,thisEvent.vendorsCount];
+    var output = List.filled(1, 0).reshape([1,1]);
+    model.run(input, output);
+    return output[0][0];
+  }
   VoidCallback? removeVendor(int eventIndex, int index) {
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
@@ -258,10 +287,29 @@ class BusinessLogic extends ChangeNotifier {
     notifyListeners();
   }
 
-  Duration timeRemaining(DateTime setDateTime) {
-    Duration diff = DateTime.now().difference(setDateTime);
-    print("difference${diff.inMinutes}");
-    return diff;
+  String timeRemaining(DateTime setDateTime) {
+    Duration diff = setDateTime.difference(DateTime.now());
+    int hours = diff.inHours;
+    int minutes = (diff.inMinutes % 60);
+    print("Time remaining: $hours hours and $minutes minutes");
+    return "${-hours} hrs $minutes mins";
   }
-}
+
+  Future<void> whatsappConnect(String contact,BuildContext context) async{
+    try{
+      launchUrl(Uri.parse("https://wa.me/$contact"));
+    }catch(e){
+      alertMessages(context: context, message: "Couldn't connect to $contact");
+    }
+    }
+    Future<void> dialerConnect(String contact,BuildContext context) async{
+    try{
+      launchUrl(Uri.parse("tel:$contact"));
+    }catch(e){
+      alertMessages(context: context, message: "Couldn't connect to $contact");
+    }
+    }
+
+  }
+
 
