@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-
 import '../../components.dart';
 import '../Events/event.dart';
 
 class VenueView extends ConsumerWidget {
   final int eventIndex;
    VenueView({super.key,required this.eventIndex});
+  @override
   Widget build(BuildContext context,WidgetRef ref) {
 
     final provider = ref.watch(stateProvider);
@@ -36,7 +36,7 @@ class VenueView extends ConsumerWidget {
                       itemBuilder: (context, index) {
                         DocumentSnapshot documentSnapshot = snapshot.data!.docs[index];
                         return Padding(
-                          padding: EdgeInsets.only(top: 16.0, left: 8.0, right: 8.0),
+                          padding: const EdgeInsets.only(top: 16.0, left: 8.0, right: 8.0),
                           child: SizedBox(
                             height: 200,
                             child: ListTile(
@@ -50,28 +50,28 @@ class VenueView extends ConsumerWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   BulletoKilla(text: documentSnapshot["name"], color: Colors.black, size: 15.0),
-                                  SizedBox(height: 10),
-                                  Text("Location:", style: TextStyle(fontWeight: FontWeight.bold)),
+                                  const SizedBox(height: 10),
+                                  const Text("Location:", style: TextStyle(fontWeight: FontWeight.bold)),
                                   Text(documentSnapshot["location"]),
-                                  documentIndex==index?Text("Selected"):Text(""),
+                                  documentIndex==index?Text("Selected",style: TextStyle(color: muave,fontWeight: FontWeight.bold),):const Text(""),
                                 ],
                               ),
                               trailing: ElevatedButton(onPressed: (){
                                 if(thisEvent!=null && thisEvent.eventVenue!=null){
                                   provider.assignVenue(eventIndex, index,documentSnapshot["price_per_plate"]);
-                                  print("selectedIndex: ${thisEvent!.eventVenue!.selectedDocumentIndex}");
+                                  print("selectedIndex: ${thisEvent.eventVenue!.selectedDocumentIndex}");
                                 }
                                 else{
                                   print("Nullgiven");
                                 }
-                              }, child: Text("Select")),
+                              }, child: const Text("Select")),
                             ),
                           ),
                         );
                       }
                   );
                 } else {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
               }
           );

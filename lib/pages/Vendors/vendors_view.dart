@@ -25,25 +25,27 @@ class VendorsView extends ConsumerWidget {
           weight: FontWeight.bold,
         ),
       ),
-      body: ValueListenableBuilder(
-        valueListenable: eventBox.listenable(), // Listen to the eventBox
-        builder: (context, Box<Event> box, _) {
-          thisEvent = box.getAt(eventIndex); // Update thisEvent on change
-          provider.counterVendor(eventIndex);
-
-          if (thisEvent!.eventVendors.isEmpty) {
-            return const Center(
-              child: FrenchCannon(
-                text: "No Vendors added yet",
-                size: 25.0,
-                color: Color.fromRGBO(11, 13, 23, 1),
-              ),
-            );
-          } else {
-            return CommonFilledWindow(thisEvent: thisEvent!, isGuest: false, eventIndex: eventIndex);
-
-          }
-        },
+      body: SingleChildScrollView(
+        child: ValueListenableBuilder(
+          valueListenable: eventBox.listenable(), // Listen to the eventBox
+          builder: (context, Box<Event> box, _) {
+            thisEvent = box.getAt(eventIndex); // Update thisEvent on change
+            provider.counterVendor(eventIndex);
+        
+            if (thisEvent!.eventVendors.isEmpty) {
+              return const Center(
+                child: FrenchCannon(
+                  text: "No Vendors added yet",
+                  size: 25.0,
+                  color: Color.fromRGBO(11, 13, 23, 1),
+                ),
+              );
+            } else {
+              return CommonFilledWindow(thisEvent: thisEvent!, isGuest: false, eventIndex: eventIndex);
+        
+            }
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color.fromRGBO(11, 13, 23, 1),

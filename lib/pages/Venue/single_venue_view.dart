@@ -21,6 +21,7 @@ class SingleVenueView extends ConsumerWidget {
           Image.network(document["image_url"]),
           SizedBox(height: 50,),
           Wrap(
+            alignment: WrapAlignment.center,
             runSpacing: 20,
             spacing: 50,
             children: [
@@ -50,12 +51,12 @@ class SingleVenueView extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     FrenchCannon(text: "Connect",),
-                    Row(mainAxisAlignment:MainAxisAlignment.center,children: [IconButton(icon: Image.asset("assets/images/whatsapp.png",width: 20,height: 20,),onPressed: (){
+                    Row(mainAxisAlignment:MainAxisAlignment.center,children: [IconButton(icon: Image.asset("assets/images/whatsapp.png",width: 25,height: 25,),onPressed: (){
                       provider.whatsappConnect(document["contact"], context);
                     },),
                       IconButton(onPressed: (){
                         provider.dialerConnect(document["contact"], context);
-                      }, icon: const Icon(Icons.call,size: 20,)),
+                      }, icon: const Icon(Icons.call,size: 25,)),
                     ],),
                     Text("----------------------------------"),
 
@@ -63,15 +64,6 @@ class SingleVenueView extends ConsumerWidget {
 
                 ),
               ),
-              SizedBox(
-                height: 100,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [FrenchCannon(text: "Select this Venue"),
-                    Text("----------------------------------"),
-                  ],
-                ),
-              )
 
 
             ],

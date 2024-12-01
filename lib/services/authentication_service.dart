@@ -27,8 +27,5 @@ class AuthenticationService extends ChangeNotifier{
       alertMessages(context: context, message: "Please Check connection or enter the correct credentials");
     }
   }
-  Future<void> SignInWithGoogleMobile() async
-  {
-    final GoogleSignInAccount? googleUser= await GoogleSignIn().signIn();
-  }
+
 }

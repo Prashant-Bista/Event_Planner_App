@@ -1,6 +1,6 @@
 import 'package:event_planner_app/business_logic.dart';
+import 'package:event_planner_app/pages/Schedule/schedule.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -19,6 +19,9 @@ class ScheduleView extends ConsumerWidget {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: const FrenchCannon(text:"Schedule", color: Colors.white,weight: FontWeight.bold,),
+        actions: [IconButton(onPressed: (){
+          provider.sortSchedule(eventIndex);
+        }, icon: Icon(Icons.refresh))],
       ),
       body: ValueListenableBuilder(valueListenable: eventBox.listenable(), builder: (context,Box<Event> box,widget){
         Event? thisEvent = eventBox.getAt(eventIndex);
@@ -26,8 +29,9 @@ class ScheduleView extends ConsumerWidget {
           return const Center(child: FrenchCannon(text: "No Schedule yet",size: 30.0,));
         }
         else{
-          return  ListView.builder(itemCount:thisEvent.eventSchedule.length,itemBuilder: (context,index){
-           return Column(
+          return  ListView.builder(itemCount:thisEvent!.eventSchedule.length,itemBuilder: (context,index){
+            DateTime deadline=thisEvent.eventSchedule[index].completeWithin;
+            return Column(
              children: [
                SizedBox(height: 20,),
                GestureDetector(
@@ -46,19 +50,19 @@ class ScheduleView extends ConsumerWidget {
                    // trailing: ,
                    title: Column(
                        mainAxisAlignment: MainAxisAlignment.start,
-                       children: [  FrenchCannon(text: thisEvent.eventSchedule[index].title),
+                       children: [  FrenchCannon(text: thisEvent!.eventSchedule[index].title),
+                         FrenchCannon(text: "Deadline: ${deadline.year}-${deadline.month}-${deadline.day}  ${deadline.hour}:${deadline.minute} "),
                          FrenchCannon(
 
-                           text: "Time remaining: ${provider.timeRemaining(thisEvent.eventSchedule[index].completeWithin,)}",size: 13.0,)]
+                           text: "Time remaining: ${provider.timeRemaining(thisEvent!.eventSchedule[index].completeWithin,)}",size: 13.0,)]
                    ),
                    trailing: RemoveButton(onPressed: (){
-            provider.removeSchedule(index, thisEvent);
+            provider.removeSchedule(index, eventIndex);
             }),
                  )
 
                )],
            );
-
           }
           );
         }

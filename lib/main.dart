@@ -23,6 +23,7 @@ void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   Directory directory = await getApplicationCacheDirectory();
+
   Hive.init(directory.path);
   Hive.registerAdapter(TasksAdapter());
   Hive.registerAdapter(GuestsAdapter());

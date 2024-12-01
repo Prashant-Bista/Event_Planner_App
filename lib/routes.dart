@@ -21,7 +21,6 @@ class Routes{
     if (settings.name=='/login'){
       return MaterialPageRoute(builder: (_)=>const Login());
     }
-
     if (settings.name=='/todo'){
       final int args = int.parse(settings.arguments.toString());
       return MaterialPageRoute(builder: (_)=>TodoView(eventIndex: args,));

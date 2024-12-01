@@ -18,18 +18,15 @@ class VenueAdapter extends TypeAdapter<Venue> {
     };
     return Venue(
       selectedDocumentIndex: fields[0] as int?,
-      venueCost: fields[1] as double?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Venue obj) {
     writer
-      ..writeByte(2)
-      ..writeByte(0)
-      ..write(obj.selectedDocumentIndex)
       ..writeByte(1)
-      ..write(obj.venueCost);
+      ..writeByte(0)
+      ..write(obj.selectedDocumentIndex);
   }
 
   @override
@@ -38,7 +35,7 @@ class VenueAdapter extends TypeAdapter<Venue> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is VenueAdapter &&
-              runtimeType == other.runtimeType &&
-              typeId == other.typeId;
+      other is VenueAdapter &&
+          runtimeType == other.runtimeType &&
+          typeId == other.typeId;
 }

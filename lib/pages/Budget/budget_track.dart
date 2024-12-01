@@ -1,23 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-
 import '../../components.dart';
 import '../Events/event.dart';
 import 'package:event_planner_app/business_logic.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 class BudgetTrack extends ConsumerWidget {
   final int eventIndex;
-
   const BudgetTrack({super.key, required this.eventIndex});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    double deviceHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
     double deviceWidth = MediaQuery
         .of(context)
         .size
@@ -30,7 +23,7 @@ class BudgetTrack extends ConsumerWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: FrenchCannon(
+        title: const FrenchCannon(
           text: "Budgeting",
           color: Colors.white,
           weight: FontWeight.bold,
@@ -43,29 +36,34 @@ class BudgetTrack extends ConsumerWidget {
             valueListenable: eventBox.listenable(),
             builder: (context, Box<Event> box, _) {
               if (thisEvent!.eventBudget.budget == 0 &&
-                  thisEvent!.eventExpenses.isEmpty) {
-                return FrenchCannon(
+                  thisEvent.eventExpenses.isEmpty) {
+                return const FrenchCannon(
                   text: "No Budget or Expense added yet",
                   size: 35.0,
                   color: Color.fromRGBO(11, 13, 23, 1),
                 );
-              } else if (thisEvent!.eventBudget.budget != 0 &&
-                  thisEvent!.eventExpenses.isEmpty) {
-                return                     Container(
-                  height: 50,
+              } else if (thisEvent.eventBudget.budget != 0 &&
+                  thisEvent.eventExpenses.isEmpty) {
+                return Container(
+                  height: 100,
                   width: deviceWidth,
                   color: dusty_rose,
-                  child: Center(child: FrenchCannon(
-                    text: "Budget: ${thisEvent.eventBudget.budget
-                        .toString()}",
-                    size: 20.0,
-                    weight: FontWeight.bold,color: Colors.green,)),
+                  child: Center(child: Column(
+                    children: [
+                      FrenchCannon(
+                        text: "Budget:  Rs. ${thisEvent.eventBudget.budget
+                            .toString()}",
+                        size: 20.0,
+                        weight: FontWeight.bold,color: Colors.green,),
+                    PredictionRow(provider, eventIndex),
+                    ],
+                  )),
                 );
-              } else if (thisEvent!.eventBudget.budget == 0 &&
-                  thisEvent!.eventExpenses.isNotEmpty) {
+              } else if (thisEvent.eventBudget.budget == 0 &&
+                  thisEvent.eventExpenses.isNotEmpty) {
                 return Column(
                   children: [
-                    FrenchCannon(
+                    const FrenchCannon(
                       text: "No Budget added yet",
                       size: 35.0,
                       color: Color.fromRGBO(11, 13, 23, 1),
@@ -77,11 +75,11 @@ class BudgetTrack extends ConsumerWidget {
                       height: 450, // Specify a height
                       child: ListView.builder(
                         shrinkWrap: false,
-                        itemCount: thisEvent!.eventExpenses.length,
+                        itemCount: thisEvent.eventExpenses.length,
                         itemBuilder: (context, index) {
                           return Column(
                             children: [
-                              SizedBox(height: 15.0),
+                              const SizedBox(height: 15.0),
                               Container(
                                 decoration: BoxDecoration(
                                     color: dusty_rose,
@@ -92,7 +90,7 @@ class BudgetTrack extends ConsumerWidget {
                                     children: [
                                       FrenchCannon(
                                         text:
-                                        "Expense: ${thisEvent!.eventExpenses[index]
+                                        "Expense: Rs. ${thisEvent.eventExpenses[index]
                                             .expenses}",
                                         size: 15.0,
                                         color: Colors.redAccent,
@@ -100,7 +98,7 @@ class BudgetTrack extends ConsumerWidget {
                                       ),
                                       FrenchCannon(
                                         text:
-                                        "For: ${thisEvent!.eventExpenses[index]
+                                        "For: ${thisEvent.eventExpenses[index]
                                             .purpose}",
                                         size: 15.0,
                                         color: Colors.redAccent,
@@ -121,23 +119,22 @@ class BudgetTrack extends ConsumerWidget {
                 );
               } else {
                 return Column(
-
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      padding: EdgeInsets.only(top: 5,left: 5),
-                      height: 100,
+                      padding: const EdgeInsets.only(top: 5,left: 5),
+                      height: 50,
                       width: deviceWidth,
                       color: dusty_rose,
                       child: RichText(
                         textAlign: TextAlign.start,
                           text: TextSpan(children: [
-                        TextSpan(text: "Budget: ${thisEvent.eventBudget.budget.toString()}\n\n",style: TextStyle(fontFamily: "FrenchCannon",color: Colors.green,fontSize: 15.0,),),
+                        TextSpan(text: "Budget: Rs. ${thisEvent.eventBudget.budget.toString()}\n\n",style: const TextStyle(fontFamily: "FrenchCannon",color: Colors.green,fontSize: 15.0,),),
                         TextSpan(text: "Budget left(Vendors included): ${provider
-                            .calcBudgetLeft(eventIndex).toString()}\n\n",style: TextStyle(fontFamily: "FrenchCannon",color: Colors.orange,fontSize: 15.0)),
-                            TextSpan(text:"Predicted Budget:",style: TextStyle(color:mainColor,fontFamily: "FrenchCannon")),
-
-
+                            .calcBudgetLeft(eventIndex).toString()}\n\n",style: const TextStyle(fontFamily: "FrenchCannon",color: Colors.orange,fontSize: 15.0)),
                       ]))),
+              PredictionRow(provider, eventIndex),
+                    const SizedBox(height: 10,),
 
                     Container(
                       decoration: BoxDecoration(
@@ -146,11 +143,11 @@ class BudgetTrack extends ConsumerWidget {
                       height: 450, // Specify a height
                       child: ListView.builder(
                         shrinkWrap: false,
-                        itemCount: thisEvent!.eventExpenses.length,
+                        itemCount: thisEvent.eventExpenses.length,
                         itemBuilder: (context, index) {
                           return Column(
                             children: [
-                              SizedBox(height: 15.0),
+                              const SizedBox(height: 15.0),
                               Container(
                                 decoration: BoxDecoration(
                                     color: dusty_rose,
@@ -161,7 +158,7 @@ class BudgetTrack extends ConsumerWidget {
                                     children: [
                                       FrenchCannon(
                                         text:
-                                        "Expense: ${thisEvent!.eventExpenses[index]
+                                        "Expense: Rs. ${thisEvent.eventExpenses[index]
                                             .expenses}",
                                         size: 15.0,
                                         color: Colors.redAccent,
@@ -169,7 +166,7 @@ class BudgetTrack extends ConsumerWidget {
                                       ),
                                       FrenchCannon(
                                         text:
-                                        "For: ${thisEvent!.eventExpenses[index]
+                                        "For: ${thisEvent.eventExpenses[index]
                                             .purpose}",
                                         size: 15.0,
                                         color: Colors.redAccent,
@@ -192,8 +189,7 @@ class BudgetTrack extends ConsumerWidget {
               }
             },
           ),
-          // SizedBox(height: 30,),
-          Container(
+          SizedBox(
             height: 40,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -222,7 +218,7 @@ class BudgetTrack extends ConsumerWidget {
                                     )
                                 ),
                               ),
-                    SizedBox(height: 20,),
+                    const SizedBox(height: 20,),
                     TextField(
                     controller: titleController,
                     focusNode: FocusNode(),
@@ -244,9 +240,8 @@ class BudgetTrack extends ConsumerWidget {
                         ));
                     });
                   },
-                  child: Text("Add Expenses"),
+                  child: const Text("Add Expenses"),
                 ),
-
                 MaterialButton(
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
@@ -254,7 +249,7 @@ class BudgetTrack extends ConsumerWidget {
                   onPressed: () {
                     CommonAlert(context, eventIndex, "Budget", provider);
                   },
-                  child: Text("Add Budget"),
+                  child: const Text("Add Budget"),
                 )
               ],
             ),

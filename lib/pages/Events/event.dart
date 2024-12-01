@@ -43,7 +43,8 @@ class Event {
 
   @HiveField(10)
   final Venue? eventVenue ;
-
+  @HiveField(11)
+  late double? predictedBudget ;
   Event({
    required this.eventBudget,
     required this.eventExpenses,
@@ -55,7 +56,8 @@ class Event {
     required this.vendorsCount,
     required this.guestsCount,
     required this.eventSchedule,
-    required this.eventVenue
+    required this.eventVenue,
+    this.predictedBudget
 
   });
 }

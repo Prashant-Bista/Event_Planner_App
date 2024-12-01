@@ -1,4 +1,5 @@
 
+
 import 'package:event_planner_app/components.dart';
 import 'package:event_planner_app/pages/Budget/budget.dart';
 import 'package:event_planner_app/pages/Events/event.dart';
@@ -27,7 +28,7 @@ class BusinessLogic extends ChangeNotifier {
     Event? updatedEvent;
     Budget thisBudget = Budget(budget: value, isSet: true);
     updatedEvent = Event(eventTasks: thisEvent!.eventTasks,
-        eventExpenses: thisEvent!.eventExpenses,
+        eventExpenses: thisEvent.eventExpenses,
         eventGuests: thisEvent.eventGuests,
         eventName: thisEvent.eventName,
         eventDate: thisEvent.eventDate,
@@ -216,14 +217,14 @@ class BusinessLogic extends ChangeNotifier {
 
     ));
     notifyListeners();
-
   }
+
   void assignVenue(int eventIndex,int venueIndex,int pricePerplate){
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     thisEvent!.eventVenue!.selectedDocumentIndex=venueIndex;
     thisEvent.eventVenue!.venueCost= double.parse(((thisEvent.guestsCount+thisEvent.vendorsCount)*pricePerplate).toString());
-
+    eventBox.putAt(eventIndex, thisEvent);
     notifyListeners();
   }
 
@@ -248,25 +249,27 @@ class BusinessLogic extends ChangeNotifier {
         eventVenue: thisEvent.eventVenue
     ));
     notifyListeners();
-
   }
-  Future<double> predictBudget(int eventIndex) async{
+
+  Future<void> predictBudget(int eventIndex) async{
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     final model = await Interpreter.fromAsset("assets/models/model.tflite");
-    var input=[[thisEvent!.guestsCount,thisEvent.eventVenue!.venueCost],thisEvent.eventTasks.length,thisEvent.vendorsCount];
+    var input=[[thisEvent!.guestsCount,thisEvent.eventVenue!.venueCost,thisEvent.eventTasks.length,thisEvent.vendorsCount]];
     var output = List.filled(1, 0).reshape([1,1]);
     model.run(input, output);
-    return output[0][0];
+    thisEvent.predictedBudget=output[0][0];
+    eventBox.putAt(eventIndex, thisEvent);
+    notifyListeners();
   }
-  VoidCallback? removeVendor(int eventIndex, int index) {
+  void removeVendor(int eventIndex, int index) {
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     thisEvent!.vendorsCount !=
-        thisEvent.vendorsCount - thisEvent.eventGuests[index].membersNo;
+        thisEvent.vendorsCount - 1;
     thisEvent.eventVendors.removeAt(index);
+    eventBox.putAt(eventIndex, thisEvent);
     notifyListeners();
-    return null;
   }
 
   VoidCallback? updateSchedule(int itemIndex,int eventIndex,String title,DateTime? picked){
@@ -274,25 +277,35 @@ class BusinessLogic extends ChangeNotifier {
     Event? thisEvent = eventBox.getAt(eventIndex);
     thisEvent!.eventSchedule.removeAt(itemIndex);
     thisEvent!.eventSchedule.insert(itemIndex, Schedule(title: title, completeWithin: picked!));
+    eventBox.putAt(eventIndex, thisEvent);
     notifyListeners();
   }
-  VoidCallback? removeSchedule(int itemIndex,Event? thisEvent){
+  VoidCallback? removeSchedule(int itemIndex,int eventIndex){
+    Box<Event> eventBox = Hive.box<Event>('event');
+    Event? thisEvent = eventBox.getAt(eventIndex);
     thisEvent!.eventSchedule.removeAt(itemIndex);
+    eventBox.putAt(eventIndex,thisEvent);
     notifyListeners();
   }
+
   VoidCallback? addSchedule(int eventIndex,String title,DateTime? picked){
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     thisEvent!.eventSchedule.add(Schedule(title: title, completeWithin: picked!));
+    eventBox.putAt(eventIndex, thisEvent);
     notifyListeners();
   }
 
   String timeRemaining(DateTime setDateTime) {
     Duration diff = setDateTime.difference(DateTime.now());
     int hours = diff.inHours;
-    int minutes = (diff.inMinutes % 60);
-    print("Time remaining: $hours hours and $minutes minutes");
-    return "${-hours} hrs $minutes mins";
+    int minutes = diff.inMinutes%60;
+    if (diff.isNegative){
+      return "Deadline Expired";
+    }
+    else{
+      return "${hours} hrs $minutes mins";
+    }
   }
 
   Future<void> whatsappConnect(String contact,BuildContext context) async{
@@ -310,6 +323,26 @@ class BusinessLogic extends ChangeNotifier {
     }
     }
 
+  void sortSchedule(int eventIndex) {
+    Box<Event> eventBox = Hive.box<Event>('event');
+    Event? thisEvent = eventBox.getAt(eventIndex);
+    Schedule tempSchedule;
+    List<Schedule> thisSchedules = thisEvent!.eventSchedule;
+    int scheduleLength = thisSchedules.length;
+      for (int i = scheduleLength - 1; i > 0; i--) {
+        for (int j = 0; j < i; j++) {
+          if (thisSchedules[j].completeWithin.difference(DateTime.now()) > thisSchedules[j + 1].completeWithin.difference(DateTime.now())) {
+            tempSchedule = thisSchedules[j];
+            thisSchedules[j] = thisSchedules[j + 1];
+            thisSchedules[j + 1] = tempSchedule;
+          }
+        }
+
+    }
+    thisEvent.eventSchedule!=thisSchedules;
+      eventBox.putAt(eventIndex, thisEvent);
+      notifyListeners();
+  }
   }
 
 

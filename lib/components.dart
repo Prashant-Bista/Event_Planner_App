@@ -71,7 +71,7 @@ class EventTile extends ConsumerWidget {
       ),
       trailing: isHome?null:RemoveButton(onPressed: (){
        if (isSchedule){
-         provider.removeSchedule(index, thisEvent);
+         provider.removeSchedule(index, eventIndex);
        }
        else{
 provider.removeEvent(eventIndex);
@@ -325,7 +325,7 @@ class BudgetTile extends StatelessWidget {
       color: Colors.green,
       height: 75,
       child:  FrenchCannon(
-          text: "Budget: $value",
+          text: "Budget:  Rs. $value",
           size: 20.0,
           color: Colors.black,
           weight: FontWeight.bold,
@@ -344,14 +344,14 @@ class BottomBar extends StatelessWidget {
       currentIndex: 0,
       onTap: (index) {
         if (index==0){
-          Navigator.of(context).pushNamed('/event',);
+          Navigator.of(context).popAndPushNamed('/home',arguments: eventIndex);
         }
         else if (index==1){
-          Navigator.of(context).pushNamed('/budget',arguments:eventIndex );
+          Navigator.of(context).popAndPushNamed('/event',arguments:eventIndex );
         }else if (index==2){
-          Navigator.of(context).pushNamed('/todo',arguments:eventIndex);
+          Navigator.of(context).popAndPushNamed('/budget',arguments:eventIndex);
         }else if (index==3){
-          Navigator.of(context).pushNamed('/guests',arguments:eventIndex);
+          Navigator.of(context).popAndPushNamed('/guests',arguments:eventIndex);
         }
 
       },
@@ -365,6 +365,10 @@ class BottomBar extends StatelessWidget {
       unselectedItemColor: Colors.black,
       items: [
         BottomNavigationBarItem(
+          icon: Icon(Icons.home,color: mainColor,size: 24,),
+          label: "Home",
+        ),
+        BottomNavigationBarItem(
           icon: Icon(Icons.celebration,color: mainColor,size: 24,),
           label: "Events",
           backgroundColor: mainColor,
@@ -372,10 +376,6 @@ class BottomBar extends StatelessWidget {
         BottomNavigationBarItem(
           icon: Icon(CupertinoIcons.money_dollar_circle_fill,color: mainColor,size: 24,),
           label: 'Budgets',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.task_outlined,color: mainColor,size: 24,),
-          label: "Tasks",
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.people,color: mainColor,size: 24,),
@@ -599,12 +599,12 @@ class CommonFilledWindow extends ConsumerWidget {
                       ),
                       child:      ListTile(
                         trailing: RemoveButton(onPressed: (){
-                          if (isGuest)
+                          if (isGuest){
                             provider.removeGuest(eventIndex, index);
-                          else
+                          }
+                          else{
                             provider.removeVendor(eventIndex, index);
-
-
+                          }
                         },),
                         title: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -646,7 +646,6 @@ class CommonFilledWindow extends ConsumerWidget {
 
                                 })
 
-                                // FrenchCannon(text: guest.invited?'Invited':"Not Invited",size: 13.0),
 
                               ],
                             ),
@@ -756,14 +755,17 @@ class EventAlert extends ConsumerWidget {
             if(isUpdate){
               if (isSchedule){
                 provider.updateSchedule(itemIndex!, eventIndex!, nameController.text, picked);
+                provider.sortSchedule(eventIndex!);
+
               }
             }
             else{
               if (isSchedule){
                 provider.addSchedule( eventIndex!, nameController.text, picked);
+                provider.sortSchedule(eventIndex!);
               }
               else{
-                eventBox.add(Event(eventBudget:Budget(budget: 0, isSet: false), eventExpenses: [], eventGuests: [], eventTasks: [], eventName: nameController.text, eventDate: picked, eventVendors: [], vendorsCount: 0, guestsCount: 0,eventSchedule: [],eventVenue: Venue(selectedDocumentIndex: null,venueCost: 0)));
+                eventBox.add(Event(eventBudget:Budget(budget: 0, isSet: false), eventExpenses: [], eventGuests: [], eventTasks: [], eventName: nameController.text, eventDate: picked, eventVendors: [], vendorsCount: 0, guestsCount: 0,eventSchedule: [],eventVenue: Venue(selectedDocumentIndex: null,venueCost: null),predictedBudget: null));
               }
             }
             Navigator.pop(context);
@@ -777,6 +779,17 @@ void alertMessages({required BuildContext context,required String message}){
      title: Text("Error"),
      content: Text(message),
      actions: [TextButton(onPressed: (){Navigator.of(context).pop();}, child: Text("Ok"))],
-   ));}
+   ));
+}
+Widget PredictionRow(var provider,int eventIndex){
+  Box<Event> eventBox = Hive.box<Event>('event');
+  Event? thisEvent =eventBox.getAt(eventIndex);
+  return Row(
+    children: [Text("Predicted Budget:  Rs. ",style: TextStyle(color:mainColor,fontFamily: "FrenchCannon")),thisEvent!.predictedBudget==0?SizedBox(width: 100,):FrenchCannon(text: thisEvent.predictedBudget.toString()),IconButton(onPressed: (){
+      provider.predictBudget(eventIndex);
+    }, icon: Icon(Icons.refresh))],
+  );
+}
+
 
 
