@@ -1,4 +1,4 @@
-# event_planner_app
+# event_planner
 
 A new Flutter project.
 

@@ -19,7 +19,7 @@ class SingleVenueView extends ConsumerWidget {
       body: Column(
         children: [
           Image.network(document["image_url"]),
-          SizedBox(height: 50,),
+          const SizedBox(height: 50,),
           Wrap(
             alignment: WrapAlignment.center,
             runSpacing: 20,
@@ -27,22 +27,22 @@ class SingleVenueView extends ConsumerWidget {
             children: [
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: [FrenchCannon(text: "Location:",), FrenchCannon(text: document["location"],size: 20.0),
-                Text("----------------------------------")],
+                children: [const FrenchCannon(text: "Location:",), FrenchCannon(text: document["location"],size: 20.0),
+                const Text("----------------------------------")],
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: [FrenchCannon(text: "Contact"), FrenchCannon(text: document["contact"],size: 20.0),Text("----------------------------------")],
+                children: [const FrenchCannon(text: "Contact"), FrenchCannon(text: document["contact"],size: 20.0),const Text("----------------------------------")],
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: [FrenchCannon(text: "Capacity(people)"), FrenchCannon(text: document["capacity"].toString(),size: 20.0),
-                  Text("----------------------------------")],
+                children: [const FrenchCannon(text: "Capacity(people)"), FrenchCannon(text: document["capacity"].toString(),size: 20.0),
+                  const Text("----------------------------------")],
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: [FrenchCannon(text: "Price Per Plate"), FrenchCannon(text: document["price_per_plate"].toString(),size: 20.0),
-                  Text("----------------------------------")],
+                children: [const FrenchCannon(text: "Price Per Plate"), FrenchCannon(text: document["price_per_plate"].toString(),size: 20.0),
+                  const Text("----------------------------------")],
               ),
               SizedBox(
                 width: 150,
@@ -50,7 +50,7 @@ class SingleVenueView extends ConsumerWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    FrenchCannon(text: "Connect",),
+                    const FrenchCannon(text: "Connect",),
                     Row(mainAxisAlignment:MainAxisAlignment.center,children: [IconButton(icon: Image.asset("assets/images/whatsapp.png",width: 25,height: 25,),onPressed: (){
                       provider.whatsappConnect(document["contact"], context);
                     },),
@@ -58,7 +58,7 @@ class SingleVenueView extends ConsumerWidget {
                         provider.dialerConnect(document["contact"], context);
                       }, icon: const Icon(Icons.call,size: 25,)),
                     ],),
-                    Text("----------------------------------"),
+                    const Text("----------------------------------"),
 
                   ],
 

@@ -38,7 +38,6 @@ void main() async{
   if (!Hive.isBoxOpen('todo')) {
     await Hive.openBox<Tasks>('todo');
   }
-  print(directory.path);
 
   if (!Hive.isBoxOpen('guests')) {
     await Hive.openBox<Guests>('guests');
@@ -47,7 +46,7 @@ void main() async{
     await Hive.openBox<Budget>('budget');
   }
   if (!Hive.isBoxOpen('event')) {
-    Box<Event> box =await Hive.openBox<Event>('event');
+   await Hive.openBox<Event>('event');
   }
   if (!Hive.isBoxOpen('expense')) {
     await Hive.openBox<Expenses>('expense');
@@ -78,9 +77,9 @@ class MyApp extends StatelessWidget {
             centerTitle: true,
           elevation: 20.0,
         ),
-        scaffoldBackgroundColor: dusty_rose,
+        scaffoldBackgroundColor: dustyRose,
       ),
-      home:  EventPage(),
+      home:  const EventPage(),
       initialRoute: '/splash',
       onGenerateRoute: (settings)=>Routes.routeGenerator(settings),
     );

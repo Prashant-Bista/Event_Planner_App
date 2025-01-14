@@ -1,5 +1,5 @@
 import 'package:event_planner_app/pages/Schedule/schedule.dart';
-import 'package:event_planner_app/pages/Venue/venueList_view.dart';
+import 'package:event_planner_app/pages/Venue/venue_list_view.dart';
 import 'package:hive/hive.dart';
 import '../Budget/budget.dart';
 import '../Guests/guests.dart';

@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_planner_app/business_logic.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../components.dart';
@@ -9,7 +8,7 @@ import '../Events/event.dart';
 
 class VenueView extends ConsumerWidget {
   final int eventIndex;
-   VenueView({super.key,required this.eventIndex});
+   const VenueView({super.key,required this.eventIndex});
   @override
   Widget build(BuildContext context,WidgetRef ref) {
 
@@ -40,7 +39,7 @@ class VenueView extends ConsumerWidget {
                           child: SizedBox(
                             height: 200,
                             child: ListTile(
-                              tileColor: light_dusty_rose,
+                              tileColor: lightDustyRose,
                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                               onTap: () {
                                 Navigator.of(context).pushNamed('/singlevenue', arguments: documentSnapshot);
@@ -59,10 +58,8 @@ class VenueView extends ConsumerWidget {
                               trailing: ElevatedButton(onPressed: (){
                                 if(thisEvent!=null && thisEvent.eventVenue!=null){
                                   provider.assignVenue(eventIndex, index,documentSnapshot["price_per_plate"]);
-                                  print("selectedIndex: ${thisEvent.eventVenue!.selectedDocumentIndex}");
                                 }
                                 else{
-                                  print("Nullgiven");
                                 }
                               }, child: const Text("Select")),
                             ),

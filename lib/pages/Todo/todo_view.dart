@@ -2,7 +2,6 @@ import 'package:event_planner_app/business_logic.dart';
 import 'package:event_planner_app/components.dart';
 import 'package:event_planner_app/pages/Todo/tasks.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -17,7 +16,6 @@ class TodoView extends ConsumerWidget {
     final provider = ref.watch(stateProvider);
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
-    TextEditingController titleController = TextEditingController();
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
@@ -75,7 +73,7 @@ class TodoView extends ConsumerWidget {
           color: Colors.white,
         ),
         onPressed: () {
-CommonAlert(context, eventIndex, "Task", provider);
+commonAlert(context, eventIndex, "Task", provider);
         },
       ),
       bottomNavigationBar: BottomBar(eventIndex: eventIndex),

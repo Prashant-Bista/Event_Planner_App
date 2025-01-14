@@ -11,8 +11,8 @@ class ContactPage extends StatelessWidget {
   void _launchWhatsApp() async {
     final String whatsappNumber = whatsappController.text.trim();
     final url = "https://wa.me/$whatsappNumber";
-    if (await canLaunch(url)) {
-      await launch(url);
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchUrl(Uri.parse(url));
     } else {
       throw 'Could not launch $url';
     }
@@ -25,8 +25,8 @@ class ContactPage extends StatelessWidget {
       path: email,
       query: 'subject=Subject&body=Body', // add subject and body if needed
     );
-    if (await canLaunch(emailUri.toString())) {
-      await launch(emailUri.toString());
+    if (await canLaunchUrl(emailUri)) {
+      await launchUrl(emailUri);
     } else {
       throw 'Could not launch $emailUri';
     }
@@ -38,8 +38,8 @@ class ContactPage extends StatelessWidget {
       scheme: 'tel',
       path: phoneNumber,
     );
-    if (await canLaunch(phoneUri.toString())) {
-      await launch(phoneUri.toString());
+    if (await canLaunchUrl(phoneUri)) {
+      await launchUrl(phoneUri);
     } else {
       throw 'Could not launch $phoneUri';
     }

@@ -47,7 +47,7 @@ class BudgetTrack extends ConsumerWidget {
                 return Container(
                   height: 100,
                   width: deviceWidth,
-                  color: dusty_rose,
+                  color: dustyRose,
                   child: Center(child: Column(
                     children: [
                       FrenchCannon(
@@ -70,7 +70,7 @@ class BudgetTrack extends ConsumerWidget {
                     ),
                     Container(
                       decoration: BoxDecoration(
-                          color: light_dusty_rose,
+                          color: lightDustyRose,
                           border: Border.all(color: Colors.black, width: 2)),
                       height: 450, // Specify a height
                       child: ListView.builder(
@@ -82,7 +82,7 @@ class BudgetTrack extends ConsumerWidget {
                               const SizedBox(height: 15.0),
                               Container(
                                 decoration: BoxDecoration(
-                                    color: dusty_rose,
+                                    color: dustyRose,
                                     borderRadius: BorderRadius.circular(25)
                                 ),
                                 child: ListTile(
@@ -125,7 +125,7 @@ class BudgetTrack extends ConsumerWidget {
                       padding: const EdgeInsets.only(top: 5,left: 5),
                       height: 50,
                       width: deviceWidth,
-                      color: dusty_rose,
+                      color: dustyRose,
                       child: RichText(
                         textAlign: TextAlign.start,
                           text: TextSpan(children: [
@@ -138,7 +138,7 @@ class BudgetTrack extends ConsumerWidget {
 
                     Container(
                       decoration: BoxDecoration(
-                          color: light_dusty_rose,
+                          color: lightDustyRose,
                           border: Border.all(color: Colors.black, width: 2)),
                       height: 450, // Specify a height
                       child: ListView.builder(
@@ -150,7 +150,7 @@ class BudgetTrack extends ConsumerWidget {
                               const SizedBox(height: 15.0),
                               Container(
                                 decoration: BoxDecoration(
-                                    color: dusty_rose,
+                                    color: dustyRose,
                                     borderRadius: BorderRadius.circular(25)
                                 ),
                                 child: ListTile(
@@ -198,7 +198,7 @@ class BudgetTrack extends ConsumerWidget {
                 MaterialButton(
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
-                  color: light_dusty_rose,
+                  color: lightDustyRose,
                   onPressed: () {
                     showDialog(context: context, builder: (BuildContext context){
                       return AlertDialog(
@@ -245,9 +245,9 @@ class BudgetTrack extends ConsumerWidget {
                 MaterialButton(
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
-                  color: light_dusty_rose,
+                  color: lightDustyRose,
                   onPressed: () {
-                    CommonAlert(context, eventIndex, "Budget", provider);
+                    commonAlert(context, eventIndex, "Budget", provider);
                   },
                   child: const Text("Add Budget"),
                 )

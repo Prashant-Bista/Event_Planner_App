@@ -29,7 +29,7 @@ class _HomePageState extends State<HomePage> {
 
   return SafeArea(
     child: Scaffold(
-      backgroundColor: dusty_rose,
+      backgroundColor: dustyRose,
         appBar: AppBar(
           centerTitle: true,
           backgroundColor: muave,
@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
         ),
         body:  Column(
           children: [
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
         EventTile( eventIndex: widget.eventIndex,isHome: true,onPressed: (){},isUpdate: false,isSchedule: false,index: 0,),
@@ -49,7 +49,7 @@ class _HomePageState extends State<HomePage> {
               Column(
                 children: [
                   SizedBox(
-                    height:heightDevice/2.8,
+                    height:heightDevice/4.0,
                     child: Wrap(
                           runSpacing:widthDevice/12,
                           spacing: widthDevice/12,
@@ -78,7 +78,7 @@ class _HomePageState extends State<HomePage> {
                           ],
                     ),
                   ),
-                  Image.asset("assets/images/Eventium_nobg.png",height: 200,width:250,)
+                  Image.asset("assets/images/Eventium_nobg.png",height: 230,width:250,)
                 ],
               ),
 
