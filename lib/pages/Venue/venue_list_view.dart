@@ -51,7 +51,7 @@ class VenueView extends ConsumerWidget {
                                   BulletoKilla(text: documentSnapshot["name"], color: Colors.black, size: 15.0),
                                   const SizedBox(height: 10),
                                   const Text("Location:", style: TextStyle(fontWeight: FontWeight.bold)),
-                                  Text(documentSnapshot["location"]),
+                                  Text(documentSnapshot["place"].toString()),
                                   documentIndex==index?Text("Selected",style: TextStyle(color: muave,fontWeight: FontWeight.bold),):const Text(""),
                                 ],
                               ),

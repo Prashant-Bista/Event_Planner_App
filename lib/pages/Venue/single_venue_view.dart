@@ -27,8 +27,14 @@ class SingleVenueView extends ConsumerWidget {
             children: [
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,
-                children: [const FrenchCannon(text: "Location:",), FrenchCannon(text: document["location"],size: 20.0),
-                const Text("----------------------------------")],
+                children: [const FrenchCannon(text: "Location:",), Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    FrenchCannon(text: document["place"],size: 20.0),
+                    IconButton(onPressed: (){}, icon: Icon(Icons.location_on,size: 30,))
+                  ],
+                ),
+                const Text("-----------------------------------------")],
               ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.end,

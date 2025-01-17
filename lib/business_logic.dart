@@ -55,8 +55,7 @@ class BusinessLogic extends ChangeNotifier {
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     thisEvent!.eventTasks.add(Tasks(title: task, isDone: false));
-    
-    return null;
+    notifyListeners();
   }
 
   VoidCallback? taskCompletion(bool value, int eventIndex, int index) {
@@ -78,16 +77,16 @@ class BusinessLogic extends ChangeNotifier {
         eventVenue: thisEvent.eventVenue
 
     ));
-    
-    return null;
+    notifyListeners();
+
+
   }
 
   VoidCallback? taskDelete(int eventIndex, int index) {
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     thisEvent!.eventTasks.removeAt(index);
-    
-    return null;
+    notifyListeners();
   }
 
   VoidCallback? addGuest(int eventIndex, String name, int members,
@@ -327,7 +326,6 @@ class BusinessLogic extends ChangeNotifier {
       alertMessages(context: context, message: "Couldn't connect to $contact");
     }
     }
-
   void sortSchedule(int eventIndex) {
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);

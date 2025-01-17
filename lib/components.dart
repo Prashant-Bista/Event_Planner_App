@@ -103,11 +103,10 @@ class InputField extends StatefulWidget {
   final  onSaved;
   final prefixIcon;
   final bool isObscure;
-  final suffixIcon;
   final String hinttext;
   final validator;
   final focusNode;
-  const InputField({super.key, required this.width, required this.onSaved, required this.prefixIcon, required this.isObscure, this.suffixIcon, required this.hinttext, required this.validator, this.focusNode});
+  const InputField({super.key, required this.width, required this.onSaved, required this.prefixIcon, required this.isObscure, required this.hinttext, required this.validator, this.focusNode});
 
   @override
   State<InputField> createState() => _InputFieldState();
@@ -128,7 +127,7 @@ class _InputFieldState extends State<InputField> {
   }
   @override
   Widget build(BuildContext context) {
-    return               SizedBox(
+    return SizedBox(
       width: widget.width,
       child: TextFormField(
         focusNode: widget.focusNode,
@@ -136,6 +135,7 @@ class _InputFieldState extends State<InputField> {
         onSaved: widget.onSaved,
         validator: widget.validator,
         decoration: InputDecoration(
+          fillColor: Colors.grey,
             hintText: widget.hinttext,
             prefixIcon: widget.prefixIcon,
             suffixIcon: widget.isObscure?IconButton(onPressed: (){
@@ -300,7 +300,7 @@ void commonAlert(BuildContext context,int eventIndex,String title,final provider
       ),
       content: ElevatedButton(onPressed: (){
         if (title=="Budget"){
-          provider.AddBudget(eventIndex,double.parse(titleController.text));
+          provider.addBudget(eventIndex,double.parse(titleController.text));
         }
         else if (title == "Expense"){
           provider.addExpense(double.parse(titleController.text), eventIndex);
@@ -768,7 +768,7 @@ class EventAlert extends ConsumerWidget {
                 provider.sortSchedule(eventIndex!);
               }
               else{
-                eventBox.add(Event(eventBudget:Budget(budget: 0, isSet: false), eventExpenses: [], eventGuests: [], eventTasks: [], eventName: nameController.text, eventDate: picked, eventVendors: [], vendorsCount: 0, guestsCount: 0,eventSchedule: [],eventVenue: Venue(selectedDocumentIndex: null,venueCost: null),predictedBudget: null));
+                eventBox.add(Event(eventBudget:Budget(budget: 0, isSet: false), eventExpenses: [], eventGuests: [], eventTasks: [], eventName: nameController.text, eventDate: picked, eventVendors: [], vendorsCount: 0, guestsCount: 0,eventSchedule: [],eventVenue: Venue(selectedDocumentIndex: null,venueCost: 0),predictedBudget: null));
               }
             }
             Navigator.pop(context);

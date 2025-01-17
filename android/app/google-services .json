@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "975657109570",
+    "project_id": "eventium-74c4c",
+    "storage_bucket": "eventium-74c4c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:975657109570:android:39accbe36d49d8fa0545db",
+        "android_client_info": {
+          "package_name": "com.example.event_planner_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "975657109570-gk2toh877302sv203gi90cssqvs1b2db.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.event_planner_app",
+            "certificate_hash": "f90cd699fd0f3561ff4176fb2b9a1c274ab68e81"
+          }
+        },
+        {
+          "client_id": "975657109570-c47q443k5vn6h2lcppnt0tdq85j2cs8h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCje7EUV8OF80bFfxECVsz4L8G27pghuR8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "975657109570-c47q443k5vn6h2lcppnt0tdq85j2cs8h.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "975657109570-j29mc6nmcvcdprji980r4nf2g8g1a1b5.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.eventPlannerApp"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

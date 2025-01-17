@@ -11,7 +11,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  final AuthenticationService _auth=  new AuthenticationService();
+  final AuthenticationService _auth= AuthenticationService();
   GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
   FocusNode emailFocusNode = FocusNode();
   FocusNode passwordFocusNode = FocusNode();
@@ -115,15 +115,11 @@ class _LoginState extends State<Login> {
                     ),
                     const SizedBox(height: 20,),
                     SignInButton(buttonType: ButtonType.google, onPressed: (){
-
+// _auth.signInWithGoogleMobile(context);
                     },),
                     const SizedBox(height: 10,),
-                    const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        FrenchCannon(text: "Don't have an account",)
-                      ],
-                    )
+                    InkWell(child: const FrenchCannon(text: "Create an Account",),onTap:()=>Navigator.of(context).pushNamed("/register")),
+
                   ],
                 ),)
           ],

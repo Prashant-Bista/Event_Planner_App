@@ -26,9 +26,9 @@ class TodoView extends ConsumerWidget {
         ),
       ),
       body: ValueListenableBuilder(
-        valueListenable: eventBox.listenable(), // Listen to the eventBox
+        valueListenable: eventBox.listenable(),
         builder: (context, Box<Event> box, _) {
-          thisEvent = box.getAt(eventIndex); // Update thisEvent on change
+          thisEvent = box.getAt(eventIndex);
 
           if (thisEvent!.eventTasks.isEmpty) {
             return const Center(

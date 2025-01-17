@@ -1,4 +1,5 @@
 import 'package:event_planner_app/business_logic.dart';
+import 'package:event_planner_app/services/authentication_service.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -10,11 +11,15 @@ class EventPage extends ConsumerWidget {
   const EventPage({super.key});
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    AuthenticationService auth = AuthenticationService();
     final provider = ref.watch(stateProvider);
     Box<Event> event = Hive.box<Event>('event');
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
+        actions: [IconButton(onPressed: (){
+          auth.signOut(context);
+        }, icon: Icon(Icons.logout))],
         title: const FrenchCannon(
           text: "Events",
           color: Colors.white,
@@ -71,7 +76,7 @@ class EventPage extends ConsumerWidget {
                   );
                 } else {
                   return const SizedBox
-                      .shrink(); // If the event is null, don't render anything
+                      .shrink();
                 }
               },
             );

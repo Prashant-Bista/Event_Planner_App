@@ -9,6 +9,7 @@ import 'package:event_planner_app/pages/Vendors/vendors_view.dart';
 import 'package:event_planner_app/pages/Venue/single_venue_view.dart';
 import 'package:event_planner_app/pages/Venue/venue_list_view.dart';
 import 'package:event_planner_app/pages/home_page.dart';
+import 'package:event_planner_app/pages/register.dart';
 import 'package:event_planner_app/pages/splash.dart';
 import 'package:flutter/material.dart';
 
@@ -54,6 +55,9 @@ class Routes{
     if (settings.name=='/singlevenue'){
       final DocumentSnapshot args = settings.arguments as DocumentSnapshot;
       return MaterialPageRoute(builder: (_)=>SingleVenueView(document: args));
+    }
+    if(settings.name=="/register"){
+      return MaterialPageRoute(builder: (_)=>Register());
     }
     return null;
   }

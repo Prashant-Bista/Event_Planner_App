@@ -1,5 +1,6 @@
 import 'package:event_planner_app/components.dart';
 import 'package:event_planner_app/pages/Events/event.dart';
+import 'package:event_planner_app/services/authentication_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -12,6 +13,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  AuthenticationService _auth = AuthenticationService();
   Box<Event> eventBox = Hive.box<Event>('event');
   Event? thisEvent;
 @override
@@ -29,12 +31,11 @@ class _HomePageState extends State<HomePage> {
 
   return SafeArea(
     child: Scaffold(
-      backgroundColor: dustyRose,
         appBar: AppBar(
-          centerTitle: true,
-          backgroundColor: muave,
           title: const FrenchCannon(text:"Home Page", color: Colors.white,weight: FontWeight.bold,),
-          elevation: 20.0,
+          actions: [IconButton(onPressed: (){
+            _auth.signOut(context);
+          }, icon: Icon(Icons.logout))],
         ),
         body:  Column(
           children: [
