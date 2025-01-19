@@ -2,7 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:event_planner_app/components.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+
+import '../pages/login.dart';
 
 class AuthenticationService {
   late FirebaseAuth auth;
@@ -28,22 +29,7 @@ class AuthenticationService {
       alertMessages(context: context, message:e.toString());
     }
   }
-  // Future<void>signinWithGoogleWeb(BuildContext context)async{
-  //   final GoogleAuthProvider googleAuthProvider = GoogleAuthProvider();
-  //   auth.signInWithPopup(googleAuthProvider);
-  // }
-  // Future<void> signInWithGoogleMobile(BuildContext context)async {
-  //   try {
-  //     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-  //     final GoogleSignInAuthentication? googleAtuth = await googleUser
-  //         ?.authentication;
-  //     final credentails = GoogleAuthProvider.credential(
-  //         accessToken: googleAtuth?.accessToken, idToken: googleAtuth?.idToken);
-  //     auth.signInWithCredential(credentails);
-  //   } catch (e) {
-  //     alertMessages(context: context, message: e.toString());
-  //   }
-  // }
+
     Future<void> signOut(BuildContext context) async {
     showDialog(context: context, builder: (_){
       return AlertDialog(

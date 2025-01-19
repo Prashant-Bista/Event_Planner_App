@@ -19,7 +19,7 @@ class EventPage extends ConsumerWidget {
       appBar: AppBar(
         actions: [IconButton(onPressed: (){
           auth.signOut(context);
-        }, icon: Icon(Icons.logout))],
+        }, icon: const Icon(Icons.logout))],
         title: const FrenchCannon(
           text: "Events",
           color: Colors.white,
@@ -36,8 +36,8 @@ class EventPage extends ConsumerWidget {
             return ListView.builder(
               itemCount: box.length,
               itemBuilder: (context, index) {
-                Event? thisEvent =
-                    box.getAt(index); // Make sure to make thisEvent nullable
+                Event thisEvent =
+                    box.getAt(index)!; // Make sure to make thisEvent nullable
                 if (thisEvent != null) {
                   // Check if the event is not null
                   return Column(
@@ -60,8 +60,8 @@ class EventPage extends ConsumerWidget {
                               FrenchCannon(text: thisEvent.eventName),
                               FrenchCannon(
                                 text:
-                                    "On : ${thisEvent.eventDate!.year}/${thisEvent.eventDate!.month}/${thisEvent.eventDate!.day} "
-                                    "At ${thisEvent.eventDate!.hour}:${thisEvent.eventDate!.minute < 10 ? '0${thisEvent.eventDate!.minute}' : thisEvent.eventDate!.minute}",
+                                    "On :${thisEvent.eventDate!=null? '${thisEvent.eventDate!.year}/${thisEvent.eventDate!.month}/${thisEvent.eventDate!.day}':'No date'} "
+                                    "At ${thisEvent.eventDate!=null? '${thisEvent.eventDate!.hour}:${thisEvent.eventDate!.minute < 10 ? '0${thisEvent.eventDate!.minute}' : thisEvent.eventDate!.minute}':'No time'}",
                               ),
                             ],
                           ),
@@ -88,7 +88,7 @@ class EventPage extends ConsumerWidget {
           showDialog(
               context: context,
               builder: (BuildContext context) {
-                return EventAlert(
+                return const EventAlert(
                   isSchedule: false,
                   isUpdate: false,
                   eventIndex: null,

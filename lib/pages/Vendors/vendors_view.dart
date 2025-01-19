@@ -30,8 +30,6 @@ class VendorsView extends ConsumerWidget {
           valueListenable: eventBox.listenable(), // Listen to the eventBox
           builder: (context, Box<Event> box, _) {
             thisEvent = box.getAt(eventIndex); // Update thisEvent on change
-            provider.counterVendor(eventIndex);
-        
             if (thisEvent!.eventVendors.isEmpty) {
               return const Center(
                 child: FrenchCannon(

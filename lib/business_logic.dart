@@ -1,5 +1,6 @@
 
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_planner_app/components.dart';
 import 'package:event_planner_app/pages/Budget/budget.dart';
 import 'package:event_planner_app/pages/Events/event.dart';
@@ -7,6 +8,7 @@ import 'package:event_planner_app/pages/Guests/guests.dart';
 import 'package:event_planner_app/pages/Schedule/schedule.dart';
 import 'package:event_planner_app/pages/Todo/tasks.dart';
 import 'package:event_planner_app/pages/Vendors/vendors.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,11 +16,13 @@ import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 final stateProvider = ChangeNotifierProvider.autoDispose<BusinessLogic>((ref)=>BusinessLogic());
+FirebaseFirestore _db = FirebaseFirestore.instance;
+String _uid =  FirebaseAuth.instance.currentUser!.uid;
 class BusinessLogic extends ChangeNotifier {
+
   VoidCallback? removeEvent(int eventIndex){
     Box<Event> eventBox = Hive.box<Event>('event');
     eventBox.deleteAt(eventIndex);
-    
     return null;
   }
   VoidCallback? addBudget(int eventIndex, double value) {
@@ -37,7 +41,8 @@ class BusinessLogic extends ChangeNotifier {
         vendorsCount: thisEvent.eventVendors.length,
         guestsCount: thisEvent.guestsCount,
         eventSchedule:thisEvent.eventSchedule,
-      eventVenue: thisEvent.eventVenue
+      eventVenue: thisEvent.eventVenue,
+      eventId: thisEvent.eventId
 
     );
     eventBox.putAt(eventIndex, updatedEvent);
@@ -74,7 +79,9 @@ class BusinessLogic extends ChangeNotifier {
         vendorsCount: thisEvent.eventVendors.length,
         guestsCount: thisEvent.guestsCount,
         eventSchedule:thisEvent.eventSchedule,
-        eventVenue: thisEvent.eventVenue
+        eventVenue: thisEvent.eventVenue,
+      eventId: thisEvent.eventId,
+
 
     ));
     notifyListeners();
@@ -162,21 +169,21 @@ class BusinessLogic extends ChangeNotifier {
   VoidCallback? removeGuest(int eventIndex, int index) {
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
-    thisEvent!.vendorsCount !=
-        thisEvent.vendorsCount - thisEvent.eventGuests[index].membersNo;
+    thisEvent!.guestsCount !=
+        thisEvent.guestsCount - thisEvent.eventGuests[index].membersNo;
     thisEvent.eventGuests.removeAt(index);
-    
+
     return null;
   }
 
-  VoidCallback? addVendors(int eventIndex, String name, String contact,
-      bool isBooked, int price) {
+ void addVendors(int eventIndex, String name, String contact,
+      bool isBooked, int price) async{
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     thisEvent!.eventVendors.add(Vendors(
         name: name, contact: contact, isBooked: isBooked, price: price));
-    
-    return null;
+    await _db.collection("Users").doc(_uid).collection("Events").doc(thisEvent.eventId).update({"vendors_no":thisEvent.eventVendors.length});
+    notifyListeners();
   }
 
   VoidCallback? updateVendors(int eventIndex, int vendorIndex, String name,
@@ -196,11 +203,12 @@ class BusinessLogic extends ChangeNotifier {
     return null;
   }
 
-  void counterGuests(int eventIndex) {
+  void counterGuests(int eventIndex) async{
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     int totalGuests = 0;
     List<Guests> guests = thisEvent!.eventGuests;
+
     for (Guests guest in guests) {
       totalGuests = totalGuests + guest.membersNo;
     }
@@ -214,9 +222,12 @@ class BusinessLogic extends ChangeNotifier {
         vendorsCount: thisEvent.eventVendors.length,
         guestsCount: totalGuests,
         eventSchedule:thisEvent.eventSchedule,
-        eventVenue: thisEvent.eventVenue
+        eventVenue: thisEvent.eventVenue,
+        eventId: thisEvent.eventId
 
     ));
+
+    await _db.collection("Users").doc(_uid).collection("Events").doc(thisEvent.eventId).update({"guest_no":totalGuests});
   }
 
   void assignVenue(int eventIndex,int venueIndex,int pricePerplate){
@@ -225,29 +236,6 @@ class BusinessLogic extends ChangeNotifier {
     thisEvent!.eventVenue!.selectedDocumentIndex=venueIndex;
     thisEvent.eventVenue!.venueCost= double.parse(((thisEvent.guestsCount+thisEvent.vendorsCount)*pricePerplate+14000).toString());
     eventBox.putAt(eventIndex, thisEvent);
-    
-  }
-
-  void counterVendor(int eventIndex) {
-    Box<Event> eventBox = Hive.box<Event>('event');
-    Event? thisEvent = eventBox.getAt(eventIndex);
-    int totalGuests = 0;
-    List<Guests> guests = thisEvent!.eventGuests;
-    for (Guests guest in guests) {
-      totalGuests = totalGuests + guest.membersNo;
-    }
-    eventBox.putAt(eventIndex, Event(eventBudget: thisEvent.eventBudget,
-        eventExpenses: thisEvent.eventExpenses,
-        eventGuests: thisEvent.eventGuests,
-        eventTasks: thisEvent.eventTasks,
-        eventName: thisEvent.eventName,
-        eventDate: thisEvent.eventDate,
-        eventVendors: thisEvent.eventVendors,
-        vendorsCount: thisEvent.eventVendors.length,
-        guestsCount: totalGuests,
-    eventSchedule: thisEvent.eventSchedule,
-        eventVenue: thisEvent.eventVenue
-    ));
     
   }
 
@@ -263,14 +251,15 @@ class BusinessLogic extends ChangeNotifier {
     eventBox.putAt(eventIndex, thisEvent);
     
   }
-  void removeVendor(int eventIndex, int index) {
+  void removeVendor(int eventIndex, int index) async{
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     thisEvent!.vendorsCount !=
         thisEvent.vendorsCount - 1;
     thisEvent.eventVendors.removeAt(index);
     eventBox.putAt(eventIndex, thisEvent);
-    
+    await _db.collection("Users").doc(_uid).collection("Events").doc(thisEvent.eventId).update({"vendors_no":thisEvent.eventVendors.length});
+
   }
 
   VoidCallback? updateSchedule(int itemIndex,int eventIndex,String title,DateTime? picked){

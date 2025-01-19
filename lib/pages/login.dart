@@ -5,6 +5,7 @@ import 'package:sign_button/constants.dart';
 import 'package:sign_button/create_button.dart';
 
 class Login extends StatefulWidget {
+
   const Login({super.key});
   @override
   State<Login> createState() => _LoginState();
@@ -15,11 +16,10 @@ class _LoginState extends State<Login> {
   GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
   FocusNode emailFocusNode = FocusNode();
   FocusNode passwordFocusNode = FocusNode();
+   bool guestLogin=false;
   late double widthDevice;
-  // final authProvider= ref.watch(authenticationProvider);
   late String email;
   late String password;
-  // bool remember=false;
   @override
   Widget build(BuildContext context) {
     widthDevice= MediaQuery.of(context).size.width;
@@ -93,6 +93,7 @@ class _LoginState extends State<Login> {
                         color: Colors.deepPurple,
                         child:const FrenchCannon(text: "Guest Login ", size: 20.0,color: Colors.white,),
                         onPressed: (){
+                          guestLogin = true;
                           Navigator.of(context).pushNamed('/event');
                           // }
                         }),
@@ -115,7 +116,6 @@ class _LoginState extends State<Login> {
                     ),
                     const SizedBox(height: 20,),
                     SignInButton(buttonType: ButtonType.google, onPressed: (){
-// _auth.signInWithGoogleMobile(context);
                     },),
                     const SizedBox(height: 10,),
                     InkWell(child: const FrenchCannon(text: "Create an Account",),onTap:()=>Navigator.of(context).pushNamed("/register")),

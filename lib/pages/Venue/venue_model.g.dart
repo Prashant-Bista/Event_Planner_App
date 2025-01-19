@@ -18,6 +18,8 @@ class VenueAdapter extends TypeAdapter<Venue> {
     };
     return Venue(
       selectedDocumentIndex: fields[0] as int?,
+      venueId: fields[1] as String,
+
     );
   }
 

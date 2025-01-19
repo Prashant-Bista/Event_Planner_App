@@ -4,6 +4,7 @@ import 'package:event_planner_app/pages/Events/event.dart';
 import 'package:event_planner_app/pages/Guests/guests.dart';
 import 'package:event_planner_app/pages/Vendors/vendors.dart';
 import 'package:event_planner_app/pages/Venue/venue_model.dart';
+import 'package:event_planner_app/services/database_service.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,7 +19,7 @@ Color mainColor = const Color.fromRGBO(11, 14, 28, 1);
 Color muave = const Color.fromRGBO(199, 124, 124, 1.0);
 Color dustyRose = const Color.fromRGBO(242, 202, 198, 1.0);
 Color darkDustyRose = const Color.fromRGBO(244, 175, 168, 1.0);
-
+DatabaseService _db = DatabaseService();
 Color lightDustyRose = const Color.fromRGBO(242, 223, 223, 1.0);
 
 Color softBlueGrey = const Color.fromRGBO(206, 230, 242, 1);
@@ -755,7 +756,7 @@ class EventAlert extends ConsumerWidget {
               ],
             ),
           ),
-          content: ElevatedButton(onPressed: (){
+          content: ElevatedButton(onPressed: () {
             if(isUpdate){
               if (isSchedule){
                 provider.updateSchedule(itemIndex!, eventIndex!, nameController.text, picked);
@@ -768,7 +769,9 @@ class EventAlert extends ConsumerWidget {
                 provider.sortSchedule(eventIndex!);
               }
               else{
-                eventBox.add(Event(eventBudget:Budget(budget: 0, isSet: false), eventExpenses: [], eventGuests: [], eventTasks: [], eventName: nameController.text, eventDate: picked, eventVendors: [], vendorsCount: 0, guestsCount: 0,eventSchedule: [],eventVenue: Venue(selectedDocumentIndex: null,venueCost: 0),predictedBudget: null));
+                eventBox.add(Event(eventId:"notset",eventBudget:Budget(budget: 0, isSet: false), eventExpenses: [], eventGuests: [], eventTasks: [], eventName: nameController.text, eventDate: picked!, eventVendors: [], vendorsCount: 0, guestsCount: 0,eventSchedule: [],eventVenue: Venue(selectedDocumentIndex: null,venueCost: 0,venueId: "not_Added"),predictedBudget: null));
+                 _db.createEvent(eventBox.length-1);
+
               }
             }
             Navigator.pop(context);

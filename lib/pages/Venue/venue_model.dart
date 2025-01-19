@@ -8,9 +8,11 @@ class Venue{
 
   @HiveField(0)
   int? selectedDocumentIndex;
+  String venueId;
   double? venueCost;
   Venue({
      this.selectedDocumentIndex,
      this.venueCost,
+    required this.venueId
   });
 }
