@@ -13,6 +13,7 @@ class EventPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     AuthenticationService auth = AuthenticationService();
     final provider = ref.watch(stateProvider);
+    provider.eventRefresh();
     Box<Event> event = Hive.box<Event>('event');
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -38,47 +39,42 @@ class EventPage extends ConsumerWidget {
               itemBuilder: (context, index) {
                 Event thisEvent =
                     box.getAt(index)!; // Make sure to make thisEvent nullable
-                if (thisEvent != null) {
-                  // Check if the event is not null
-                  return Column(
-                    children: [
-                      const SizedBox(height: 20),
-                      InkWell(
-                        splashColor: darkDustyRose,
-                        onTap: () {
-                          Navigator.of(context)
-                              .pushNamed('/home', arguments: index);
-                        },
-                        child: ListTile(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                          tileColor: lightDustyRose,
-                          title: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              FrenchCannon(text: thisEvent.eventName),
-                              FrenchCannon(
-                                text:
-                                    "On :${thisEvent.eventDate!=null? '${thisEvent.eventDate!.year}/${thisEvent.eventDate!.month}/${thisEvent.eventDate!.day}':'No date'} "
-                                    "At ${thisEvent.eventDate!=null? '${thisEvent.eventDate!.hour}:${thisEvent.eventDate!.minute < 10 ? '0${thisEvent.eventDate!.minute}' : thisEvent.eventDate!.minute}':'No time'}",
-                              ),
-                            ],
-                          ),
-                          trailing: RemoveButton(
-                            onPressed: () {
-                              provider.removeEvent(index);
-                            },
-                          ),
+                // Check if the event is not null
+                return Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    InkWell(
+                      splashColor: darkDustyRose,
+                      onTap: () {
+                        Navigator.of(context)
+                            .pushNamed('/home', arguments: index);
+                      },
+                      child: ListTile(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                        tileColor: lightDustyRose,
+                        title: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            FrenchCannon(text: thisEvent.eventName),
+                            FrenchCannon(
+                              text:
+                                  "On :${thisEvent.eventDate!=null? '${thisEvent.eventDate!.year}/${thisEvent.eventDate!.month}/${thisEvent.eventDate!.day}':'No date'} "
+                                  "At ${thisEvent.eventDate!=null? '${thisEvent.eventDate!.hour}:${thisEvent.eventDate!.minute < 10 ? '0${thisEvent.eventDate!.minute}' : thisEvent.eventDate!.minute}':'No time'}",
+                            ),
+                          ],
+                        ),
+                        trailing: RemoveButton(
+                          onPressed: () {
+                            provider.removeEvent(index);
+                          },
                         ),
                       ),
-                    ],
-                  );
-                } else {
-                  return const SizedBox
-                      .shrink();
-                }
-              },
+                    ),
+                  ],
+                );
+                            },
             );
           }
         },

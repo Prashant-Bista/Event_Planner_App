@@ -12,6 +12,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+
   final AuthenticationService _auth= AuthenticationService();
   GlobalKey<FormState> loginFormKey = GlobalKey<FormState>();
   FocusNode emailFocusNode = FocusNode();
@@ -20,6 +21,11 @@ class _LoginState extends State<Login> {
   late double widthDevice;
   late String email;
   late String password;
+  @override
+  void initState() {
+
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     widthDevice= MediaQuery.of(context).size.width;

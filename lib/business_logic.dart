@@ -8,6 +8,7 @@ import 'package:event_planner_app/pages/Guests/guests.dart';
 import 'package:event_planner_app/pages/Schedule/schedule.dart';
 import 'package:event_planner_app/pages/Todo/tasks.dart';
 import 'package:event_planner_app/pages/Vendors/vendors.dart';
+import 'package:event_planner_app/services/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -17,6 +18,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 final stateProvider = ChangeNotifierProvider.autoDispose<BusinessLogic>((ref)=>BusinessLogic());
 FirebaseFirestore _db = FirebaseFirestore.instance;
+DatabaseService _dbService = DatabaseService();
 String _uid =  FirebaseAuth.instance.currentUser!.uid;
 class BusinessLogic extends ChangeNotifier {
 
@@ -244,6 +246,27 @@ notifyListeners();
     eventBox.putAt(eventIndex, thisEvent);
     
   }
+  void eventRefresh() async{
+    Box<Event> event = Hive.box("event");
+    await _db.collection("Users").doc(_uid).collection("Events").where("presence",isEqualTo:true).get().then((querySnap){
+      for (int i=event.length-1;i>=0;i-- ){
+        bool isEventPresent=false;
+        int newEventIndex=-1;
+        for (DocumentSnapshot docSnap in querySnap.docs){
+          if(event.getAt(i)?.eventId==docSnap.id){
+            isEventPresent=true;
+            newEventIndex= i;
+            break;
+          }
+        }
+        if(isEventPresent==false){
+          _dbService.createEvent(newEventIndex);
+        }
+      }
+    });
+
+
+     }
 
   Future<void> predictBudget(int eventIndex) async{
     Box<Event> eventBox = Hive.box<Event>('event');
@@ -341,6 +364,7 @@ notifyListeners();
       eventBox.putAt(eventIndex, thisEvent);
       
   }
+
   }
 
 
