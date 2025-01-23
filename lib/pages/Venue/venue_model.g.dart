@@ -17,18 +17,19 @@ class VenueAdapter extends TypeAdapter<Venue> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Venue(
-      selectedDocumentIndex: fields[0] as int?,
-      venueId: fields[1] as String,
-
+      venueCost: fields[1] as double,
+      venueId: fields[0] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Venue obj) {
     writer
-      ..writeByte(1)
+      ..writeByte(2)
       ..writeByte(0)
-      ..write(obj.selectedDocumentIndex);
+      ..write(obj.venueId)
+      ..writeByte(1)
+      ..write(obj.venueCost);
   }
 
   @override

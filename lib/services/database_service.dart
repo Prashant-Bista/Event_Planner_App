@@ -32,7 +32,8 @@ class DatabaseService {
   Future<void> createEvent(int eventIndex)async{
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
-    DocumentReference docref= await db.collection("Users").doc(_userId).collection("Events").add({"guest_no":thisEvent!.guestsCount,"name":thisEvent.eventName,"selected_venue":thisEvent.eventVenue!.selectedDocumentIndex??-1,"tasks_no":thisEvent.eventTasks.length,"vendors_no":thisEvent.vendorsCount,"event_index":eventIndex});
+
+    DocumentReference docref= await db.collection("Users").doc(_userId).collection("Events").add({"guest_no":thisEvent!.guestsCount,"name":thisEvent.eventName,"selected_venue":thisEvent.eventVenue!.venueId??"not_added","tasks_no":thisEvent.eventTasks.length,"vendors_no":thisEvent.vendorsCount,"expense":thisEvent.eventBudget.total_expenses});
     thisEvent.eventId=docref.id;
 
   }
@@ -40,7 +41,8 @@ class DatabaseService {
       Box<Event> eventBox = Hive.box<Event>('event');
       Event? thisEvent = eventBox.getAt(eventIndex);
       try {
-        Future<QuerySnapshot> dbEvent= db.collection("Users").doc(_userId).collection("Events").where("name",isEqualTo: thisEvent!.eventName).get();
+ db.collection("Users").doc(_userId).collection("Events").doc(thisEvent!.eventId).update(
+     {"expense":thisEvent.eventBudget.total_expenses});
       } catch (e) {
         alertMessages(context: context, message: e.toString());
       }

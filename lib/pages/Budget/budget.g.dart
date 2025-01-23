@@ -19,17 +19,20 @@ class BudgetAdapter extends TypeAdapter<Budget> {
     return Budget(
       budget: fields[0] as double,
       isSet: fields[1] as bool,
+      total_expenses: fields[2] as double,
     );
   }
 
   @override
   void write(BinaryWriter writer, Budget obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.budget)
       ..writeByte(1)
-      ..write(obj.isSet);
+      ..write(obj.isSet)
+      ..writeByte(2)
+      ..write(obj.total_expenses);
   }
 
   @override

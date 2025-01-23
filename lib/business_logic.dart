@@ -20,17 +20,17 @@ FirebaseFirestore _db = FirebaseFirestore.instance;
 String _uid =  FirebaseAuth.instance.currentUser!.uid;
 class BusinessLogic extends ChangeNotifier {
 
-  VoidCallback? removeEvent(int eventIndex){
+  void removeEvent(int eventIndex){
     Box<Event> eventBox = Hive.box<Event>('event');
     eventBox.deleteAt(eventIndex);
-    return null;
+    notifyListeners();
   }
-  VoidCallback? addBudget(int eventIndex, double value) {
+  void addBudget(int eventIndex, double value) {
     Box<Event> eventBox = Hive.box<Event>('event');
 
     Event? thisEvent = eventBox.getAt(eventIndex);
     Event? updatedEvent;
-    Budget thisBudget = Budget(budget: value, isSet: true);
+    Budget thisBudget = Budget(budget: value, isSet: true,total_expenses: 0);
     updatedEvent = Event(eventTasks: thisEvent!.eventTasks,
         eventExpenses: thisEvent.eventExpenses,
         eventGuests: thisEvent.eventGuests,
@@ -46,8 +46,9 @@ class BusinessLogic extends ChangeNotifier {
 
     );
     eventBox.putAt(eventIndex, updatedEvent);
+
+    notifyListeners();
     
-    return null;
   }
 
   bool budgetSetCheck(int eventIndex) {
@@ -56,14 +57,14 @@ class BusinessLogic extends ChangeNotifier {
     return thisEvent!.eventBudget.isSet;
   }
 
-  VoidCallback? addTask(int eventIndex, String task) {
+  void addTask(int eventIndex, String task) {
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     thisEvent!.eventTasks.add(Tasks(title: task, isDone: false));
     notifyListeners();
   }
 
-  VoidCallback? taskCompletion(bool value, int eventIndex, int index) {
+  void taskCompletion(bool value, int eventIndex, int index) {
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     List<Tasks>? updated = thisEvent!.eventTasks;
@@ -85,18 +86,16 @@ class BusinessLogic extends ChangeNotifier {
 
     ));
     notifyListeners();
-
-
   }
 
-  VoidCallback? taskDelete(int eventIndex, int index) {
+  void taskDelete(int eventIndex, int index) {
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     thisEvent!.eventTasks.removeAt(index);
     notifyListeners();
   }
 
-  VoidCallback? addGuest(int eventIndex, String name, int members,
+  void addGuest(int eventIndex, String name, int members,
       bool isInvited, String contact) {
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
@@ -109,11 +108,12 @@ class BusinessLogic extends ChangeNotifier {
         contact: contact,
       ),
     );
+
+    notifyListeners();
     
-    return null;
   }
 
-  VoidCallback? updateGuest(int eventIndex, int guestIndex, String name,
+  void updateGuest(int eventIndex, int guestIndex, String name,
       int members, bool isInvited, String contact) {
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
@@ -126,19 +126,21 @@ class BusinessLogic extends ChangeNotifier {
         contact: contact,
       ),
     );
+
+    notifyListeners();
     
-    return null;
   }
 
-  VoidCallback? addExpense(double value, int eventIndex, String purpose) {
+  void addExpense(double value, int eventIndex, String purpose) {
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     thisEvent!.eventExpenses.add(Expenses(
         expenses: value,
         purpose: purpose
     ));
+
+    notifyListeners();
     
-    return null;
   }
 
   double calcBudgetLeft(int eventIndex,) {
@@ -154,26 +156,29 @@ class BusinessLogic extends ChangeNotifier {
     for (Vendors vendor in vendors) {
       totalExpense = totalExpense + vendor.price!;
     }
+    totalExpense += thisEvent.eventVenue!.venueCost;
+    thisEvent.eventBudget.total_expenses = totalExpense;
     budgetRemaining = thisEvent.eventBudget.budget - totalExpense;
+
     return budgetRemaining;
   }
 
-  VoidCallback? deleteExpense(int eventIndex, index) {
+  void deleteExpense(int eventIndex, index) {
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     thisEvent!.eventExpenses.removeAt(index);
-    
-    return null;
+    notifyListeners();
   }
 
-  VoidCallback? removeGuest(int eventIndex, int index) {
+  void removeGuest(int eventIndex, int index) {
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     thisEvent!.guestsCount !=
         thisEvent.guestsCount - thisEvent.eventGuests[index].membersNo;
     thisEvent.eventGuests.removeAt(index);
 
-    return null;
+    notifyListeners();
+    
   }
 
  void addVendors(int eventIndex, String name, String contact,
@@ -186,7 +191,7 @@ class BusinessLogic extends ChangeNotifier {
     notifyListeners();
   }
 
-  VoidCallback? updateVendors(int eventIndex, int vendorIndex, String name,
+  void updateVendors(int eventIndex, int vendorIndex, String name,
       int price, bool isInvited, String contact) {
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
@@ -200,7 +205,8 @@ class BusinessLogic extends ChangeNotifier {
       ),
     );
     
-    return null;
+notifyListeners();
+
   }
 
   void counterGuests(int eventIndex) async{
@@ -230,10 +236,10 @@ class BusinessLogic extends ChangeNotifier {
     await _db.collection("Users").doc(_uid).collection("Events").doc(thisEvent.eventId).update({"guest_no":totalGuests});
   }
 
-  void assignVenue(int eventIndex,int venueIndex,int pricePerplate){
+  void assignVenue(int eventIndex,String venueIndex,int pricePerplate){
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
-    thisEvent!.eventVenue!.selectedDocumentIndex=venueIndex;
+    thisEvent!.eventVenue!.venueId=venueIndex;
     thisEvent.eventVenue!.venueCost= double.parse(((thisEvent.guestsCount+thisEvent.vendorsCount)*pricePerplate+14000).toString());
     eventBox.putAt(eventIndex, thisEvent);
     
@@ -262,31 +268,31 @@ class BusinessLogic extends ChangeNotifier {
 
   }
 
-  VoidCallback? updateSchedule(int itemIndex,int eventIndex,String title,DateTime? picked){
+  void updateSchedule(int itemIndex,int eventIndex,String title,DateTime? picked){
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     thisEvent!.eventSchedule.removeAt(itemIndex);
     thisEvent.eventSchedule.insert(itemIndex, Schedule(title: title, completeWithin: picked!));
     eventBox.putAt(eventIndex, thisEvent);
     
-    return null;
+    
   }
-  VoidCallback? removeSchedule(int itemIndex,int eventIndex){
+  void removeSchedule(int itemIndex,int eventIndex){
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     thisEvent!.eventSchedule.removeAt(itemIndex);
     eventBox.putAt(eventIndex,thisEvent);
     
-    return null;
+    
   }
 
-  VoidCallback? addSchedule(int eventIndex,String title,DateTime? picked){
+  void addSchedule(int eventIndex,String title,DateTime? picked){
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     thisEvent!.eventSchedule.add(Schedule(title: title, completeWithin: picked!));
     eventBox.putAt(eventIndex, thisEvent);
     
-    return null;
+    
   }
 
   String timeRemaining(DateTime setDateTime) {

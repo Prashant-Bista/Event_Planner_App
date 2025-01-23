@@ -6,15 +6,16 @@ part 'budget.g.dart';
 class Budget {
   @HiveField(0)
   final double budget;
-
   @HiveField(1)
   final bool isSet;
-
+  @HiveField(2)
+  double total_expenses;
 
 
   Budget({
     required this.budget,
     required this.isSet,
+    required this.total_expenses,
 
   });
 }

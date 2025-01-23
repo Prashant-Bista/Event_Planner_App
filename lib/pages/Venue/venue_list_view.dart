@@ -22,9 +22,9 @@ class VenueView extends ConsumerWidget {
         valueListenable: eventBox.listenable(),
         builder:(context,Box<Event> eventBox, _){
           Event? thisEvent = eventBox.getAt(eventIndex);
-          int? documentIndex;
+          String? venueId;
           if(thisEvent!=null && thisEvent.eventVenue!=null){
-            documentIndex= thisEvent.eventVenue!.selectedDocumentIndex;
+            venueId= thisEvent.eventVenue!.venueId;
           }
           return StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance.collection("Venues").snapshots(),
@@ -34,6 +34,7 @@ class VenueView extends ConsumerWidget {
                       itemCount: snapshot.data!.docs.length,
                       itemBuilder: (context, index) {
                         DocumentSnapshot documentSnapshot = snapshot.data!.docs[index];
+                        String venueId = documentSnapshot.id;
                         return Padding(
                           padding: const EdgeInsets.only(top: 16.0, left: 8.0, right: 8.0),
                           child: SizedBox(
@@ -52,12 +53,12 @@ class VenueView extends ConsumerWidget {
                                   const SizedBox(height: 10),
                                   const Text("Location:", style: TextStyle(fontWeight: FontWeight.bold)),
                                   Text(documentSnapshot["place"].toString()),
-                                  documentIndex==index?Text("Selected",style: TextStyle(color: muave,fontWeight: FontWeight.bold),):const Text(""),
+                                  venueId==thisEvent!.eventVenue!.venueId?Text("Selected",style: TextStyle(color: muave,fontWeight: FontWeight.bold),):const Text(""),
                                 ],
                               ),
                               trailing: ElevatedButton(onPressed: (){
                                 if(thisEvent!=null && thisEvent.eventVenue!=null){
-                                  provider.assignVenue(eventIndex, index,documentSnapshot["price_per_plate"]);
+                                  provider.assignVenue(eventIndex, venueId,documentSnapshot["price_per_plate"]);
                                 }
                                 else{
                                 }

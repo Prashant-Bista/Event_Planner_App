@@ -1,5 +1,4 @@
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hive/hive.dart';
 
 part 'venue_model.g.dart';
@@ -7,12 +6,14 @@ part 'venue_model.g.dart';
 class Venue{
 
   @HiveField(0)
-  int? selectedDocumentIndex;
   String venueId;
-  double? venueCost;
+
+  @HiveField(1)
+  double venueCost;
+
+  @HiveField(2)
   Venue({
-     this.selectedDocumentIndex,
-     this.venueCost,
+     required this.venueCost,
     required this.venueId
   });
 }
