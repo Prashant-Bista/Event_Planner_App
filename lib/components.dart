@@ -33,7 +33,7 @@ class FrenchCannon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return   Text(text,style: TextStyle(fontFamily: "FrenchCannon",fontSize: size,color: color,fontWeight: weight))
+    return   Text(text,style: TextStyle(fontFamily: "FrenchCannon",fontSize: size,color: color,fontWeight: weight,),maxLines: 1,overflow: TextOverflow.ellipsis,)
     ;
   }
 }
@@ -623,33 +623,35 @@ class CommonFilledWindow extends ConsumerWidget {
                               ],
                             ),
                             const SizedBox(width: 20,),
-
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                FrenchCannon(text: isGuest?guest.guestName:vendor.name,size: 13.0),
-                                FrenchCannon(text: isGuest?guest.contact:vendor.contact,size: 13.0),
-                                FrenchCannon(text: isGuest?'${guest.membersNo}':'${vendor.price}',size: 13.0),
-                                StatefulBuilder(builder: (context,setState){
-                                  return Checkbox(
-                                    value: isGuest?thisEvent.eventGuests[index].invited:thisEvent.eventVendors[index].isBooked,
-                                    onChanged: (bool? value) {
-                                      setState(() {
-                                        isInvited = value!;
-                                        if (isGuest)
-                                          provider.updateGuest(eventIndex, index, thisEvent.eventGuests[index].guestName, thisEvent.eventGuests[index].membersNo, isInvited!, thisEvent.eventGuests[index].contact);
-                                        else
-                                          provider.updateVendors(eventIndex, index, thisEvent.eventVendors[index].name!, thisEvent.eventVendors[index].price!, isInvited!, thisEvent.eventVendors[index].contact!);
-
-                                      });
-                                    },
-                                  );
-
-                                })
-
-
-                              ],
+                        
+                            Flexible(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  FrenchCannon(text: isGuest?guest.guestName:vendor.name,size: 13.0),
+                                  FrenchCannon(text: isGuest?guest.contact:vendor.contact,size: 13.0),
+                                  FrenchCannon(text: isGuest?'${guest.membersNo}':'${vendor.price}',size: 13.0),
+                                  StatefulBuilder(builder: (context,setState){
+                                    return Checkbox(
+                                      value: isGuest?thisEvent.eventGuests[index].invited:thisEvent.eventVendors[index].isBooked,
+                                      onChanged: (bool? value) {
+                                        setState(() {
+                                          isInvited = value!;
+                                          if (isGuest)
+                                            provider.updateGuest(eventIndex, index, thisEvent.eventGuests[index].guestName, thisEvent.eventGuests[index].membersNo, isInvited!, thisEvent.eventGuests[index].contact);
+                                          else
+                                            provider.updateVendors(eventIndex, index, thisEvent.eventVendors[index].name!, thisEvent.eventVendors[index].price!, isInvited!, thisEvent.eventVendors[index].contact!);
+                                                      
+                                        });
+                                      },
+                                    );
+                                                      
+                                  })
+                                                      
+                                                      
+                                ],
+                              ),
                             ),
                           ],
                         ),

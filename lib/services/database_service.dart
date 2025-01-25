@@ -33,7 +33,7 @@ class DatabaseService {
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
 
-    DocumentReference docref= await db.collection("Users").doc(_userId).collection("Events").add({"guest_no":thisEvent!.guestsCount,"name":thisEvent.eventName,"selected_venue":thisEvent.eventVenue!.venueId??"not_added","tasks_no":thisEvent.eventTasks.length,"vendors_no":thisEvent.vendorsCount,"expense":thisEvent.eventBudget.total_expenses});
+    DocumentReference docref= await db.collection("Users").doc(_userId).collection("Events").add({"guest_no":thisEvent!.guestsCount,"name":thisEvent.eventName,"selected_venue":thisEvent.eventVenue!.venueId??"not_added","tasks_no":thisEvent.eventTasks.length,"vendors_no":thisEvent.vendorsCount,"expense":thisEvent.eventBudget.total_expenses,"presence":true,"venuecost":0});
     thisEvent.eventId=docref.id;
 
   }

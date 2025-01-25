@@ -18,64 +18,51 @@ class VenueView extends ConsumerWidget {
       appBar: AppBar(
         title: const FrenchCannon(text:"Venues", color: Colors.white, weight: FontWeight.bold),
       ),
-      body: ValueListenableBuilder(
-        valueListenable: eventBox.listenable(),
-        builder:(context,Box<Event> eventBox, _){
-          Event? thisEvent = eventBox.getAt(eventIndex);
-          String? venueId;
-          if(thisEvent!=null && thisEvent.eventVenue!=null){
-            venueId= thisEvent.eventVenue!.venueId;
-          }
-          return StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance.collection("Venues").snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  return ListView.builder(
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        DocumentSnapshot documentSnapshot = snapshot.data!.docs[index];
-                        String venueId = documentSnapshot.id;
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 16.0, left: 8.0, right: 8.0),
-                          child: SizedBox(
-                            height: 200,
-                            child: ListTile(
-                              tileColor: lightDustyRose,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                              onTap: () {
-                                Navigator.of(context).pushNamed('/singlevenue', arguments: documentSnapshot);
-                              },
-                              leading: Image.network(documentSnapshot["image_url"], fit: BoxFit.fitHeight),
-                              title: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  BulletoKilla(text: documentSnapshot["name"], color: Colors.black, size: 15.0),
-                                  const SizedBox(height: 10),
-                                  const Text("Location:", style: TextStyle(fontWeight: FontWeight.bold)),
-                                  Text(documentSnapshot["place"].toString()),
-                                  venueId==thisEvent!.eventVenue!.venueId?Text("Selected",style: TextStyle(color: muave,fontWeight: FontWeight.bold),):const Text(""),
-                                ],
-                              ),
-                              trailing: ElevatedButton(onPressed: (){
-                                if(thisEvent!=null && thisEvent.eventVenue!=null){
-                                  provider.assignVenue(eventIndex, venueId,documentSnapshot["price_per_plate"]);
-                                }
-                                else{
-                                }
-                              }, child: const Text("Select")),
-                            ),
-                          ),
-                        );
-                      }
-                  );
-                } else {
-                  return const Center(child: CircularProgressIndicator());
-                }
-              }
-          );
-        },
+      body:
+      Builder(builder: (context){
+        Future snapshot= provider.getVenues();
+        return Center();
+        // return ListView.builder(
+        //     itemCount: snapshot.da,
+        //     itemBuilder: (context, index) {
+        //       DocumentSnapshot documentSnapshot = snapshot.data!.docs[index];
+        //       String venueId = documentSnapshot.id;
+        //       return Padding(
+        //         padding: const EdgeInsets.only(top: 16.0, left: 8.0, right: 8.0),
+        //         child: SizedBox(
+        //           height: 200,
+        //           child: ListTile(
+        //             tileColor: lightDustyRose,
+        //             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        //             onTap: () {
+        //               Navigator.of(context).pushNamed('/singlevenue', arguments: documentSnapshot);
+        //             },
+        //             leading: Image.network(documentSnapshot["image_url"], fit: BoxFit.fitHeight),
+        //             title: Column(
+        //               crossAxisAlignment: CrossAxisAlignment.start,
+        //               children: [
+        //                 BulletoKilla(text: documentSnapshot["name"], color: Colors.black, size: 15.0),
+        //                 const SizedBox(height: 10),
+        //                 const Text("Location:", style: TextStyle(fontWeight: FontWeight.bold)),
+        //                 Text(documentSnapshot["place"].toString()),
+        //                 venueId==thisEvent!.eventVenue!.venueId?Text("Selected",style: TextStyle(color: muave,fontWeight: FontWeight.bold),):const Text(""),
+        //               ],
+        //             ),
+        //             trailing: ElevatedButton(onPressed: (){
+        //               if(thisEvent!=null && thisEvent.eventVenue!=null){
+        //                 provider.assignVenue(eventIndex, venueId,documentSnapshot["price_per_plate"]);
+        //               }
+        //               else{
+        //               }
+        //             }, child: const Text("Select")),
+        //           ),
+        //         ),
+        //       );
+        //     }
+        // ),
+      }),
 
-      ),
+
     );
   }
 }

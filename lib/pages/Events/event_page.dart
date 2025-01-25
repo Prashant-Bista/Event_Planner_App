@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_planner_app/business_logic.dart';
 import 'package:event_planner_app/services/authentication_service.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ class EventPage extends ConsumerWidget {
     AuthenticationService auth = AuthenticationService();
     final provider = ref.watch(stateProvider);
     provider.eventRefresh();
+
     Box<Event> event = Hive.box<Event>('event');
     return Scaffold(
       resizeToAvoidBottomInset: true,
