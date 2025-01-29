@@ -14,9 +14,8 @@ class EventPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     AuthenticationService auth = AuthenticationService();
     final provider = ref.watch(stateProvider);
-    provider.eventRefresh();
-
     Box<Event> event = Hive.box<Event>('event');
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(

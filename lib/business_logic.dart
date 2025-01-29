@@ -1,5 +1,3 @@
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:event_planner_app/components.dart';
 import 'package:event_planner_app/pages/Budget/budget.dart';
@@ -8,7 +6,6 @@ import 'package:event_planner_app/pages/Guests/guests.dart';
 import 'package:event_planner_app/pages/Schedule/schedule.dart';
 import 'package:event_planner_app/pages/Todo/tasks.dart';
 import 'package:event_planner_app/pages/Vendors/vendors.dart';
-import 'package:event_planner_app/services/database_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -18,7 +15,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 final stateProvider = ChangeNotifierProvider.autoDispose<BusinessLogic>((ref)=>BusinessLogic());
 FirebaseFirestore _db = FirebaseFirestore.instance;
-DatabaseService _dbService = DatabaseService();
 String _uid =  FirebaseAuth.instance.currentUser!=null?FirebaseAuth.instance.currentUser!.uid:"";
 class BusinessLogic extends ChangeNotifier {
 
@@ -65,7 +61,9 @@ class BusinessLogic extends ChangeNotifier {
     thisEvent!.eventTasks.add(Tasks(title: task, isDone: false));
     if (_uid != "") {
       await _db.collection("Users").doc(_uid).collection("Events").doc(
-          thisEvent.eventId).update({"tasks_no": thisEvent.eventTasks.length+thisEvent.eventSchedule.length});
+          thisEvent.eventId).update({
+        "tasks_no": thisEvent.eventTasks.length + thisEvent.eventSchedule.length
+      });
     }
     notifyListeners();
   }
@@ -176,7 +174,8 @@ class BusinessLogic extends ChangeNotifier {
     totalExpense += thisEvent.eventVenue!.venueCost;
     thisEvent.eventBudget.total_expenses = totalExpense;
     budgetRemaining = thisEvent.eventBudget.budget - totalExpense;
-    _db.collection("Users").doc(_uid).collection("Events").doc(thisEvent.eventId).update({"expense":totalExpense});
+    _db.collection("Users").doc(_uid).collection("Events").doc(
+        thisEvent.eventId).update({"expense": totalExpense});
     return budgetRemaining;
   }
 
@@ -265,7 +264,7 @@ class BusinessLogic extends ChangeNotifier {
     }
   }
 
-  Future<void> assignVenue(int eventIndex, String venueIndex, int pricePerplate) async{
+  void assignVenue(int eventIndex, String venueIndex, int pricePerplate) {
     Box<Event> eventBox = Hive.box<Event>('event');
     Event? thisEvent = eventBox.getAt(eventIndex);
     thisEvent!.eventVenue!.venueId = venueIndex;
@@ -273,146 +272,122 @@ class BusinessLogic extends ChangeNotifier {
         ((thisEvent.guestsCount + thisEvent.vendorsCount) * pricePerplate +
             14000).toString());
     eventBox.putAt(eventIndex, thisEvent);
-    await _db.collection("Users").doc(_uid).collection("Events").doc(thisEvent.eventId).update({"venue_cost":thisEvent.eventVenue!.venueCost});
+    _db.collection("Users").doc(_uid).collection("Events").doc(
+        thisEvent.eventId).update(
+        {"venue_cost": thisEvent.eventVenue!.venueCost});
   }
 
 
+  Future<void> predictBudget(int eventIndex) async {
+    Box<Event> eventBox = Hive.box<Event>('event');
+    Event? thisEvent = eventBox.getAt(eventIndex);
+    final model = await Interpreter.fromAsset("assets/models/model.tflite",);
+    var input = [
+      [
+        thisEvent!.guestsCount,
+        thisEvent.eventVenue!.venueCost,
+        thisEvent.eventTasks.length,
+        thisEvent.vendorsCount
+      ]
+    ];
+    var output = List.filled(1, 0).reshape([1, 1]);
+    model.run(input, output);
+    thisEvent.predictedBudget = output[0][0];
+    eventBox.putAt(eventIndex, thisEvent);
+  }
 
-    Future<void> predictBudget(int eventIndex) async {
-      Box<Event> eventBox = Hive.box<Event>('event');
-      Event? thisEvent = eventBox.getAt(eventIndex);
-      final model = await Interpreter.fromAsset("assets/models/model.tflite");
-      var input = [
-        [
-          thisEvent!.guestsCount,
-          thisEvent.eventVenue!.venueCost,
-          thisEvent.eventTasks.length,
-          thisEvent.vendorsCount
-        ]
-      ];
-      var output = List.filled(1, 0).reshape([1, 1]);
-      model.run(input, output);
-      thisEvent.predictedBudget = output[0][0];
-      eventBox.putAt(eventIndex, thisEvent);
-    }
-    Future<void> removeVendor(int eventIndex, int index) async {
-      Box<Event> eventBox = Hive.box<Event>('event');
-      Event? thisEvent = eventBox.getAt(eventIndex);
-      thisEvent!.vendorsCount !=
-          thisEvent.vendorsCount - 1;
-      thisEvent.eventVendors.removeAt(index);
-      eventBox.putAt(eventIndex, thisEvent);
-      if(_uid!="") {
-        await _db.collection("Users").doc(_uid).collection("Events").doc(
+  Future<void> removeVendor(int eventIndex, int index) async {
+    Box<Event> eventBox = Hive.box<Event>('event');
+    Event? thisEvent = eventBox.getAt(eventIndex);
+    thisEvent!.vendorsCount !=
+        thisEvent.vendorsCount - 1;
+    thisEvent.eventVendors.removeAt(index);
+    eventBox.putAt(eventIndex, thisEvent);
+    if (_uid != "") {
+      await _db.collection("Users").doc(_uid).collection("Events").doc(
           thisEvent.eventId).update(
           {"vendors_no": thisEvent.eventVendors.length});
-      }
-    }
-
-    void updateSchedule(int itemIndex, int eventIndex, String title,
-        DateTime? picked) {
-      Box<Event> eventBox = Hive.box<Event>('event');
-      Event? thisEvent = eventBox.getAt(eventIndex);
-      thisEvent!.eventSchedule.removeAt(itemIndex);
-      thisEvent.eventSchedule.insert(
-          itemIndex, Schedule(title: title, completeWithin: picked!));
-      eventBox.putAt(eventIndex, thisEvent);
-    }
-    void removeSchedule(int itemIndex, int eventIndex) {
-      Box<Event> eventBox = Hive.box<Event>('event');
-      Event? thisEvent = eventBox.getAt(eventIndex);
-      thisEvent!.eventSchedule.removeAt(itemIndex);
-      eventBox.putAt(eventIndex, thisEvent);
-    }
-
-    Future<void> addSchedule(int eventIndex, String title, DateTime? picked) async{
-      Box<Event> eventBox = Hive.box<Event>('event');
-      Event? thisEvent = eventBox.getAt(eventIndex);
-      thisEvent!.eventSchedule.add(
-          Schedule(title: title, completeWithin: picked!));
-      eventBox.putAt(eventIndex, thisEvent);
-      await _db.collection("Users").doc(_uid).collection("Events").doc(
-          thisEvent.eventId).update({"tasks_no": thisEvent.eventTasks.length+thisEvent.eventSchedule.length});
-    }
-
-    String timeRemaining(DateTime setDateTime) {
-      Duration diff = setDateTime.difference(DateTime.now());
-      int hours = diff.inHours;
-      int minutes = diff.inMinutes % 60;
-      if (diff.isNegative) {
-        return "Deadline Expired";
-      }
-      else {
-        return "$hours hrs $minutes mins";
-      }
-    }
-
-    Future<void> whatsappConnect(String contact, BuildContext context) async {
-      try {
-        launchUrl(Uri.parse("https://wa.me/$contact"));
-      } catch (e) {
-        alertMessages(
-            context: context, message: "Couldn't connect to $contact");
-      }
-    }
-    Future<void> dialerConnect(String contact, BuildContext context) async {
-      try {
-        launchUrl(Uri.parse("tel:$contact"));
-      } catch (e) {
-        alertMessages(
-            context: context, message: "Couldn't connect to $contact");
-      }
-    }
-    void sortSchedule(int eventIndex) {
-      Box<Event> eventBox = Hive.box<Event>('event');
-      Event? thisEvent = eventBox.getAt(eventIndex);
-      Schedule tempSchedule;
-      List<Schedule> thisSchedules = thisEvent!.eventSchedule;
-      int scheduleLength = thisSchedules.length;
-      for (int i = scheduleLength - 1; i > 0; i--) {
-        for (int j = 0; j < i; j++) {
-          if (thisSchedules[j].completeWithin.difference(DateTime.now()) >
-              thisSchedules[j + 1].completeWithin.difference(DateTime.now())) {
-            tempSchedule = thisSchedules[j];
-            thisSchedules[j] = thisSchedules[j + 1];
-            thisSchedules[j + 1] = tempSchedule;
-          }
-        }
-      }
-      thisEvent.eventSchedule != thisSchedules;
-      eventBox.putAt(eventIndex, thisEvent);
-    }
-  Future<void> eventRefresh() async {
-    Box<Event> event = Hive.box("event");
-    if (_uid != "") {
-      QuerySnapshot querySnap= await _db.collection("Users").doc(_uid).collection("Events").where("presence",isEqualTo: false).get();
-      Set<String> dbEventIds= querySnap.docs.map((docSnap)=>docSnap.id).toSet();
-      for (int i= event.length-1;i>=0;i--){
-        Event? localEvent = event.getAt(i);
-        if(localEvent!=null && !dbEventIds.contains(localEvent.eventId)){
-          await _dbService.createEvent(i);
-        }
-      }
-      for (DocumentSnapshot docSnap in querySnap.docs){
-        bool isPresent=false;
-        for (int i=0;i<event.length;i++){
-          if(event.getAt(i)!.eventId== docSnap.id){
-            isPresent=true;
-          }
-        }
-        if(isPresent==false){
-         await _db.collection("Users").doc(_uid).collection("Events").doc(docSnap.id).update({"presence":false});
-        }
-
-      }
-
-    }
-  }
-    Future<QuerySnapshot> getVenues() async{
-    QuerySnapshot snap = await FirebaseFirestore.instance.collection("Venues").get();
-    print(snap.docs.toList());
-    return snap;
     }
   }
 
+  void updateSchedule(int itemIndex, int eventIndex, String title,
+      DateTime? picked) {
+    Box<Event> eventBox = Hive.box<Event>('event');
+    Event? thisEvent = eventBox.getAt(eventIndex);
+    thisEvent!.eventSchedule.removeAt(itemIndex);
+    thisEvent.eventSchedule.insert(
+        itemIndex, Schedule(title: title, completeWithin: picked!));
+    eventBox.putAt(eventIndex, thisEvent);
+  }
 
+  void removeSchedule(int itemIndex, int eventIndex) {
+    Box<Event> eventBox = Hive.box<Event>('event');
+    Event? thisEvent = eventBox.getAt(eventIndex);
+    thisEvent!.eventSchedule.removeAt(itemIndex);
+    eventBox.putAt(eventIndex, thisEvent);
+  }
+
+  Future<void> addSchedule(int eventIndex, String title,
+      DateTime? picked) async {
+    Box<Event> eventBox = Hive.box<Event>('event');
+    Event? thisEvent = eventBox.getAt(eventIndex);
+    thisEvent!.eventSchedule.add(
+        Schedule(title: title, completeWithin: picked!));
+    eventBox.putAt(eventIndex, thisEvent);
+    await _db.collection("Users").doc(_uid).collection("Events").doc(
+        thisEvent.eventId).update({
+      "tasks_no": thisEvent.eventTasks.length + thisEvent.eventSchedule.length
+    });
+  }
+
+  String timeRemaining(DateTime setDateTime) {
+    Duration diff = setDateTime.difference(DateTime.now());
+    int hours = diff.inHours;
+    int minutes = diff.inMinutes % 60;
+    if (diff.isNegative) {
+      return "Deadline Expired";
+    }
+    else {
+      return "$hours hrs $minutes mins";
+    }
+  }
+
+  Future<void> whatsappConnect(String contact, BuildContext context) async {
+    try {
+      launchUrl(Uri.parse("https://wa.me/$contact"));
+    } catch (e) {
+      alertMessages(
+          context: context, message: "Couldn't connect to $contact");
+    }
+  }
+
+  Future<void> dialerConnect(String contact, BuildContext context) async {
+    try {
+      launchUrl(Uri.parse("tel:$contact"));
+    } catch (e) {
+      alertMessages(
+          context: context, message: "Couldn't connect to $contact");
+    }
+  }
+
+  void sortSchedule(int eventIndex) {
+    Box<Event> eventBox = Hive.box<Event>('event');
+    Event? thisEvent = eventBox.getAt(eventIndex);
+    Schedule tempSchedule;
+    List<Schedule> thisSchedules = thisEvent!.eventSchedule;
+    int scheduleLength = thisSchedules.length;
+    for (int i = scheduleLength - 1; i > 0; i--) {
+      for (int j = 0; j < i; j++) {
+        if (thisSchedules[j].completeWithin.difference(DateTime.now()) >
+            thisSchedules[j + 1].completeWithin.difference(DateTime.now())) {
+          tempSchedule = thisSchedules[j];
+          thisSchedules[j] = thisSchedules[j + 1];
+          thisSchedules[j + 1] = tempSchedule;
+        }
+      }
+    }
+    thisEvent.eventSchedule != thisSchedules;
+    eventBox.putAt(eventIndex, thisEvent);
+  }
+
+}

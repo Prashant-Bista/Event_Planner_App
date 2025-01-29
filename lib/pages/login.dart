@@ -100,7 +100,7 @@ class _LoginState extends State<Login> {
                         child:const FrenchCannon(text: "Guest Login ", size: 20.0,color: Colors.white,),
                         onPressed: (){
                           guestLogin = true;
-                          Navigator.of(context).pushNamed('/event');
+                          Navigator.of(context).popAndPushNamed('/event');
                           // }
                         }),
                     Row(

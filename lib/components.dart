@@ -771,7 +771,7 @@ class EventAlert extends ConsumerWidget {
                 provider.sortSchedule(eventIndex!);
               }
               else{
-                eventBox.add(Event(eventId:"notset",eventBudget:Budget(budget: 0, isSet: false,total_expenses: 0), eventExpenses: [], eventGuests: [], eventTasks: [], eventName: nameController.text, eventDate: picked!, eventVendors: [], vendorsCount: 0, guestsCount: 0,eventSchedule: [],eventVenue: Venue(venueCost: 0,venueId: "not_Added"),predictedBudget: null));
+                eventBox.add(Event(eventId:"notset",eventBudget:Budget(budget: 0, isSet: false,total_expenses: 0), eventExpenses: [], eventGuests: [], eventTasks: [], eventName: nameController.text, eventDate: picked!, eventVendors: [], vendorsCount: 0, guestsCount: 0,eventSchedule: [],eventVenue: Venue(venueCost: 0,venueId: "not_Added"),predictedBudget: 0));
                  _db.createEvent(eventBox.length-1);
 
               }
